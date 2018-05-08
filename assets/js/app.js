@@ -7,55 +7,50 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
 
     $stateProvider
 
+        .state('container', {
+            templateUrl : "views/container.html",
+            controller : "containerCtrl"
+        })
+
         .state('home', {
             url: '/',
-            templateUrl : "views/home.html",
-            controller : "homeCtrl"
-        })
-
-        .state('body', {
-            templateUrl : "views/body.html",
-            controller: 'bodyCtrl'
-        })
-
-        .state('account', {
-            parent: 'body',
+            parent: 'container',
             views: {
-                'container@body': {
-                    templateUrl : "views/account.html",
-                    controller: 'accountCtrl'
+                'home@container': {
+                    templateUrl : "views/home.html",
+                    controller : "homeCtrl"
                 }
-            }
+            }            
         })
 
         .state('login', {
             url: '/login',
-            parent: 'account',
-            templateUrl : "views/login.html"
-        })
-
-        .state('signup', {
-            url: '/signup',
-            parent: 'account',
-            templateUrl : "views/signup.html"
-        })
-
-        .state('logout', {
-            url: '/logout',
-            parent: 'body',
+            parent: 'container',
             views: {
-                'container@body': {
-                    templateUrl : "views/logout.html",
-                    controller: 'accountCtrl'
+                'overlay@container': {
+                    templateUrl : "views/login.html",
+                    controller : "loginCtrl"
+                },
+                'home@container': {
+                    templateUrl : "views/home.html",
+                    controller : "homeCtrl"
                 }
             }
         })
 
-        .state('reset', {
-            url: '/reset',
+        .state('signup', {
+            url: '/signup',
             parent: 'container',
-            templateUrl : "views/reset.html",
-            controller: 'resetCtrl'
+            views: {
+                'overlay@container': {
+                    templateUrl : "views/signup.html",
+                    controller : "signupCtrl"
+                },
+                'home@container': {
+                    templateUrl : "views/home.html",
+                    controller : "homeCtrl"
+                }
+            }
         })
 
         .state('verify', {

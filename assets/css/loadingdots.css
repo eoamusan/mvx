@@ -27,7 +27,7 @@
     height: 11px;
     width:  11px;
     margin-right: 10px;
-    color: #305EBE;
+    color: #00AFEF;
     -webkit-animation:  loading_dots_red 0.8s linear infinite;
     -moz-animation:     loading_dots_red 0.8s linear infinite;
     -ms-animation:      loading_dots_red 0.8s linear infinite;
@@ -147,7 +147,7 @@ Define the animation for every efing vendor prefix
         background: transparent;
     }
     50% {
-        background: #305EBE;
+        background: #00AFEF;
     }
     100% {
         background: transparent;

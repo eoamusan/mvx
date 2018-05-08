@@ -1,196 +1,427 @@
-<div style="width: 100%; height: 100vh;" data-simplebar>
-	<div style="width: 85%; height: 50px; padding-top: 40px; margin: auto;">
-		<div style="width: 150px; height: 45px; float: left; margin-right: 50px;">
-			<img src="assets/images/logo_stacked.png" height="100%">
-		</div>
-		<div style="width: calc(100% - 200px); height: 45px; float: left;">
-			<div style="width: 35%; height: calc(100% - 10px); float: left; padding-top: 5px;">
-				<div style="width: calc(100% - 3px); height: 32px; background: #F58634; border-radius: 10px; padding-top: 3px; padding-left: 3px;">
-					<div style="width: calc(100% - 130px); height: 29px; float: left;">
-						<input style="width: calc(100% - 10px); height: 100%; background: #FFF; border: none; border-radius: 7px 0 0 7px; padding: 0; padding-left: 10px; outline: 0;" />
-					</div>
-					<div style="width: 130px; height: 29px; float: left; position: relative; color: #FFF; font-size: 0.8rem; font-weight: 500; cursor: pointer;">
-						<span class="center_item">SEARCH</span>
-					</div>
+<div class="mvx_header">
+	<div class="logo">
+		<img src="assets/images/logo_stacked.png" height="100%">
+	</div>
+	<div class="mvx_headeraction">
+		<div class="mvx_searchbarcontainer">
+			<div class="cover">
+				<div class="mvx_searchinput">
+					<input />
+				</div>
+				<div class="mvx_searchbtn">
+					<span class="center_item">SEARCH</span>
 				</div>
 			</div>
-			<div style="width: calc(65% - 20px); height: 100%; float: left; margin-left: 20px;">
-				<div class="nowrap" style="width: 130px; height: 30px; border-radius: 5px; background: #056A9F; float: left; font-size: 0.8rem; position: relative; margin-right: 10px; color: #FFF; margin-top: 8px; cursor: pointer;">
-					<span class="center_item">POST A VESSEL</span>
+		</div>
+		<div class="mvx_links">
+			<div class="nowrap mvx_link addvessel">
+				<span class="center_item">POST A VESSEL</span>
+			</div>
+			<div class="nowrap mvx_link addad">
+				<span class="center_item">POST PROCUREMENT AD</span>
+			</div>
+			<div class="mvx_morelinks">
+				<div class="nowrap mvx_morelink join" ng-click="signup();">
+					<span class="center_item">JOIN MVXCHANGE</span>
 				</div>
-				<div class="nowrap" style="width: 180px; height: 30px; border-radius: 5px; background: #056A9F; float: left; font-size: 0.8rem; position: relative; color: #FFF; margin-top: 8px; cursor: pointer;">
-					<span class="center_item">POST PROCUREMENT AD</span>
+				<div class="nowrap mvx_morelink signin" ng-click="login();">
+					<span class="center_item">SIGN IN</span>
 				</div>
-				<div style="width: calc(100% - 320px); height: 100%; float: left;">
-					<div class="nowrap" style="width: 50%; height: 100%; float: left; position: relative; color: #000; font-size: 0.8rem;">
-						<span class="center_item">JOIN MVXCHANGE</span>
-					</div>
-					<div class="nowrap" style="width: 30%; height: 100%; float: left; position: relative; color: #000; font-size: 0.8rem;">
-						<span class="center_item">SIGN IN</span>
-					</div>
-					<div style="width: 20%; height: 100%; float: left; position: relative; color: #000; font-size: 0.8rem; cursor: pointer;">
-						<img src="assets/images/ham_black.png" height="28" class="center_item_vertically" style="right: 0;">
-					</div>
+				<div class="mvx_toggle">
+					<img src="assets/images/ham_black.png" height="28" class="center_item_vertically" style="right: 0;">
 				</div>
 			</div>
 		</div>
 	</div>
-	<div style="width: 85%; height: auto; padding-top: 40px; margin: auto; margin-bottom: 30px;">
-		<div style="width: calc(100% - 400px); height: auto; padding: 0 200px; margin-bottom: 40px; text-align: center; font-size: 1.15rem; color: #919193;">
-			Motor Vessel Xchange (MVX / MVXchange) is an online marketplace and marine logistics service enabling people to search, find, sell, purchase and/or charter suitable marine equipment and oil & gas equipment and products
-		</div>
-		<div style="width: 300px; height: 45px; background: #056A9F; position: relative; color: #FFF; margin: auto; cursor: pointer;">
-			<span class="center_item">
-				CHARTER VESSEL
-			</span>
-		</div>
+</div>
+<div class="mvx_actionarea">
+	<div class="mvx_shortinfo">
+		Motor Vessel Xchange (MVX / MVXchange) is a vessel chartering + brokerage and procurement marketplace for the energy industry.
 	</div>
-	<div style="width: 85%; height: 450px; padding-top: 40px; margin: auto; margin-bottom: 50px;">
-		<div style="width: calc((100% - 20px) / 2); height: 100%; float: left; background: linear-gradient(to right, #80A3BC , #ABC5D2); margin-right: 20px; border-radius: 10px;">
-			<div class="relative-container" style="background: url(assets/images/bg1.png); background-position: center; background-repeat: no-repeat;">
-				<div style="width: auto; height: 37px; padding: 0 50px; background: #FFF; display: inline-block; padding-top: 13px; border-radius: 10px 0 0 10px; position: absolute; right: 0; bottom: 40px; font-weight: bold;">
-					VIEW ALL VESSELS
-				</div>
-			</div>
-		</div>
-		<div style="width: calc((100% - 20px) / 2); height: 100%; float: left; background: linear-gradient(to right, #80A3BC , #ABC5D2); border-radius: 10px;">
-			<div class="relative-container" style="background: url(assets/images/bg2.png); background-position: center; background-repeat: no-repeat;">
-				<div style="width: auto; height: 37px; padding: 0 50px; background: #FFF; display: inline-block; padding-top: 13px; border-radius: 10px 0 0 10px; position: absolute; right: 0; bottom: 40px; font-weight: bold;">
-					VIEW ALL PROCUREMENT ITEMS
-				</div>
+	<div class="mvx_actionbtn">
+		<span class="center_item">
+			CHARTER VESSEL
+		</span>
+	</div>
+</div>
+<div class="mvx_ads">
+	<div class="mvx_ad one">
+		<div class="relative-container">
+			<div class="mvx_adlabel">
+				VIEW ALL VESSELS
 			</div>
 		</div>
 	</div>
-	<div style="width: 85%; height: 45px; margin: auto; margin-bottom: 20px;">
-		<div style="width: calc(50% - 10px); height: 45px; border-bottom: 1px solid #00afef;">
-			<div style="width: auto; display: inline-block; height: 42px; border-bottom: 3px solid #00afef; color: #056a9f; font-weight: bold;">
-				FEATURED VESSELS
+	<div class="mvx_ad two">
+		<div class="relative-container">
+			<div class="mvx_adlabel">
+				VIEW ALL PROCUREMENT ITEMS
 			</div>
 		</div>
 	</div>
-	<div style="width: calc(85% + 10px); height: 250px; margin: auto; margin-bottom: 50px; position: relative;">
-		<div class="center_item_vertically" style="width: 40px; height: 40px; border-radius: 40px; background: #FFF; position: absolute; left: -15px; z-index: 9;">
-			
-		</div>
-		<div class="center_item_vertically" style="width: 40px; height: 40px; border-radius: 40px; background: #FFF; position: absolute; right: -15px; z-index: 9;">
-			
-		</div>
-		<div style="width: 100%; height: 100%">
-			<slick id="slideWeb" infinite=true slides-to-show=4 responsive autoplay=true slides-to-scroll=1>
-				<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured1.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
-					<div style="width: 100%; height: 100%; background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
-						<div style="width: 85%; height: 100px; margin: auto;">
-							<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
-								<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
-							</div>
-							<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
-								Passenger ships and ferries are among the most complex ships to . . .
-							</div>
-						</div>
-					</div>
-				</div>
-				<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured2.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
-					<div style="width: 100%; height: 100%; background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
-						<div style="width: 85%; height: 100px; margin: auto;">
-							<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
-								<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
-							</div>
-							<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
-								Passenger ships and ferries are among the most complex ships to . . .
-							</div>
-						</div>
-					</div>
-				</div>
-				<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured3.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
-					<div style="width: 100%; height: 100%; background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
-						<div style="width: 85%; height: 100px; margin: auto;">
-							<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
-								<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
-							</div>
-							<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
-								Passenger ships and ferries are among the most complex ships to . . .
-							</div>
-						</div>
-					</div>
-				</div>
-				<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured4.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
-					<div style="width: 100%; height: 100%; background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
-						<div style="width: 85%; height: 100px; margin: auto;">
-							<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
-								<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
-							</div>
-							<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
-								Passenger ships and ferries are among the most complex ships to . . .
-							</div>
-						</div>
-					</div>
-				</div>
-				<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured1.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
-					<div style="width: 100%; height: 100%; background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
-						<div style="width: 85%; height: 100px; margin: auto;">
-							<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
-								<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
-							</div>
-							<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
-								Passenger ships and ferries are among the most complex ships to . . .
-							</div>
-						</div>
-					</div>
-				</div>
-			</slick>
+	<div class="clear-both"></div>
+</div>
+<div class="mvx_featuredlabel">
+	<div class="mvx_labels">
+		<div>
+			FEATURED VESSELS
 		</div>
 	</div>
-	<div style="width: calc(85% + 10px); height: auto; margin: auto; margin-bottom: 50px; position: relative;">
-		<div style="width: 300px; height: auto; min-height: 400px; float: left; margin-right: 20px;">
-			<div style="width: 100%; height: 45px; border-bottom: 1px solid #00afef;">
-				<div style="width: auto; display: inline-block; height: 42px; border-bottom: 3px solid #00afef; color: #056a9f; font-weight: bold;">
-					GLOBAL NEWS
+</div>
+<div class="mvx_featuredcontent">
+	<div class="center_item_vertically mvx_featuredcontrols left">
+		
+	</div>
+	<div class="center_item_vertically mvx_featuredcontrols right">
+		
+	</div>
+	<div class="relative-container web">
+		<slick id="slideWeb" infinite=true slides-to-show=4 responsive autoplay=true slides-to-scroll=1>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured1.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
 				</div>
 			</div>
-			<div style="width: 100%; height: 250px; background: #000; margin-bottom: 50px;">
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured2.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured3.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured4.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured1.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+		</slick>
+	</div>
+	<div class="relative-container mobile">
+		<slick id="slideWeb" infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured1.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured2.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured3.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured4.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width: calc((100% - 30px) / 4); height: 250px; float: left; border-radius: 7px; background: url(assets/images/featured1.png); background-repeat: no-repeat; background-size: cover; background-position: center; margin: 0 5px; overflow: hidden;">
+				<div style="width: 100%; height: calc(100% - 150px); background: rgba(5, 106, 159, 0.7); padding-top: 150px;">
+					<div style="width: 85%; height: 100px; margin: auto;">
+						<div style="width: 90%; height: 32px; background: #FFF; border-radius: 5px; position: relative; font-style: italic;">
+							<span class="center_item_vertically" style="padding-left: 10px; font-size: 0.9rem;">Ro-Pax vessels</span>
+						</div>
+						<div style="width: 100%; position: relative; font-size: 0.8rem; color: #FFF; padding-top: 10px; height: 38px;" class="text_truncate_two">
+							Passenger ships and ferries are among the most complex ships to . . .
+						</div>
+					</div>
+				</div>
+			</div>
+		</slick>
+	</div>
+</div>
+<div class="mvx_content">
+	<div class="mvx_labels">
+		<div>
+			FEATURED PROCUREMENT ITEMS
+		</div>
+	</div>
+	<div class="mvx_procurementcontainers">
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
 				
 			</div>
-			<div style="width: 100%; height: 45px; border-bottom: 1px solid #00afef;">
-				<div style="width: auto; display: inline-block; height: 42px; border-bottom: 3px solid #00afef; color: #056a9f; font-weight: bold;">
-					WEST AFRICAN NEWS
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
 				</div>
 			</div>
-			<div style="width: 100%; height: 500px; background: #000; margin-bottom: 50px;">
+			<div class="bottom">
 				
 			</div>
 		</div>
-		<div style="width: calc(100% - 320px); height: auto; min-height: 400px; float: left;">
-			<div style="width: 100%; height: 45px; border-bottom: 1px solid #00afef;">
-				<div style="width: auto; display: inline-block; height: 42px; border-bottom: 3px solid #00afef; color: #056a9f; font-weight: bold;">
-					COMMODITIES
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
 				</div>
 			</div>
-			<div style="width: 100%; height: 350px; background: #000; margin-bottom: 50px;">
-			
+			<div class="bottom">
+				
 			</div>
-			<div style="width: 100%; height: 45px; border-bottom: 1px solid #00afef;">
-				<div style="width: auto; display: inline-block; height: 42px; border-bottom: 3px solid #00afef; color: #056a9f; font-weight: bold;">
-					FEATURED
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
 				</div>
 			</div>
-			<div style="width: 100%; height: 600px; background: #000; margin-bottom: 50px;">
-			
+			<div class="bottom">
+				
+			</div>
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
+			</div>
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
 			</div>
 		</div>
 		<div class="clear-both"></div>
 	</div>
-	<div style="width: calc(85% + 10px); height: auto; margin: auto; margin-bottom: 50px; position: relative;">
-		<div style="width: 100%; height: 45px; border-bottom: 1px solid #00afef;">
-			<div style="width: auto; display: inline-block; height: 42px; border-bottom: 3px solid #00afef; color: #056a9f; font-weight: bold;">
-				PARTNERS
+	<div class="mvx_adspace"></div>
+	<div class="mvx_procurementcontainers">
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
 			</div>
 		</div>
-		<div style="width: 100%; height: 150px; background: #000; margin-bottom: 50px;">
-			
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
+			</div>
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
+			</div>
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
+			</div>
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
+			</div>
+		</div>
+		<div class="featured_vessels">
+			<div class="top">
+				<div class="previewImg">
+					
+				</div>
+			</div>
+			<div class="bottom">
+				
+			</div>
+		</div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="clear-both"></div>
+</div>
+<div class="mvx_content">
+	<div class="mvx_labels">
+		<div>
+			PARTNERS
 		</div>
 	</div>
-	<div style="width: 100%; height: 300px; margin: auto; position: relative; background: linear-gradient(to right, #056A9F , #69A6C5);">
-		
+	<div class="mvx_partners">
+		<div class="mvx_partner one"></div>
+		<div class="mvx_partner two"></div>
+		<div class="mvx_partner three"></div>
+		<div class="mvx_partner four"></div>
+		<div class="mvx_partner five"></div>
+		<div class="mvx_partner six"></div>
+		<div class="mvx_partner seven"></div>
+		<div class="clear-both"></div>
 	</div>
-
+</div>
+<div class="mvx_footer">
+	<div class="top">
+		<div class="left">
+			<div class="header">
+				Subscribe for our weekly newsletters.
+			</div>
+			<div class="copy">
+				Keep abreast of recent happenings in the Oil and Gas industry by subscribing. We won't spam you, we promise :)
+			</div>
+			<div class="mvx_newsletter">
+				<div class="input">
+					<input type="text" class="mvx_btn" placeholder="Email address">
+				</div>
+				<div class="mvx_nbtn">
+					<button>
+						SUBSCRIBE
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="right">
+			<div class="header">
+				FOLLOW US
+			</div>
+			<div class="mvx_socials">
+				<div class="mvx_social">
+					<i class="fa fa-facebook center_item_vertically"></i>
+				</div>
+				<div class="mvx_social">
+					<i class="fa fa-twitter center_item_vertically"></i>
+				</div>
+				<div class="mvx_social">
+					<i class="fa fa-instagram center_item_vertically"></i>
+				</div>
+			</div>
+			<div class="header">
+				QUICK LINKS
+			</div>
+			<div class="mvx_quicklinks">
+				<div class="mvx_quicklink">
+					<span class="center_item_vertically">
+						LOGIN
+					</span>
+				</div>
+				<div class="mvx_quicklink">
+					<span class="center_item_vertically">
+						SIGN UP
+					</span>
+				</div>
+				<div class="mvx_quicklink">
+					<span class="center_item_vertically">
+						CREATE AD
+					</span>
+				</div>
+				<div class="mvx_quicklink">
+					<span class="center_item_vertically">
+						HELP
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="bottom">
+		<span class="center_item_vertically nowrap">
+			&copy; 2018 MVXchange. All rights reserved
+		</span>
+	</div>
 </div>
