@@ -4,7 +4,33 @@ app.controller('signupCtrl', function($rootScope, $scope, $http, $state) {
     $scope.signUpStep = 1;
 
     $scope.proceed = function(){
-    	if($scope.signUpStep < 3){
+    	var valids = angular.element(document.querySelectorAll('[data-validate]'));
+
+		var validation = 0;
+
+        angular.forEach(valids, function(valid){
+
+        	angular.element(valid.querySelector('div.status')).removeClass('showStatus');
+
+            if(((angular.element(valid).find('input').val() == "") || (angular.element(valid).find('select').val() == "")) && (valid.attributes['data-validate'].value != "Confirm Password")){
+            	angular.element(valid.querySelector('div.status')).html(valid.attributes['data-validate'].value+" is required");
+            	angular.element(valid.querySelector('div.status')).addClass('showStatus');
+
+            	validation++;
+            }else if(valid.attributes['data-validate'].value == "Confirm Password"){
+            	if($scope.user.password != $scope.user.confirmpassword){
+            		angular.element(valid.querySelector('div.status')).html("Please confirm password correctly");
+            		angular.element(valid.querySelector('div.status')).addClass('showStatus');
+
+	            	validation++;
+	            }
+            }
+
+        });
+
+        console.log(validation);
+
+    	if($scope.signUpStep < 3 && validation == 0){
 		    $scope.signUpStep++;
 		}
 	}

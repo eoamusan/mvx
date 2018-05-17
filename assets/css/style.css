@@ -801,3 +801,59 @@ html, body{
 	color: #FFF;
 	font-size: 1.7rem;
 }
+.status{
+	width: 100%;
+    height: 25px;
+    margin-top: -40px;
+    transition: all 0.3s;
+    text-align: left;
+    padding-top: 15px;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: red;
+}
+.showStatus{
+	margin-top: 0;
+}
+.featuredVessel{
+	width: calc((100% - 30px) / 4);
+	height: 250px;
+	float: left;
+	border-radius: 7px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	margin: 0 5px;
+	overflow: hidden;
+}
+.featuredVessel .layer{
+	width: 100%;
+	height: calc(100% - 150px);
+	background: rgba(5, 106, 159, 0.7);
+	padding-top: 150px;
+}
+.featuredVessel .layer .content{
+	width: 85%;
+	height: 100px;
+	margin: auto;
+}
+.featuredVessel .layer .content .title{
+	width: 90%;
+	height: 32px;
+	background: #FFF;
+	border-radius: 5px;
+	position: relative;
+	font-style: italic;
+}
+.featuredVessel .layer .content .title span{
+	padding-left: 10px;
+	font-size: 0.9rem;
+}
+.featuredVessel .layer .content .desc{
+	width: 100%;
+	position: relative;
+	font-size: 0.8rem;
+	color: #FFF;
+	padding-top: 10px;
+	height: 38px;
+}

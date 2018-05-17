@@ -7,12 +7,11 @@
 						<div style="width: 80%; height: 40px; padding-top: 25px; margin: auto; color: #000; font-weight: bold; font-size: 1.1rem; text-align: center; margin-bottom: 20px;">
 							<span ng-if="signUpStep != 3">JOIN MVXCHANGE</span>
 							<span ng-if="(signUpStep == 3) && (user.category == 'Ship Owner')">SHIP OWNER REGISTRATION</span>
-							<span ng-if="(signUpStep == 3) && (user.category == 'Broker')">BROKER REGISTRATION</span>
 							<span ng-if="(signUpStep == 3) && (user.category == 'Charterer')">CHARTERER</span>
 							<span ng-if="(signUpStep == 3) && (user.category == 'Procurement Agent')">PROCUREMENT AGENT</span>
 						</div>
 						<div ng-if="signUpStep == 1">
-							<div class="input-box" data-validate="Last Name">
+							<div class="input-box" data-validate="Email address">
 								<div class="label">
 									<div class="hidden_label">
 										EMAIL ADDRESS <span class="required">*</span>
@@ -25,12 +24,12 @@
 							</div>
 						</div>
 						<div ng-if="signUpStep == 2">
-							<div style="width: 80%; height: 60px; margin: auto;">
+							<div style="width: 80%; min-height: 60px; margin: auto;">
 								<div style="width: 100px; height: 49px; float: left; position: relative;">
 									<span class="center_item_vertically">I am a/an</span>
 								</div>
-								<div style="width: calc(100% - 100px); height: 60px; float: left;">
-									<div class="input-box" data-validate="Last Name" style="width: 100%;">
+								<div style="width: calc(100% - 100px); min-height: 60px; float: left;">
+									<div class="input-box" data-validate="Category" style="width: 100%;">
 										<div class="label">
 											<div class="hidden_label">
 												Choose Category <span class="required">*</span>
@@ -47,9 +46,6 @@
 												<option value="Charterer">
 													Charterer
 												</option>
-												<option value="Broker">
-													Broker
-												</option>
 												<option value="Procurement Agent">
 													Procurement Agent
 												</option>
@@ -59,7 +55,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="input-box" data-validate="Last Name">
+							<div class="input-box" data-validate="Password">
 								<div class="label">
 									<div class="hidden_label">
 										PASSWORD <span class="required">*</span>
@@ -70,32 +66,35 @@
 								</div>
 								<div class="status error"></div>
 							</div>
-							<div class="input-box midiextend" data-validate="Last Name">
+							<div class="input-box midiextend" data-validate="Confirm Password">
 								<div class="label">
 									<div class="hidden_label">
 										CONFIRM PASSWORD <span class="required">*</span>
 									</div>
 								</div>
 								<div class="inputcontainer">
-									<input type="password" ng-model="user.password" ng-disabled="user.carinsurance == 'no'" placeholder="Confirm Password">
+									<input type="password" ng-model="user.confirmpassword" ng-disabled="user.carinsurance == 'no'" placeholder="Confirm Password">
 								</div>
 								<div class="status error"></div>
 							</div>
 						</div>
 						<div ng-if="(signUpStep == 3) && (user.category == 'Ship Owner')">
-							<div class="input-box verbose" data-validate="Last Name">
+							<div class="input-box verbose" data-validate="Category">
 								<div class="label">
 									CATEGORY
 								</div>
 								<div class="inputcontainer">
-									<select>
-										<option>
+									<select ng-model="user.usercategory">
+										<option value="">
+											Choose Ship Owner Category
+										</option>
+										<option value="Ship Owner">
 											Ship Owner
 										</option>
-										<option>
+										<option value="Ship Management Company">
 											Ship Management Company
 										</option>
-										<option>
+										<option value="Brokerage Firm">
 											Brokerage Firm
 										</option>
 									</select>
@@ -105,7 +104,7 @@
 							<div class="section-label">
 								BUSINESS DETAILS
 							</div>
-							<div class="input-box" data-validate="Last Name">
+							<div class="input-box" data-validate="Company Logo">
 								<div class="inputcontainer">
 									<div class="image-field">
 										<div class="icon">
@@ -118,7 +117,7 @@
 								</div>
 								<div class="status error"></div>
 							</div>
-							<div class="input-box" data-validate="Last Name">
+							<div class="input-box" data-validate="Business Name">
 								<div class="label">
 									<div class="hidden_label">
 										BUSINESS NAME <span class="required">*</span>
@@ -130,7 +129,7 @@
 								<div class="status error"></div>
 							</div>
 							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
+								<div class="input-box box-half" data-validate="Company Registration Number">
 									<div class="label">
 										<div class="hidden_label">
 											COMPANY REGISTRATION NUMBER <span class="required">*</span>
@@ -141,7 +140,7 @@
 									</div>
 									<div class="status error"></div>
 								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
+								<div class="input-box box-half last" data-validate="Website">
 									<div class="label">
 										<div class="hidden_label">
 											WEBSITE <span class="required">*</span>
@@ -152,9 +151,10 @@
 									</div>
 									<div class="status error"></div>
 								</div>
+								<div class="clear-both"></div>
 							</div>
 							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
+								<div class="input-box box-half" data-validate="Email">
 									<div class="label">
 										<div class="hidden_label">
 											Email <span class="required">*</span>
@@ -165,7 +165,7 @@
 									</div>
 									<div class="status error"></div>
 								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
+								<div class="input-box box-half last" data-validate="Phone Number">
 									<div class="label">
 										<div class="hidden_label">
 											Phone Number <span class="required">*</span>
@@ -178,7 +178,7 @@
 								</div>
 								<div class="clear-both"></div>
 							</div>
-							<div class="input-box" data-validate="Last Name" ng-repeat="service in user.services">
+							<div class="input-box" data-validate="Service" ng-repeat="service in user.services">
 								<div class="label">
 									<div class="hidden_label">
 										Service {{$index+1}} <span class="required">*</span>
@@ -203,7 +203,7 @@
 									Add Service
 								</span>
 							</div>
-							<div class="input-box" data-validate="Last Name">
+							<div class="input-box" data-validate="Corporate Office Address">
 								<div class="label">
 									<div class="hidden_label">
 										Corporate Office Address <span class="required">*</span>
@@ -215,7 +215,7 @@
 								<div class="status error"></div>
 							</div>
 							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
+								<div class="input-box box-half" data-validate="Name of Contact Person">
 									<div class="label">
 										<div class="hidden_label">
 											Name of Contact Person <span class="required">*</span>
@@ -226,7 +226,7 @@
 									</div>
 									<div class="status error"></div>
 								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
+								<div class="input-box box-half last" data-validate="Phone Number of Contact Person">
 									<div class="label">
 										<div class="hidden_label">
 											Phone Number of Contact Person <span class="required">*</span>
@@ -292,161 +292,6 @@
 								</span>
 							</div>
 						</div>
-						<div ng-if="(signUpStep == 3) && (user.category == 'Broker')">
-							<div class="input-box" data-validate="Last Name">
-								<div class="inputcontainer">
-									<div class="image-field">
-										<div class="icon">
-											<i class="fa fa-picture-o center_item"></i>
-										</div>
-										<div class="copy">
-											<span class="center_item_vertically">Upload Profile Photo</span>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										NAME <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.brokername" ng-disabled="user.carinsurance == 'no'" placeholder="Name">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										COMPANY NAME <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.companyname" ng-disabled="user.carinsurance == 'no'" placeholder="Company Name">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										ADDRESS <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Address">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Website <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.biz" ng-disabled="user.carinsurance == 'no'" placeholder="Website">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Email <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.mobile" ng-disabled="user.carinsurance == 'no'" placeholder="Email">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Phone Number <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.biz" ng-disabled="user.carinsurance == 'no'" placeholder="Phone Number">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name" ng-repeat="record in user.records">
-								<div class="label">
-									<div class="hidden_label">
-										Verifiable Track Record {{$index+1}} <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Verifiable Track Record {{$index+1}}">
-								</div>
-								<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.records.length > 1" ng-click="removeRecord(record)">
-									<div class="relative-container">
-										<div class="delete_btn center_item">
-											<div class="relative-container">
-												<i class="pe-7s-close center_item"></i>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; height: auto; margin: auto; margin-bottom: 20px;">
-								<span class="action_btn" ng-click="addNewRecord();">
-									Add Record
-								</span>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										CURRENT LOCATION <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Current Location">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box">
-								<div class="label">
-									ARE YOU THE CAR OWNER?
-								</div>
-								<div class="inputcontainer">
-									<ul class="radiolist">
-										<li class="radiolist__item">
-											<input type="radio" class="radio-btn" name="choice" id="owner-opt" value="1" ng-model="user.carowner" ng-disabled="user.carinsurance == 'no'" />
-											<label for="owner-opt" class="radiolabel">Yes</label>
-										</li>
-										<li class="radiolist__item">
-											<input type="radio" class="radio-btn" name="choice" id="notowner-opt" value="0" ng-model="user.carowner" ng-disabled="user.carinsurance == 'no'" />
-											<label for="notowner-opt" class="radiolabel">No</label>
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div class="input-box extend">
-								<div style="width: 65px; height: 40px; float: left; margin-right: 10px;">
-									<div class="wrapper">
-										<div class="switch_box box_1">
-											<input type="checkbox" class="switch_1" id="switch_1" ng-disabled="user.carinsurance == 'no'" ng-model="user.car_paperscomplete" ng-true-value="1" ng-false-value="0">
-										</div>
-									</div>
-								</div>
-								<div style="width: calc(100% - 75px); height: 40px; float: left; position: relative; font-size: 0.9rem; color: #BDBDBD;">
-									<label class="center_item_vertically disable-select" for="switch_1" style="width: 100%; left: 0; text-align: left; font-weight: normal; color: #777;">
-										Terms and Conditions (Click to accept)
-									</label>
-								</div>
-								<div style="clear: both;"></div>
-							</div>
-						</div>
 						<div ng-if="(signUpStep == 3) && (user.category == 'Charterer')">
 							<div class="input-box" data-validate="Last Name">
 								<div class="label">
@@ -493,6 +338,7 @@
 									</div>
 									<div class="status error"></div>
 								</div>
+								<div class="clear-both"></div>
 							</div>
 						</div>
 						<div ng-if="(signUpStep == 3) && (user.category == 'Procurement Agent')">
@@ -571,6 +417,7 @@
 									</div>
 									<div class="status error"></div>
 								</div>
+								<div class="clear-both"></div>
 							</div>
 							<div style="width: 80%; margin: auto;">
 								<div class="input-box box-half" data-validate="Last Name">
