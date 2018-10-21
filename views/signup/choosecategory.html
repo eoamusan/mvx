@@ -1,0 +1,56 @@
+<div class="input-box">
+	<div class="choice-label">
+		<span class="center_item_vertically abs-left nowrap">I am a/an</span>
+	</div>
+	<div class="choice-input">
+		<div class="input-box only" data-validate="Category" style="width: 100%;">
+			<div class="label">
+				<div class="hidden_label">
+					Choose Category <span class="required">*</span>
+				</div>
+			</div>
+			<div class="inputcontainer">
+				<select ng-model="user.category">
+					<option value="">
+						Choose Category
+					</option>
+					<option value="Ship Owner">
+						Ship (Vessel) Owner
+					</option>
+					<option value="Charterer">
+						Charterer
+					</option>
+					<option value="Procurement Vendor / Supplier">
+						Procurement Vendor / Supplier
+					</option>
+				</select>
+			</div>
+			<div class="status error"></div>
+		</div>
+	</div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box" data-validate="Password">
+	<div class="label">
+		<div class="hidden_label">
+			PASSWORD <span class="required">*</span>
+		</div>
+	</div>
+	<div class="inputcontainer">
+		<input type="password" ng-model="user.password" placeholder="Choose a Password" class="datapassword">
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box midiextend" data-validate="Confirm Password">
+	<div class="label">
+		<div class="hidden_label">
+			CONFIRM PASSWORD <span class="required">*</span>
+		</div>
+	</div>
+	<div class="inputcontainer">
+		<input type="password" ng-model="user.confirmpassword" placeholder="Confirm Password" class="dataconfirmpassword">
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>

@@ -1,0 +1,850 @@
+<div id="charter" class="relative-container charter" data-simplebar ng-if="!addvesselSuccess">
+	<div class="innerContainer">
+		<div class="account_actions text_truncate">
+			<div class="account_action left" ng-click="home();">HOME</div><div> \ </div><div class="account_action right">ADD VESSEL</div>
+		</div>
+		<form ng-submit="addVessel();" ng-class="{showingError: showingError}">
+			<div class="signupForm">
+				<div class="alertMessage" ng-if="addvesselError">
+					<div class="alertBox" ng-mouseover="showError()" ng-mouseleave="!enforceError && closeError()" ng-class="{showingError: showingError, 'error-bg': addvesselError}">
+						<div class="icon">
+							<i class="material-icons center_item">info</i>
+						</div>
+						<div class="text">
+							<span class="center_item_vertically" style="color: #aee4ff;" ng-if="!addvesselError">
+								SOMETHING WENT WRONG
+							</span>
+							<span class="center_item_vertically" ng-if="addvesselError">
+								<span class="emphasis">{{addvesselError}}</span>
+							</span>
+						</div>
+						<div class="close" ng-click="closeError();">
+							<i class="pe-7s-close center_item"></i>
+						</div>
+					</div>
+				</div>
+				<div class="charter_header">
+					ADD VESSEL
+				</div>
+				<div class="optional">
+					<div class="text">
+						<span class="left">[</span>VESSEL DETAILS<span class="right">]</span>
+					</div>
+					<div class="aesthetic">
+						<div class="ln center_item_vertically"></div>
+					</div>
+				</div>
+				<div class="input-box" data-validate="Vessel Availability" data-option="radio">
+					<div class="label display">
+						VESSEL AVAILABILITY <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<ul class="radiolist" style="height: 61px;">
+							<li class="radiolist__item" ng-class="{'items_3': addvessel.vessel_availability == 'Unavailable'}">
+								<input type="radio" class="radio-btn" name="vessel_availability" id="available-opt" value="Available" ng-model="addvessel.vessel_availability" ng-change="clearAddVesselError();" />
+								<label for="available-opt" class="radiolabel">Available</label>
+							</li>
+							<li class="radiolist__item" ng-class="{'items_3': addvessel.vessel_availability == 'Unavailable'}">
+								<input type="radio" class="radio-btn" name="vessel_availability" id="unavailable-opt" value="Unavailable" ng-model="addvessel.vessel_availability" ng-change="clearAddVesselError();" ng-click="loadCalender();" />
+								<label for="unavailable-opt" class="radiolabel">Unavailable</label>
+							</li>
+							<div class="input-box box-third last" style="margin-left: 0; margin-top: -13px; padding-bottom: 0; width: calc(100% / 3);" data-validate="Date" ng-if="addvessel.vessel_availability == 'Unavailable'">
+								<div class="label display gray" style="margin-bottom: 5px;">
+									NOT AVAILABLE TILL <span class="required">*</span>
+								</div>
+								<div class="inputcontainer" style="cursor: pointer;">
+									<input id="inputdate" type="text" ng-model="addvessel.unavailable_till" ng-change="clearAddVesselError();" placeholder="Choose Date" readonly="readonly">
+								</div>
+								<div class="status error"></div>
+							</div>
+							<div class="clear-both"></div>
+						</ul>
+					</div>
+					<div class="status error"></div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Daily Hire Rate">
+						<div class="label display">
+							PREFERRED DAILY HIRE RATE <span class="required">*</span>
+						</div>
+						<div class="inputcontainer light-border with-content">
+							<div class="currency">
+								<span class="center_item">
+									$
+								</span>
+							</div>
+							<div class="amount">
+								<input type="number" ng-model="addvessel.daily_hire_rate" ng-change="clearAddVesselError();" placeholder="Amount">
+							</div>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Vessel Photo" data-option="file-input">
+						<div class="label display">
+							UPLOAD PHOTO OF VESSEL <span class="required">*</span> (You can select Multiple pictures. Max 15)
+						</div>
+						<div class="inputcontainer" onclick="document.getElementById('vessel_photo').click();">
+							<div class="image-field" style="width: calc(100% - 2px);" ng-class="{'indent': (addvessel.vessel_photopreview.length > 0)}">
+								<div class="icon">
+									<i class="fa fa-picture-o center_item"></i>
+								</div>
+								<div class="copy">
+									<span class="center_item_vertically" ng-if="!addvessel.vessel_photoname">Upload Photo</span>
+									<span class="center_item_vertically text_truncate" ng-if="addvessel.vessel_photoname">{{addvessel.vessel_photoname}}</span>
+								</div>
+							</div>
+						</div>
+						<div class="status error"></div>
+						<div style="width: 100%; height: auto;">
+							<div class="vessel_photo_preview" ng-repeat="photo in addvessel.vessel_photopreview" style="background-image: url({{photo.image}});"></div>
+							<div class="clear-both"></div>
+						</div>
+						<input type="file" accept="image/*" class="fileField" id="vessel_photo" onchange="angular.element(this).scope().fileChanged(this, 'vessel_photo'); console.log(this.files);" multiple>
+						<input type="hidden" class="hidden" ng-value="addvessel.vessel_photopreview">
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="IMO Number">
+						<div class="label display">
+							IMO NUMBER <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.imo_number" ng-change="clearAddVesselError();" placeholder="Type text">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Vessel Name">
+						<div class="label display">
+							VESSEL NAME <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.vessel_name" ng-change="clearAddVesselError();" placeholder="Type text">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box" data-validate="Ownership Status" data-option="radio">
+					<div class="label display">
+						OWNERSHIP STATUS <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<ul class="radiolist">
+							<li class="radiolist__item">
+								<input type="radio" class="radio-btn" name="ownership_status" id="manager-opt" value="Owner/Vessel Manager" ng-model="addvessel.ownership_status" ng-change="clearAddVesselError();" />
+								<label for="manager-opt" class="radiolabel">Owner/Vessel Manager</label>
+							</li>
+							<li class="radiolist__item">
+								<input type="radio" class="radio-btn" name="ownership_status" id="shipbroker-opt" value="Shipbroker" ng-model="addvessel.ownership_status" ng-change="clearAddVesselError();" />
+								<label for="shipbroker-opt" class="radiolabel">Shipbroker</label>
+							</li>
+							<div class="clear-both"></div>
+						</ul>
+					</div>
+					<div class="status error"></div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Current Location">
+						<div class="label display">
+							CURRENT LOCATION <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.current_location" ng-change="clearAddVesselError();" placeholder="Type text">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Build Year">
+						<div class="label display">
+							YEAR BUILT <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.year_built" ng-change="clearAddVesselError();" placeholder="Type text">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Specification Sheet">
+						<div class="label display">
+							UPLOAD SPECIFICATION SHEET <span class="required">*</span>
+						</div>
+						<div class="inputcontainer" onclick="document.getElementById('vessel_specification_document').click();">
+							<div class="image-field" style="width: calc(100% - 2px);">
+								<div class="icon" ng-style="addvessel.vessel_specification_documentpreview">
+									<i class="fa fa-picture-o center_item" ng-if="!addvessel.vessel_specification_document"></i>
+								</div>
+								<div class="copy">
+									<span class="center_item_vertically" ng-if="!addvessel.vessel_specification_document">Upload Document</span>
+									<span class="center_item_vertically" ng-if="addvessel.vessel_specification_document">{{addvessel.vessel_specification_documentname}}</span>
+								</div>
+							</div>
+						</div>
+						<input type="file" accept=".doc, .docx, .ppt, .pptx, .pdf" class="fileField" id="vessel_specification_document" onchange="angular.element(this).scope().fileChanged(this, 'vessel_specification_document')">
+						<input type="hidden" class="hidden" ng-value="addvessel.vessel_specification_document">
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Flag">
+						<div class="label display">
+							FLAG <span class="required">*</span>
+						</div>
+						<div class="inputcontainer light-border with-content">
+							<div class="flag" ng-if="addvessel.flag">
+								<img ng-src="assets/images/icons/countries/{{addvessel.flag | lowercase}}.png">
+							</div>
+							<select class="noborder" ng-model="addvessel.flag" ng-change="clearAddVesselError();">
+								<option value="">
+									Choose Preferred Flag
+								</option>
+								<option value="AF">Afghanistan</option>
+								<option value="AX">Åland Islands</option>
+								<option value="AL">Albania</option>
+								<option value="DZ">Algeria</option>
+								<option value="AS">American Samoa</option>
+								<option value="AD">Andorra</option>
+								<option value="AO">Angola</option>
+								<option value="AI">Anguilla</option>
+								<option value="AQ">Antarctica</option>
+								<option value="AG">Antigua and Barbuda</option>
+								<option value="AR">Argentina</option>
+								<option value="AM">Armenia</option>
+								<option value="AW">Aruba</option>
+								<option value="AU">Australia</option>
+								<option value="AT">Austria</option>
+								<option value="AZ">Azerbaijan</option>
+								<option value="BS">Bahamas</option>
+								<option value="BH">Bahrain</option>
+								<option value="BD">Bangladesh</option>
+								<option value="BB">Barbados</option>
+								<option value="BY">Belarus</option>
+								<option value="BE">Belgium</option>
+								<option value="BZ">Belize</option>
+								<option value="BJ">Benin</option>
+								<option value="BM">Bermuda</option>
+								<option value="BT">Bhutan</option>
+								<option value="BO">Bolivia, Plurinational State of</option>
+								<option value="BQ">Bonaire, Sint Eustatius and Saba</option>
+								<option value="BA">Bosnia and Herzegovina</option>
+								<option value="BW">Botswana</option>
+								<option value="BV">Bouvet Island</option>
+								<option value="BR">Brazil</option>
+								<option value="IO">British Indian Ocean Territory</option>
+								<option value="BN">Brunei Darussalam</option>
+								<option value="BG">Bulgaria</option>
+								<option value="BF">Burkina Faso</option>
+								<option value="BI">Burundi</option>
+								<option value="KH">Cambodia</option>
+								<option value="CM">Cameroon</option>
+								<option value="CA">Canada</option>
+								<option value="CV">Cape Verde</option>
+								<option value="KY">Cayman Islands</option>
+								<option value="CF">Central African Republic</option>
+								<option value="TD">Chad</option>
+								<option value="CL">Chile</option>
+								<option value="CN">China</option>
+								<option value="CX">Christmas Island</option>
+								<option value="CC">Cocos (Keeling) Islands</option>
+								<option value="CO">Colombia</option>
+								<option value="KM">Comoros</option>
+								<option value="CG">Congo</option>
+								<option value="CD">Congo, the Democratic Republic of the</option>
+								<option value="CK">Cook Islands</option>
+								<option value="CR">Costa Rica</option>
+								<option value="CI">Côte d'Ivoire</option>
+								<option value="HR">Croatia</option>
+								<option value="CU">Cuba</option>
+								<option value="CW">Curaçao</option>
+								<option value="CY">Cyprus</option>
+								<option value="CZ">Czech Republic</option>
+								<option value="DK">Denmark</option>
+								<option value="DJ">Djibouti</option>
+								<option value="DM">Dominica</option>
+								<option value="DO">Dominican Republic</option>
+								<option value="EC">Ecuador</option>
+								<option value="EG">Egypt</option>
+								<option value="SV">El Salvador</option>
+								<option value="GQ">Equatorial Guinea</option>
+								<option value="ER">Eritrea</option>
+								<option value="EE">Estonia</option>
+								<option value="ET">Ethiopia</option>
+								<option value="FK">Falkland Islands (Malvinas)</option>
+								<option value="FO">Faroe Islands</option>
+								<option value="FJ">Fiji</option>
+								<option value="FI">Finland</option>
+								<option value="FR">France</option>
+								<option value="GF">French Guiana</option>
+								<option value="PF">French Polynesia</option>
+								<option value="TF">French Southern Territories</option>
+								<option value="GA">Gabon</option>
+								<option value="GM">Gambia</option>
+								<option value="GE">Georgia</option>
+								<option value="DE">Germany</option>
+								<option value="GH">Ghana</option>
+								<option value="GI">Gibraltar</option>
+								<option value="GR">Greece</option>
+								<option value="GL">Greenland</option>
+								<option value="GD">Grenada</option>
+								<option value="GP">Guadeloupe</option>
+								<option value="GU">Guam</option>
+								<option value="GT">Guatemala</option>
+								<option value="GG">Guernsey</option>
+								<option value="GN">Guinea</option>
+								<option value="GW">Guinea-Bissau</option>
+								<option value="GY">Guyana</option>
+								<option value="HT">Haiti</option>
+								<option value="HM">Heard Island and McDonald Islands</option>
+								<option value="VA">Holy See (Vatican City State)</option>
+								<option value="HN">Honduras</option>
+								<option value="HK">Hong Kong</option>
+								<option value="HU">Hungary</option>
+								<option value="IS">Iceland</option>
+								<option value="IN">India</option>
+								<option value="ID">Indonesia</option>
+								<option value="IR">Iran, Islamic Republic of</option>
+								<option value="IQ">Iraq</option>
+								<option value="IE">Ireland</option>
+								<option value="IM">Isle of Man</option>
+								<option value="IL">Israel</option>
+								<option value="IT">Italy</option>
+								<option value="JM">Jamaica</option>
+								<option value="JP">Japan</option>
+								<option value="JE">Jersey</option>
+								<option value="JO">Jordan</option>
+								<option value="KZ">Kazakhstan</option>
+								<option value="KE">Kenya</option>
+								<option value="KI">Kiribati</option>
+								<option value="KP">Korea, Democratic People's Republic of</option>
+								<option value="KR">Korea, Republic of</option>
+								<option value="KW">Kuwait</option>
+								<option value="KG">Kyrgyzstan</option>
+								<option value="LA">Lao People's Democratic Republic</option>
+								<option value="LV">Latvia</option>
+								<option value="LB">Lebanon</option>
+								<option value="LS">Lesotho</option>
+								<option value="LR">Liberia</option>
+								<option value="LY">Libya</option>
+								<option value="LI">Liechtenstein</option>
+								<option value="LT">Lithuania</option>
+								<option value="LU">Luxembourg</option>
+								<option value="MO">Macao</option>
+								<option value="MK">Macedonia, the former Yugoslav Republic of</option>
+								<option value="MG">Madagascar</option>
+								<option value="MW">Malawi</option>
+								<option value="MY">Malaysia</option>
+								<option value="MV">Maldives</option>
+								<option value="ML">Mali</option>
+								<option value="MT">Malta</option>
+								<option value="MH">Marshall Islands</option>
+								<option value="MQ">Martinique</option>
+								<option value="MR">Mauritania</option>
+								<option value="MU">Mauritius</option>
+								<option value="YT">Mayotte</option>
+								<option value="MX">Mexico</option>
+								<option value="FM">Micronesia, Federated States of</option>
+								<option value="MD">Moldova, Republic of</option>
+								<option value="MC">Monaco</option>
+								<option value="MN">Mongolia</option>
+								<option value="ME">Montenegro</option>
+								<option value="MS">Montserrat</option>
+								<option value="MA">Morocco</option>
+								<option value="MZ">Mozambique</option>
+								<option value="MM">Myanmar</option>
+								<option value="NA">Namibia</option>
+								<option value="NR">Nauru</option>
+								<option value="NP">Nepal</option>
+								<option value="NL">Netherlands</option>
+								<option value="NC">New Caledonia</option>
+								<option value="NZ">New Zealand</option>
+								<option value="NI">Nicaragua</option>
+								<option value="NE">Niger</option>
+								<option value="NG">Nigeria</option>
+								<option value="NU">Niue</option>
+								<option value="NF">Norfolk Island</option>
+								<option value="MP">Northern Mariana Islands</option>
+								<option value="NO">Norway</option>
+								<option value="OM">Oman</option>
+								<option value="PK">Pakistan</option>
+								<option value="PW">Palau</option>
+								<option value="PS">Palestinian Territory, Occupied</option>
+								<option value="PA">Panama</option>
+								<option value="PG">Papua New Guinea</option>
+								<option value="PY">Paraguay</option>
+								<option value="PE">Peru</option>
+								<option value="PH">Philippines</option>
+								<option value="PN">Pitcairn</option>
+								<option value="PL">Poland</option>
+								<option value="PT">Portugal</option>
+								<option value="PR">Puerto Rico</option>
+								<option value="QA">Qatar</option>
+								<option value="RE">Réunion</option>
+								<option value="RO">Romania</option>
+								<option value="RU">Russian Federation</option>
+								<option value="RW">Rwanda</option>
+								<option value="BL">Saint Barthélemy</option>
+								<option value="SH">Saint Helena, Ascension and Tristan da Cunha</option>
+								<option value="KN">Saint Kitts and Nevis</option>
+								<option value="LC">Saint Lucia</option>
+								<option value="MF">Saint Martin (French part)</option>
+								<option value="PM">Saint Pierre and Miquelon</option>
+								<option value="VC">Saint Vincent and the Grenadines</option>
+								<option value="WS">Samoa</option>
+								<option value="SM">San Marino</option>
+								<option value="ST">Sao Tome and Principe</option>
+								<option value="SA">Saudi Arabia</option>
+								<option value="SN">Senegal</option>
+								<option value="RS">Serbia</option>
+								<option value="SC">Seychelles</option>
+								<option value="SL">Sierra Leone</option>
+								<option value="SG">Singapore</option>
+								<option value="SX">Sint Maarten (Dutch part)</option>
+								<option value="SK">Slovakia</option>
+								<option value="SI">Slovenia</option>
+								<option value="SB">Solomon Islands</option>
+								<option value="SO">Somalia</option>
+								<option value="ZA">South Africa</option>
+								<option value="GS">South Georgia and the South Sandwich Islands</option>
+								<option value="SS">South Sudan</option>
+								<option value="ES">Spain</option>
+								<option value="LK">Sri Lanka</option>
+								<option value="SD">Sudan</option>
+								<option value="SR">Suriname</option>
+								<option value="SJ">Svalbard and Jan Mayen</option>
+								<option value="SZ">Swaziland</option>
+								<option value="SE">Sweden</option>
+								<option value="CH">Switzerland</option>
+								<option value="SY">Syrian Arab Republic</option>
+								<option value="TW">Taiwan, Province of China</option>
+								<option value="TJ">Tajikistan</option>
+								<option value="TZ">Tanzania, United Republic of</option>
+								<option value="TH">Thailand</option>
+								<option value="TL">Timor-Leste</option>
+								<option value="TG">Togo</option>
+								<option value="TK">Tokelau</option>
+								<option value="TO">Tonga</option>
+								<option value="TT">Trinidad and Tobago</option>
+								<option value="TN">Tunisia</option>
+								<option value="TR">Turkey</option>
+								<option value="TM">Turkmenistan</option>
+								<option value="TC">Turks and Caicos Islands</option>
+								<option value="TV">Tuvalu</option>
+								<option value="UG">Uganda</option>
+								<option value="UA">Ukraine</option>
+								<option value="AE">United Arab Emirates</option>
+								<option value="GB">United Kingdom</option>
+								<option value="US">United States</option>
+								<option value="UM">United States Minor Outlying Islands</option>
+								<option value="UY">Uruguay</option>
+								<option value="UZ">Uzbekistan</option>
+								<option value="VU">Vanuatu</option>
+								<option value="VE">Venezuela, Bolivarian Republic of</option>
+								<option value="VN">Viet Nam</option>
+								<option value="VG">Virgin Islands, British</option>
+								<option value="VI">Virgin Islands, U.S.</option>
+								<option value="WF">Wallis and Futuna</option>
+								<option value="EH">Western Sahara</option>
+								<option value="YE">Yemen</option>
+								<option value="ZM">Zambia</option>
+								<option value="ZW">Zimbabwe</option>
+							</select>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Classification">
+						<div class="label display">
+							CLASSIFICATION <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<select ng-model="addvessel.class">
+								<option value="">
+									Choose Classification
+								</option>
+								<option value="Lloyd's Register">Lloyd's Register</option>
+								<option value="Bureau Veritas">Bureau Veritas</option>
+								<option value="Croatian Register of Shipping / Austrian Veritas">Croatian Register of Shipping / Austrian Veritas</option>
+								<option value="Registro Italiano Navale">Registro Italiano Navale</option>
+								<option value="American Bureau of Shipping">American Bureau of Shipping</option>
+								<option value="DNV GL">DNV GL</option>
+								<option value="Nippon Kaiji Kyokai (ClassNK)">Nippon Kaiji Kyokai (ClassNK)</option>
+								<option value="Russian Maritime Register of Shipping">Russian Maritime Register of Shipping</option>
+								<option value="Polish Register of Shipping">Polish Register of Shipping</option>
+								<option value="China Classification Society">China Classification Society</option>
+								<option value="Korean Register of Shipping">Korean Register of Shipping</option>
+								<option value="Indian Register of Shipping">Indian Register of Shipping</option>
+							</select>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Classification Expiry">
+						<div class="label display">
+							CLASSIFICATION EXPIRY <span class="required">*</span>
+						</div>
+						<div class="inputcontainer" style="cursor: pointer;">
+							<input id="inputdate2" type="text" ng-model="addvessel.classification_expiry" ng-change="clearAddVesselError();" placeholder="Choose Date" readonly="readonly">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Purpose">
+						<div class="label display">
+							PURPOSE <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<select ng-model="addvessel.purpose">
+								<option value="">
+									Choose Option
+								</option>
+								<option value="Charter">Charter</option>
+								<option value="Sale & Purchase (S&P)">Sale & Purchase (S&P)</option>
+							</select>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Vessel Type">
+						<div class="label display">
+							VESSEL TYPE <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<select ng-model="addvessel.vessel_type">
+								<option value="">
+									Choose Option
+								</option>
+								<option value="Accommodation Barge (Creek/Inland)">Accommodation Barge (Creek/Inland)</option>
+								<option value="Anchor Handling Tug Supply (AHTS)">Anchor Handling Tug Supply (AHTS)</option>
+								<option value="Anchor Handling Tug (AHT)">Anchor Handling Tug (AHT)</option>
+								<option value="Cargo Barge">Cargo Barge</option>
+								<option value="Construction Support Vessel">Construction Support Vessel</option>
+								<option value="Construction Vessel">Construction Vessel</option>
+								<option value="Crew Vessel">Crew Vessel</option>
+								<option value="Diving Support Vessel (DSV)">Diving Support Vessel (DSV)</option>
+								<option value="Drillships">Drillships</option>
+								<option value="Dry Dock">Dry Dock</option>
+								<option value="Emergency Response and Rescue Vessel">Emergency Response and Rescue Vessel</option>
+								<option value="Fast Supply Vessel">Fast Supply Vessel</option>
+								<option value="Floaters">Floaters</option>
+								<option value="Flotel">Flotel</option>
+								<option value="FPSO">FPSO</option>
+								<option value="FSO">FSO</option>
+								<option value="Heavy Lift Barge">Heavy Lift Barge</option>
+								<option value="Houseboat (Creek/Inland)">Houseboat (Creek/Inland)</option>
+								<option value="Inland Barge">Inland Barge</option>
+								<option value="Jackup Rig">Jackup Rig</option>
+								<option value="Laybarge (Creek/Inland)">Laybarge (Creek/Inland)</option>
+								<option value="Multipurpose Support Vessel">Multipurpose Support Vessel</option>
+								<option value="Other">Other</option>
+								<option value="Pipe Lay Vessel">Pipe Lay Vessel</option>
+								<option value="Platforms">Platforms</option>
+								<option value="Platform Support Vessel (PSV)">Platform Support Vessel (PSV)</option>
+								<option value="Push Tug (Creek/Inland)">Push Tug (Creek/Inland)</option>
+								<option value="Ramp/Water Barge (Creek/Inland)">Ramp/Water Barge (Creek/Inland)</option>
+								<option value="ROV Support Vessel">ROV Support Vessel</option>
+								<option value="Security Vessel">Security Vessel</option>
+								<option value="Standby Vessel">Standby Vessel</option>
+								<option value="Semisubmersibles">Semisubmersibles</option>
+								<option value="Submersibles">Submersibles</option>
+								<option value="Survey Vessel">Survey Vessel</option>
+								<option value="Tanker">Tanker</option>
+							</select>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-fourth first" data-validate="Bollard Pull">
+						<div class="label display">
+							Bollard Pull – BP (Tonnes) <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.bp" placeholder="Enter Number">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-fourth" data-validate="Brake Horse Power">
+						<div class="label display">
+							Brake Horse Power - BHP (Tonnes) <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.bhp" placeholder="Enter Number">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-fourth">
+						<div class="label display">
+							Deck Area (Sqm)
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.da" placeholder="Enter Number">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-fourth last">
+						<div class="label display">
+							Deck Strength (Ton/sqm)
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="addvessel.ds" placeholder="Enter Number">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="inputcontainer">
+						<div class="label display">
+							DYNAMIC POSITIONING (DP)
+						</div>
+						<div class="inputcontainer">
+							<ul class="radiolist">
+								<li class="radiolist__item items_4">
+									<input type="radio" class="radio-btn" name="dynamic_positioning" id="dynamic_positioning-one" value="1" ng-model="addvessel.dynamic_positioning" />
+									<label for="dynamic_positioning-one" class="radiolabel" style="padding-top: 7px;">1</label>
+								</li>
+								<li class="radiolist__item items_4">
+									<input type="radio" class="radio-btn" name="dynamic_positioning" id="dynamic_positioning-two" value="2" ng-model="addvessel.dynamic_positioning" />
+									<label for="dynamic_positioning-two" class="radiolabel" style="padding-top: 7px;">2</label>
+								</li>
+								<li class="radiolist__item items_4">
+									<input type="radio" class="radio-btn" name="dynamic_positioning" id="dynamic_positioning-three" value="3" ng-model="addvessel.dynamic_positioning" />
+									<label for="dynamic_positioning-three" class="radiolabel" style="padding-top: 7px;">3</label>
+								</li>
+								<li class="radiolist__item items_4">
+									<input type="radio" class="radio-btn" name="dynamic_positioning" id="dynamic_positioning-na" value="Not Applicable" ng-model="addvessel.dynamic_positioning" />
+									<label for="dynamic_positioning-na" class="radiolabel" style="padding-top: 7px;">NOT APPLICABLE</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half first" data-validate="Maximum Speed">
+						<div class="label display">
+							MAXIMUM SPEED (Knots) <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.maximum_speed" placeholder="Enter Number">
+							</div>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							DEADWEIGHT TONNAGE (DWT)
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.deadweight_tonnage" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half first" data-validate="Gross Tonnage">
+						<div class="label display">
+							GROSS TONNAGE (GRT) <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.gross_tonnage" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							LENGTH OA (Metres)
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.length_oa" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half first">
+						<div class="label display">
+							BREADTH MOULDED (Metres)
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.breadth_moulded" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							DEPTH MOULDED (Metres)
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.depth_moulded" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half first">
+						<div class="label display">
+							MAXIMUM DRAFT (Metres)
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.maximum_draft" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							ACCOMMODATION (Maximum Passengers)
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.accommodation" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half first">
+						<div class="label display">
+							DECK CRANE (Tonne)
+						</div>
+						<div class="inputcontainer">
+							<div class="inputcontainer">
+								<input type="text" ng-model="addvessel.deckcrane" placeholder="Enter Number">
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							HELIPAD / HELIDECK
+						</div>
+						<div class="inputcontainer">
+							<ul class="radiolist">
+								<li class="radiolist__item">
+									<input type="radio" class="radio-btn" name="helipad" id="helipad-yes" value="Yes" ng-model="addvessel.helipad" />
+									<label for="helipad-yes" class="radiolabel" style="padding-top: 0;">Yes</label>
+								</li>
+								<li class="radiolist__item">
+									<input type="radio" class="radio-btn" name="helipad" id="helipad-no" value="No" ng-model="addvessel.helipad" />
+									<label for="helipad-no" class="radiolabel" style="padding-top: 0;">No</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="inputcontainer" data-validate="Valid NCDMB Class">
+						<div class="label display">
+							VALID NCDMB CLASS (NIGERIA ONLY)
+						</div>
+						<div class="inputcontainer">
+							<ul class="radiolist">
+								<li class="radiolist__item items_8_less">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-aaa" value="AAA" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-aaa" class="radiolabel" style="padding-top: 7px;">AAA</label>
+								</li>
+								<li class="radiolist__item items_8_less">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-aa" value="AA" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-aa" class="radiolabel" style="padding-top: 7px;">AA</label>
+								</li>
+								<li class="radiolist__item items_8_less">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-a" value="A" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-a" class="radiolabel" style="padding-top: 7px;">A</label>
+								</li>
+								<li class="radiolist__item items_8_less">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-b" value="B" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-b" class="radiolabel" style="padding-top: 7px;">B</label>
+								</li>
+								<li class="radiolist__item items_8_less">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-c" value="C" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-c" class="radiolabel" style="padding-top: 7px;">C</label>
+								</li>
+								<li class="radiolist__item items_8_less">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-d" value="D" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-d" class="radiolabel" style="padding-top: 7px;">D</label>
+								</li>
+								<li class="radiolist__item items_8_less">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-e" value="E" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-e" class="radiolabel" style="padding-top: 7px;">E</label>
+								</li>
+								<li class="radiolist__item items_8_more">
+									<input type="radio" class="radio-btn" name="valid_ncdmb_class" id="valid_ncdmb_class-notapplicable" value="Not Applicable" ng-model="addvessel.valid_ncdmb_class" />
+									<label for="valid_ncdmb_class-notapplicable" class="radiolabel" style="padding-top: 7px;">NOT APPLICABLE</label>
+								</li>
+							</ul>
+						</div>
+						<div class="status error"></div>
+					</div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half first" data-validate="Information">
+						<div class="label display">
+							VALID OVID/CMID <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<ul class="radiolist">
+								<li class="radiolist__item">
+									<input type="radio" class="radio-btn" name="valid_ovidcmid" id="valid_ovidcmid-yes" value="Yes" ng-model="addvessel.valid_ovidcmid" />
+									<label for="valid_ovidcmid-yes" class="radiolabel" style="padding-top: 0;">Yes</label>
+								</li>
+								<li class="radiolist__item">
+									<input type="radio" class="radio-btn" name="valid_ovidcmid" id="valid_ovidcmid-no" value="No" ng-model="addvessel.valid_ovidcmid" />
+									<label for="valid_ovidcmid-no" class="radiolabel" style="padding-top: 0;">No</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+
+				<div class="input-box" style="margin-top: 20px;">
+					<button type="submit" class="of_btn" ng-class="{'success-bg': !processing && (addvesselStatus == 'Charter Added')}" ng-disabled="processing">
+						<span class="center_item" ng-if="!processing && !(addvesselStatus == 'Charter Added')">SEND</span>
+						<span class="center_item" ng-if="!processing && (addvesselStatus == 'Charter Added')">SUCCESS</span>
+						<span class="center_item" ng-if="!processing && (addvesselStatus == 'Account Not Verified')">{{addvesselStatus}}</span>
+			            <div class="spinner" ng-if="processing">
+					        <div class="bounce1"></div>
+					        <div class="bounce2"></div>
+					        <div class="bounce3"></div>
+					    </div>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="relative-container" ng-if="addvesselSuccess">
+	<div class="center_item charter signupContainer" click-anywhere-but-here="click();">
+		<div class="signupForm signupSuccess">
+			<div class="relative-container">
+				<div class="top">
+					<div class="animation animated pulse infinite">
+					    <img src="assets/images/ship.gif" class="center_child" height="100%">
+					</div>
+				</div>
+				<div class="bottom">
+					<div class="header success">
+						SUCCESS!
+					</div>
+					<div class="details">
+						Your vessel is now added to the MVXChange! Redirecting to <span class="bold">DASHBOARD</span> in <div id="seconds"></div>:<div id="milliseconds"></div> seconds
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

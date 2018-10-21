@@ -1,0 +1,11 @@
+svg#svg-animation {
+    display: block;
+    margin: 0 auto;
+    width: 200px;
+    max-width: 320px;
+    cursor: pointer;
+}
+
+#all-items {
+    opacity: 0;
+}

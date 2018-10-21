@@ -1,0 +1,250 @@
+<div class="input-box verbose" data-validate="Category">
+	<div class="label">
+		CATEGORY
+	</div>
+	<div class="inputcontainer">
+		<select ng-model="user.subcategory">
+			<option value="">
+				-- Choose Sub-category --
+			</option>
+			<option>
+				OEM
+			</option>
+			<option>
+				Supplier
+			</option>
+			<option>
+				Distributor
+			</option>
+			<option>
+				Procurement Company
+			</option>
+			<option>
+				Oil and Gas Servicing
+			</option>
+		</select>
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>
+<div class="section-label">
+	BUSINESS DETAILS
+</div>
+<div class="input-box" data-validate="Company Logo" data-option="file-input">
+	<div class="inputcontainer" onclick="document.getElementById('procurement_companylogo').click();">
+		<div class="image-field">
+			<div class="icon" ng-style="user.procurement_companylogopreview">
+				<i class="fa fa-picture-o center_item" ng-if="!user.procurement_companylogo"></i>
+			</div>
+			<div class="copy">
+				<span class="center_item_vertically" ng-if="!user.procurement_companylogo">Upload Logo</span>
+				<span class="center_item_vertically" ng-if="user.procurement_companylogo">{{user.procurement_companylogoname}}</span>
+			</div>
+		</div>
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+	<input type="file" accept="image/*" class="fileField" id="procurement_companylogo" onchange="angular.element(this).scope().fileChanged(this, 'procurement_companylogo')">
+	<input type="hidden" class="hidden" ng-value="user.procurement_companylogo">
+</div>
+<div class="input-box" data-validate="Business Name">
+	<div class="label">
+		<div class="hidden_label">
+			BUSINESS NAME <span class="required">*</span>
+		</div>
+	</div>
+	<div class="inputcontainer">
+		<input type="text" ng-model="user.businessname" placeholder="Business Name">
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box">
+	<div class="input-box box-half" data-validate="Company Registration Number">
+		<div class="label">
+			<div class="hidden_label">
+				COMPANY REGISTRATION NUMBER <span class="required">*</span>
+			</div>
+		</div>
+		<div class="inputcontainer">
+			<input type="text" ng-model="user.businessregistrationnumber" placeholder="Company Registration Number">
+		</div>
+		<div class="status error"></div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="input-box box-half last" data-validate="Website">
+		<div class="label">
+			<div class="hidden_label">
+				WEBSITE <span class="required">*</span>
+			</div>
+		</div>
+		<div class="inputcontainer">
+			<input type="text" ng-model="user.website" placeholder="Website">
+		</div>
+		<div class="status error"></div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box">
+	<div class="input-box box-half" data-validate="Email">
+		<div class="label">
+			<div class="hidden_label">
+				Email <span class="required">*</span>
+			</div>
+		</div>
+		<div class="inputcontainer">
+			<input type="text" ng-model="user.bizemail" placeholder="Email">
+		</div>
+		<div class="status error"></div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="input-box box-half last" data-validate="Phone Number">
+		<div class="label">
+			<div class="hidden_label">
+				Phone Number <span class="required">*</span>
+			</div>
+		</div>
+		<div class="inputcontainer">
+			<input type="text" ng-model="user.businessphonenumber" placeholder="Phone Number">
+		</div>
+		<div class="status error"></div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box" data-validate="Service" ng-repeat="service in user.services">
+	<div class="label">
+		<div class="hidden_label">
+			Service {{$index+1}} <span class="required">*</span>
+		</div>
+	</div>
+	<div class="inputcontainer">
+		<input type="text" ng-model="service.label" placeholder="Service {{$index+1}}">
+	</div>
+	<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.services.length > 1" ng-click="removeService(user.services, service)">
+		<div class="relative-container">
+			<div class="delete_btn center_item">
+				<div class="relative-container">
+					<i class="pe-7s-close center_item"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box align-left">
+	<span class="action_btn" ng-click="addNewservice(user.services);">
+		Add Service
+	</span>
+</div>
+<div class="input-box" data-validate="Country">
+	<div class="label">
+		<div class="hidden_label">
+			COUNTRY <span class="required">*</span>
+		</div>
+	</div>
+	<div class="inputcontainer">
+		<input type="text" ng-model="user.country" placeholder="Country">
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box" data-validate="Corporate Office Address">
+	<div class="label">
+		<div class="hidden_label">
+			Corporate Office Address <span class="required">*</span>
+		</div>
+	</div>
+	<div class="inputcontainer">
+		<input type="text" ng-model="user.corporateofficeaddress" placeholder="Corporate Office Address">
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box">
+	<div class="input-box box-half" data-validate="Name of Contact Person">
+		<div class="label">
+			<div class="hidden_label">
+				Name of Contact Person <span class="required">*</span>
+			</div>
+		</div>
+		<div class="inputcontainer">
+			<input type="text" ng-model="user.contactpersonname" placeholder="Name of Contact Person">
+		</div>
+		<div class="status error"></div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="input-box box-half last" data-validate="Phone Number of Contact Person">
+		<div class="label">
+			<div class="hidden_label">
+				Phone Number of Contact Person <span class="required">*</span>
+			</div>
+		</div>
+		<div class="inputcontainer">
+			<input type="text" ng-model="user.contactpersonmobile" placeholder="Phone Number of Contact Person">
+		</div>
+		<div class="status error"></div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box">
+	<div class="input-box box-half only" data-validate="Email of Contact Person">
+		<div class="label">
+			<div class="hidden_label">
+				Email of Contact Person <span class="required">*</span>
+			</div>
+		</div>
+		<div class="inputcontainer">
+			<input type="text" ng-model="user.contactpersonemail" placeholder="Email of Contact Person">
+		</div>
+		<div class="status error"></div>
+		<div class="clear-both"></div>
+	</div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box" data-validate="Permit" ng-repeat="permit in user.permits">
+	<div class="label">
+		<div class="hidden_label">
+			Permit (DPR. NIMASA etc) {{$index+1}} <span class="required">*</span>
+		</div>
+	</div>
+	<div class="inputcontainer">
+		<input type="text" ng-model="permit.label" placeholder="Permit (DPR. NIMASA etc) {{$index+1}}">
+	</div>
+	<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.permits.length > 1" ng-click="removePermit(user.permits, permit)">
+		<div class="relative-container">
+			<div class="delete_btn center_item">
+				<div class="relative-container">
+					<i class="pe-7s-close center_item"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>
+<div class="input-box align-left">
+	<span class="action_btn" ng-click="addNewPermit(user.permits);">
+		Add Permit
+	</span>
+</div>
+<div class="input-box padding-bottom-30" data-validate="Brochure" data-option="file-input">
+	<div class="inputcontainer" onclick="document.getElementById('procurement_companyprofile').click();">
+		<div class="image-field">
+			<div class="icon" ng-style="user.procurement_companyprofilepreview">
+				<i class="fa fa-picture-o center_item" ng-if="!user.procurement_companyprofile"></i>
+			</div>
+			<div class="copy">
+				<span class="center_item_vertically" ng-if="!user.procurement_companyprofile">Upload Brochure / Company Profile</span>
+				<span class="center_item_vertically" ng-if="user.procurement_companyprofile">{{user.procurement_companyprofilename}}</span>
+			</div>
+		</div>
+	</div>
+	<input type="file" accept=".doc, .docx, .ppt, .pptx, .pdf" class="fileField" id="procurement_companyprofile" onchange="angular.element(this).scope().fileChanged(this, 'procurement_companyprofile')">
+	<input type="hidden" class="hidden" ng-value="user.procurement_companyprofile">
+	<div class="status error"></div>
+	<div class="clear-both"></div>
+</div>

@@ -1,0 +1,226 @@
+<div ng-cloak class="left halves noselect" ng-class="{'thirds': globals.currentUser.userdata.data.category == 'Charterer'}">
+    <div class="tab_heads">
+        <div class="tab_head_icon">
+            <i class="material-icons center_item">local_offer</i>
+        </div>
+        <div class="inner_section_label" ng-class="{smaller: (focus == 'left') && globals.currentUser.userdata.data.category != 'Charterer', bigger: globals.currentUser.userdata.data.category == 'Charterer' && !(focus == 'left'), medium: globals.currentUser.userdata.data.category == 'Charterer' && (focus == 'left')}">
+            <span class="center_item_vertically text_truncate" style="width: 100%;" ng-if="globals.currentUser.userdata.data.category == 'Charterer'">
+                OFFERS
+            </span>
+            <span class="center_item_vertically text_truncate" style="width: 100%;" ng-if="globals.currentUser.userdata.data.category == 'Ship Owner'">
+                MY VESSELS
+            </span>
+        </div>
+        <div class="inner_section_search" ng-class="{bigger: (focus == 'left'), typing: (focus == 'left'), 'smaller': globals.currentUser.userdata.data.category == 'Charterer'}" focus-input>
+            <div class="search_icon">
+                <i class="material-icons center_item">search</i>
+            </div>
+            <div class="search_input">
+                <form name="search_left" autocomplete="off">
+                    <input type="text" name="term" ng-model="search.location" ng-focus="foc('left')" ng-blur="((search_left.term.$modelValue == undefined) || (search_left.term.$modelValue == '')) ? blur() : ''" class="inner_search" placeholder="Search here" autocomplete="off">
+                </form>
+            </div>
+        </div>
+        <div class="light_toggle" ng-class="{smaller: globals.currentUser.userdata.data.category == 'Charterer'}">
+            <div class="light_label" ng-if="globals.currentUser.userdata.data.category != 'Charterer'">
+                <span class="center_item">
+                    DARK
+                </span>
+            </div>
+            <div class="switch_container">
+                <div class="wrapper center_item dark_light">
+                    <div class="switch_box box_1">
+                        <input type="checkbox" class="switch_1" id="switch_1" ng-model="search.left_light">
+                    </div>
+                </div>
+            </div>
+            <div class="light_label" ng-if="globals.currentUser.userdata.data.category != 'Charterer'">
+                <span class="center_item">
+                    LIGHT
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="dash_content" ng-class="{'dark' : !search.left_light, 'light' : search.left_light}">
+        <div class="relative-container" ng-if="!vessels && !charters">
+            <div class="spinner center_item">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <div class="dash_items_container" data-simplebar ng-if="(vessels.length > 0) && (globals.currentUser.userdata.data.category == 'Ship Owner')">
+            <div class="dash_item" ng-repeat="vessel in vessels track by $index" ng-class="{'show': (show == vessel.id)}" ng-click="revealShow(vessel, 'vessel');" ui-view="vessel">
+                
+            </div>
+        </div>
+        <div class="dash_items_container charterer_dash" data-simplebar ng-if="(offers.length > 0) && (globals.currentUser.userdata.data.category == 'Charterer')">
+            <div class="dash_item" ng-repeat="offer in offers track by $index" ng-click="revealShow(offer, 'offer');" ng-class="{'show': (offerShow == offer.offers_id)}" ui-view="offer">
+                
+            </div>
+        </div>
+        <div class="center_item emptylist" ng-if="(offers.length == 0) && (globals.currentUser.userdata.data.category == 'Charterer')">
+            <div class="empty_icon">
+                <i class="material-icons center_item" style="font-size: 4rem;">not_interested</i>
+            </div>
+            <div class="no_value" ng-if="globals.currentUser.userdata.data.category == 'Charterer'">
+                <div class="top_copy">
+                    No offers just yet
+                </div>
+                <div class="sub_copy">
+                    <div class="label">To start getting some, create</div>
+                    <div class="btn" ng-click="addcharter();">
+                        CHARTER ENQUIRY
+                    </div>
+                    <div class="clear-both"></div>
+                </div>
+            </div>
+        </div>
+        <div class="center_item emptylist" ng-if="(vessels.length == 0) && (globals.currentUser.userdata.data.category == 'Ship Owner')">
+            <div class="empty_icon">
+                <i class="material-icons center_item" style="font-size: 4rem;">not_interested</i>
+            </div>
+            <div class="no_value">
+                <div class="top_copy">
+                    No vessels just yet
+                </div>
+                <div class="sub_copy">
+                    <div class="label">To start getting enquiries, create</div>
+                    <div style="min-width: 150px; height: 30px; background: #056A9F; border-radius: 50px; float: left; white-space: nowrap; padding: 0 15px; padding-top: 10px; color: #FFF; font-size: 0.9rem; cursor: pointer; text-align: center;" ng-click="addvessel();">
+                        ADD VESSEL
+                    </div>
+                    <div class="clear-both"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="left halves noselect" ng-if="globals.currentUser.userdata.data.category == 'Charterer'" ng-class="{'thirds': globals.currentUser.userdata.data.category == 'Charterer'}">
+    <div class="tab_heads">
+        <div class="tab_head_icon">
+            <i class="material-icons center_item">local_offer</i>
+        </div>
+        <div class="inner_section_label" ng-class="{smaller: (focus == 'middle') && globals.currentUser.userdata.data.category != 'Charterer', bigger: globals.currentUser.userdata.data.category == 'Charterer' && !(focus == 'middle'), medium: globals.currentUser.userdata.data.category == 'Charterer' && (focus == 'middle'), bigger: globals.currentUser.userdata.data.category == 'Charterer'}">
+            <span class="center_item_vertically text_truncate" style="width: 100%;" ng-if="globals.currentUser.userdata.data.category == 'Charterer'">
+                MY CHARTER ENQUIRIES
+            </span>
+        </div>
+        <div class="inner_section_search" ng-class="{bigger: (focus == 'middle'), typing: (focus == 'middle'), 'smaller': globals.currentUser.userdata.data.category == 'Charterer'}" focus-input>
+            <div class="search_icon">
+                <i class="material-icons center_item">search</i>
+            </div>
+            <div class="search_input">
+                <form name="search_left" autocomplete="off">
+                    <input type="text" name="term" ng-model="search.location" ng-focus="foc('middle')" ng-blur="((search_left.term.$modelValue == undefined) || (search_left.term.$modelValue == '')) ? blur() : ''" class="inner_search" placeholder="Search here" autocomplete="off">
+                </form>
+            </div>
+        </div>
+        <div class="light_toggle" ng-class="{smaller: globals.currentUser.userdata.data.category == 'Charterer'}">
+            <div class="switch_container">
+                <div class="wrapper center_item dark_light">
+                    <div class="switch_box box_1">
+                        <input type="checkbox" class="switch_1" id="switch_1" ng-model="search.middle_light">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dash_content" ng-class="{'dark' : !search.middle_light, 'light' : search.middle_light}">
+        <div class="relative-container" ng-if="!charters">
+            <div class="spinner center_item">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <div class="center_item emptylist" ng-if="(charters.length == 0) && (globals.currentUser.userdata.data.category == 'Charterer')">
+            <div class="empty_icon">
+                <i class="material-icons center_item" style="font-size: 4rem;">not_interested</i>
+            </div>
+            <div class="no_value" ng-if="globals.currentUser.userdata.data.category == 'Charterer'">
+                <div class="top_copy">
+                    No charters just yet
+                </div>
+                <div class="sub_copy">
+                    <div class="label">To get started, create</div>
+                    <div class="btn" ng-click="addcharter();">
+                        CHARTER ENQUIRY
+                    </div>
+                    <div class="clear-both"></div>
+                </div>
+            </div>
+        </div>
+        <div class="dash_items_container charterer_dash charter_list" data-simplebar ng-if="(charters.length > 0) && (globals.currentUser.userdata.data.category == 'Charterer')">
+            <div class="dash_item" ng-repeat="charter in charters | orderBy: created_at: true track by $index" ng-click="revealShow(charter, 'charter');" ng-class="{'show': (charterShow == charter.id)}" ui-view="charter_enquiry">
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="right halves noselect" ng-class="{'thirds': globals.currentUser.userdata.data.category == 'Charterer'}">
+    <div class="tab_heads">
+        <div class="tab_head_icon">
+            <i class="material-icons center_item">local_offer</i>
+        </div>
+        <div class="inner_section_label" ng-class="{smaller: (focus == 'right') && globals.currentUser.userdata.data.category != 'Charterer', bigger: globals.currentUser.userdata.data.category == 'Charterer' && !(focus == 'right'), medium: globals.currentUser.userdata.data.category == 'Charterer' && (focus == 'right')}">
+            <span class="center_item_vertically text_truncate" style="width: 100%;">
+				CHAT
+			</span>
+        </div>
+        <div class="inner_section_search" ng-class="{bigger: (focus == 'right'), typing: (focus == 'right'), 'smaller': globals.currentUser.userdata.data.category == 'Charterer'}" focus-input>
+            <div class="search_icon">
+                <i class="material-icons center_item">search</i>
+            </div>
+            <div class="search_input">
+                <form name="search_right" autocomplete="off">
+                    <input type="text" name="term" ng-model="search.term" ng-focus="foc('right')" ng-blur="((search_left.term.$modelValue == undefined) || (search_left.term.$modelValue == '')) ? blur() : ''" class="inner_search" placeholder="Search here" autocomplete="off">
+                </form>
+            </div>
+        </div>
+        <div class="light_toggle" ng-class="{smaller: globals.currentUser.userdata.data.category == 'Charterer'}">
+            <div class="light_label" ng-if="globals.currentUser.userdata.data.category != 'Charterer'">
+                <span class="center_item">
+					DARK
+				</span>
+            </div>
+            <div class="switch_container">
+                <div class="wrapper center_item dark_light">
+                    <div class="switch_box box_1">
+                        <input type="checkbox" class="switch_1" id="switch_2" ng-model="search.right_light">
+                    </div>
+                </div>
+            </div>
+            <div class="light_label" ng-if="globals.currentUser.userdata.data.category != 'Charterer'">
+                <span class="center_item">
+					LIGHT
+				</span>
+            </div>
+        </div>
+    </div>
+    <div class="dash_content" ng-class="{'dark' : !search.right_light, 'light' : search.right_light}">
+        <div class="dash_items_container" data-simplebar ui-view="chat">
+            
+        </div>
+        <div class="center_item emptylist" style="display: none;">
+            <div class="empty_icon">
+                <i class="material-icons center_item" style="font-size: 4rem;">not_interested</i>
+            </div>
+            <div class="no_value">
+                <div class="top_copy">
+                    No charter enquires yet
+                </div>
+                <div class="sub_copy" ng-if="globals.currentUser.userdata.data.category == 'Charterer'">
+                    <div class="label">Start here</div>
+                    <div class="btn" ng-click="addcharter();">
+                        CHARTER ENQUIRY
+                    </div>
+                    <div class="clear-both"></div>
+                </div>
+                <div class="sub_copy" ng-if="globals.currentUser.userdata.data.category == 'Ship Owner'">
+                    <div class="label">Not to worry, Charterers are sending some your way</div>
+                    <div class="clear-both"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

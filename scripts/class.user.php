@@ -1,6 +1,6 @@
 <?php
 	include "connect.php";
-	require_once('sendgrid/sendgrid-php.php');
+	require 'phpmailer/class.phpmailer.php';
 	
 	class User{
 		public $db;
@@ -14,31 +14,43 @@
             }
         }
 
-        function sendMailSendgrid($template_name, $template_content, $to, $subject, $attachments = null){
+        function sendMailPHPMailer($template_name, $template_content, $to, $subject, $attachments = null){
 
-        	$from = new SendGrid\Email("Backseat Nigeria", "info@backseat.ng");
-			$to = new SendGrid\Email($to['name'], $to['email']);
-			$content = new SendGrid\Content("text/html", "Welcome to Backseat Nigeria");
-			$mail = new SendGrid\Mail($from, $subject, $to, $content);
-
-			for($i = 0; $i < count($template_content); $i++){
-				$mail->personalization[0]->addSubstitution("-".$template_content[$i]['name']."-", $template_content[$i]['content']);
-			}
-
-			$mail->setTemplateId($template_name);
-
-			$apiKey = SENDGRID_APIKEY;
-			$sg = new \SendGrid($apiKey);
+        	$mail = new PHPMailer(true);
 
 			try {
-			    $response = $sg->client->mail()->send()->post($mail);
-			} catch (Exception $e) {
-			    echo 'Caught exception: ',  $e->getMessage(), "\n";
-			}
+	  
+				$body = file_get_contents('../views/emails/'.$template_name.'.html');
 
-			// echo $response->statusCode();
-			// print_r($response->headers());
-			// echo $response->body();
+				for($i = 0; $i < count($template_content); $i++){
+					$body = eregi_replace("-".$template_content[$i]['name']."-", $template_content[$i]['content'], $body);
+				}
+
+				$mail->IsSMTP();
+		        $mail->Host = 'mail.mvxchange.com';
+		        $mail->SMTPAuth = true;
+		        $mail->Username = 'info@mvxchange.com';
+		        $mail->Password = 'pass@123*';
+		        $mail->SMTPSecure = 'ssl';
+		        $mail->Port = 465;
+		        $mail->setFrom('info@mvxchange.com', "MVXChange.com");
+		        $mail->addAddress($to['email'], $to['name']);
+		        $mail->isHTML(true);
+
+				$mail->Subject = $subject;
+				$mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+				$mail->MsgHTML($body);
+				$mail->Send();
+
+			} catch (phpmailerException $e) {
+
+				// echo $e->errorMessage(); //Pretty error messages from PHPMailer
+
+			} catch (Exception $e) {
+
+				// echo $e->getMessage(); //Boring error messages from anything else!
+
+			}
 		}
 
 		function sendSMS($username, $password, $message, $mobiles, $sender){
@@ -77,29 +89,52 @@
 
 		}
 
-		public function register($fname, $lname, $address, $city, $state, $zip, $card_authorization_code, $card_bin, $card_last4, $card_exp_month, $card_exp_year, $card_channel, $card_card_type, $card_bank, $card_country_code, $card_brand, $card_reusable, $email, $mobile, $password, $car_owner, $car_ownerfirstname, $car_ownerlastname, $car_ownermobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurance_type, $car_insurancecompanyname, $car_paperscomplete){
+		public function register($data){
 
 			$response = [];
 
 			$date = new DateTime(null, new DateTimeZone('Africa/Lagos'));
 			$created_at = $date->getTimestamp();
 
-			$check_user = $this->db->prepare("SELECT * FROM users WHERE email = ? OR mobile = ?");
-			$check_user->bind_param("ss", strtolower($email), $mobile);
-			$check_user->execute();
-			$check_user->store_result();
-        	$check_user->bind_result($dbid, $dbfname, $dblname, $dbaddress, $dbcity, $dbstate, $dbzip, $dbemail, $dbmobile, $dbpassword, $enabled, $dbverification, $dbverification_code, $dbtype, $dbcarowner, $dbcarowner_firstname, $dbcarowner_lastname, $dbcarowner_mobile, $dbcar_make, $dbcar_model, $dbcar_geartype, $dbcar_insurance, $dbcar_insurancetype, $dbcar_insurancecompany, $dbcar_paperscomplete, $dbdate);
-			$check_user->fetch();
+			$email_user = $this->db->prepare("SELECT * FROM users WHERE email = ?");
+			$email_user->bind_param("s", strtolower($data->email));
+			$email_user->execute();
+			$email_user->store_result();
 
-			$user_check = $check_user->num_rows();
+			$email_used = $email_user->num_rows();
 
-			if($user_check > 0){
+			if ($data->category == "Charterer") {
+				$mobile_user = $this->db->prepare("SELECT * FROM charterer WHERE mobile = ?");
+				$mobile_user->bind_param("s", $data->charterermobile);
+				$mobile_user->execute();
+				$mobile_user->store_result();
+				$mobile_used = $mobile_user->num_rows();
+			}
 
-				if((strtolower($email) == strtolower($dbemail)) && ($mobile == $dbmobile)){
+			if ($data->category == "Procurement Vendor / Supplier") {
+
+				$mobile_user = $this->db->prepare("SELECT * FROM procurement_agent WHERE phone_number = ? OR mobile_contact_person = ? OR phone_number = ? OR mobile_contact_person = ?");
+				$mobile_user->bind_param("ssss", $data->businessphonenumber, $data->contactpersonmobile, $data->contactpersonmobile, $data->businessphonenumber);
+				$mobile_user->execute();
+				$mobile_user->store_result();
+				$mobile_used = $mobile_user->num_rows();
+			}
+
+			if ($data->category == "Ship Owner") {
+				$mobile_user = $this->db->prepare("SELECT * FROM shipowner WHERE businessmobile = ? OR contactmobile = ? OR businessmobile = ? OR contactmobile = ?");
+				$mobile_user->bind_param("ssss", $data->bizmobile, $data->contactpersonmobile, $data->contactpersonmobile, $data->bizmobile);
+				$mobile_user->execute();
+				$mobile_user->store_result();
+				$mobile_used = $mobile_user->num_rows();
+			}
+
+			if(($email_used > 0) || ($mobile_used > 0)){
+
+				if(($email_used > 0) && ($mobile_used > 0)){
 					$response['msg'] = "Both email and mobile number have an account linked to them";
-				}else if($email == $dbemail){
+				}else if($email_used > 0){
 					$response['msg'] = "Email account has an account linked to it";
-				}else if($mobile == $dbmobile){
+				}else if($mobile_used > 0){
 					$response['msg'] = "Mobile number has an account linked to it";
 				}
 
@@ -107,30 +142,81 @@
 
 				$valid = 0;
 				$link = $this->generate(6);
+				$password = md5($data->password);
 
-				$register = $this->db->prepare("INSERT INTO users(fname, lname, address, city, state, zip, email, mobile, password, verification, verification_code, carowner, carowner_firstname, carowner_lastname, carowner_mobile, car_make, car_model, car_geartype, car_insurance, car_insurancetype, car_insurancecompany, car_paperscomplete, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-				$register->bind_param("sssssssssiissssssssssis", $fname, $lname, $address, $city, $state, $zip, strtolower($email), $mobile, $password, $valid, $link, $car_owner, $car_ownerfirstname, $car_ownerlastname, $car_ownermobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurance_type, $car_insurancecompanyname, $car_paperscomplete, $created_at);
+				$register = $this->db->prepare("INSERT INTO users(email, category, password, verificationcode, createdat) VALUES(?, ?, ?, ?, ?)");
+				$register->bind_param("sssss", strtolower($data->email), $data->category, $password, $link, $created_at);
 
 				if($register->execute())
 				{
 					$recent_insert_id = $this->db->insert_id;
+					$updated_at = $date->getTimestamp();
 
-					if($card_authorization_code){
-						$update_payment = $this->db->prepare("INSERT INTO card_authorizations(user_id, authorization_code, card_type, card_brand, last4, exp_month, exp_year, bin, bank, channel, reusable, country_code) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					if ($data->category == "Charterer") {
+						$name = $data->charterername;
+						$email = $data->email;
+						$mobile = $data->charterermobile;
 
-						$update_payment->bind_param("isssssssssss", $recent_insert_id, $card_authorization_code, $card_card_type, $card_brand, $card_last4, $card_exp_month, $card_exp_year, $card_bin, $card_bank, $card_channel, $card_reusable, $card_country_code);
+						$update_record = $this->db->prepare("INSERT INTO charterer(userid, name, company_name, email, mobile, updatedat) VALUES(?, ?, ?, ?, ?, ?)");
 
-						$update_payment->execute();
+						$update_record->bind_param("isssss", $recent_insert_id, $data->charterername, $data->charterercompanyname, strtolower($data->email), $data->charterermobile, $updated_at);
+
+						$update_record->execute();
+					}
+
+					if ($data->category == "Procurement Vendor / Supplier") {
+						$name = $data->contactpersonname.' ('.$data->businessname.')';
+						$email = $data->contactpersonemail;
+						$mobile = $data->contactpersonmobile;
+
+						$cleanname = preg_replace('/\s+/', '', $name);
+						$random_hash = $cleanname.date('YmdHis',time()).mt_rand();
+
+						$extension_logo = substr($data->procurement_companylogoname, strrpos($data->procurement_companylogoname, '.') + 1);
+						$extension_profile = substr($data->procurement_companyprofilename, strrpos($data->procurement_companyprofilename, '.') + 1);
+						
+						$companylogo = "../assets/images/users/procurementcompanylogos/".$random_hash.'.'.$extension_logo;
+						$companyprofile = "../assets/images/users/procurementcompanyprofiles/".$random_hash.'.'.$extension_profile;
+						
+						$image_logo = $this->base64_to_image( $data->procurement_companylogo, $companylogo );
+						$image_profile = $this->base64_to_image( $data->procurement_companyprofile, $companyprofile );
+
+						$update_record = $this->db->prepare("INSERT INTO procurement_agent(userid, subcategory, logo, name, company_registration_number, website, phone_number, services, country, corporate_office_address, name_contact_person, mobile_contact_person, email_contact_person, permits, company_profile, updatedat) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+						$update_record->bind_param("isssssssssssssss", $recent_insert_id, trim($data->subcategory), $companylogo, $data->businessname, $data->businessregistrationnumber, $data->website, $data->businessphonenumber, json_encode($data->services), $data->country, $data->corporateofficeaddress, $data->contactpersonname, $data->contactpersonmobile, strtolower($data->contactpersonemail), json_encode($data->permits), $companyprofile, $updated_at);
+
+						$update_record->execute();
+					}
+
+					if ($data->category == "Ship Owner") {
+						$name = $data->shipcontactpersonname.' ('.$data->shipbusinessname.')';
+						$email = $data->shipcontactpersonemail;
+						$mobile = $data->shipcontactpersonmobile;
+
+						$cleanname = preg_replace('/\s+/', '', $name);
+
+						$random_hash = $cleanname.date('YmdHis',time()).mt_rand();
+
+						$extension_logo = substr($data->companylogoname, strrpos($data->companylogoname, '.') + 1);
+						$extension_profile = substr($data->companyprofilename, strrpos($data->companyprofilename, '.') + 1);
+
+						$companylogo = "../assets/images/users/shipcompanylogos/".$random_hash.'.'.$extension_logo;
+						$companyprofile = "../assets/images/users/shipcompanyprofiles/".$random_hash.'.'.$extension_profile;
+						$image_logo = $this->base64_to_image( $data->companylogo, $companylogo );
+						$image_profile = $this->base64_to_image( $data->companyprofile, $companyprofile );
+
+						$update_record = $this->db->prepare("INSERT INTO shipowner(userid, subcategory, companylogo, businessname, companyregistrationnumber, website, businessemail, businessmobile, services, corporateofficeaddress, contactname, contactmobile, contactemail, companyprofile, permits, updatedat) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+						$update_record->bind_param("isssssssssssssss", $recent_insert_id, trim($data->shipcategory), $companylogo, $data->shipbusinessname, $data->shipcompanyregistrationnumber, $data->shipwebsite, strtolower($data->shipbizemail), $data->shipbizmobile, json_encode($data->shipservices), $data->shipcorporateofficeaddress, $data->shipcontactpersonname, $data->shipcontactpersonmobile, strtolower($data->shipcontactpersonemail), $companyprofile, json_encode($data->shippermits), $updated_at);
+
+						$update_record->execute();
 					}
 
 					$response['msg'] = "Registration Successful";
 
 					$content = 	array(
 									array(
-										'name' => 'fname', 'content' => $fname
-									),
-									array(
-										'name' => 'lname', 'content' => $lname
+										'name' => 'name', 'content' => $name
 									),
 									array(
 										'name' => 'link', 'content' => $link
@@ -139,13 +225,13 @@
 
 					$to = 	array(
 								'email' => $email,
-								'name' => $fname.' '.$lname
+								'name' => $name
 							);
 
-					$this->sendMailSendgrid('9b3f0bce-8f02-4971-be3d-c4b766705478', $content, $to, 'Welcome to Backseat');
+					$this->sendMailPHPMailer('signup', $content, $to, 'Welcome to MVXchange');
 
 					#Send sms to user
-					$message = "Take the Backseat!";
+					$message = "Welcome to MVXchange!";
 					$message .= "\n\n";
 					$message .= "To verify your account, please use this code on first login:"."\n";
 					$message .= $link;
@@ -162,6 +248,368 @@
 
 		}
 
+		public function charter($data){
+			$response = [];
+
+			$date = new DateTime(null, new DateTimeZone('Africa/Lagos'));
+			$created_at = $date->getTimestamp();
+			$document = "";
+
+			if (isset($data->vessel_specification_document)) {
+				$cleanname = preg_replace('/\s+/', '', $data->vessel_specification_documentname);
+				$cleanname = str_replace(".", "", $cleanname);
+				$random_hash = $cleanname.date('YmdHis',time()).mt_rand();
+
+				$extension = substr($data->vessel_specification_documentname, strrpos($data->vessel_specification_documentname, '.') + 1);
+				
+				$document = "../assets/images/charters/".$random_hash.'.'.$extension;
+				
+				$image = $this->base64_to_image( $data->vessel_specification_document, $document );
+			}
+
+			$register = $this->db->prepare("INSERT INTO charters(user_id, preferred_shipowner_category, vessel_type, identity, preferred_flag, max_age, firm_duration, tonnage_dwt_min, tonnage_dwt_max, tonnage_grt_min, tonnage_grt_max, expected_mob_date, preferred_daily_hire_rate, location_of_operation, scope_of_work, performance_sbp_bp_min, performance_sbp_bp_max, performance_sbp_bhp_min, performance_sbp_bhp_max, performance_sbp_speed_min, performance_sbp_speed_max, dimensions_length_min, dimensions_length_max, dimensions_breadth_min, dimensions_breadth_max, dimensions_depth_min, dimensions_depth_max, dimensions_draft_min, dimensions_draft_max, end_client, reg_doc_class, reg_doc_ncdmb, dec_cargo_cleardeckarea_min, dec_cargo_cleardeckarea_max, dec_cargo_deckstrength_min, dec_cargo_deckstrength_max, dec_cargo_deckcrane, dp_one, dp_two, valid_ovid_cmid, add_inspection, purpose, port_of_delivery, port_of_redelivery, fuel_consumption_on_tow, accommodation_passengers_min, accommodation_passengers_max, accommodation_hospital, helipad, additional_data, vessel_specification_document, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$register->bind_param("isssssssssssissssssssssssssssssssssssssssssssssssssss", $data->userid, $data->preferred_shipowner_category, $data->vessel_type, $data->identity, $data->preferred_flag, $data->max_age, $data->firm_duration, $data->tonnage_dwt_min, $data->tonnage_dwt_max, $data->tonnage_grt_min, $data->tonnage_grt_max, $data->expected_mob_date, $data->daily_hire_rate, $data->location_of_operation, $data->scope_of_work, $data->performance_sbb_bp_min, $data->performance_sbb_bp_max, $data->performance_sbb_bhp_min, $data->performance_sbb_bhp_max, $data->performance_sbb_speed_min, $data->performance_sbb_speed_max, $data->dimensions_length_min, $data->dimensions_length_max, $data->dimensions_breadth_min, $data->dimensions_breadth_max, $data->dimensions_depth_min, $data->dimensions_depth_max, $data->dimensions_draft_min, $data->dimensions_draft_max, $data->end_client, $data->class, $data->ncdmb, $data->cleardeckarea_min, $data->cleardeckarea_max, $data->deckstrength_min, $data->deckstrength_max, $data->deckcrane, $data->dp1, $data->dp2, $data->valid_ovid_cmid, $data->inspection, $data->purpose, $data->port_of_delivery, $data->port_of_redelivery, $data->fuel_consumption_on_tow, $data->accommodation_passengers_min, $data->accommodation_passengers_max, $data->accommodation_hospital, $data->helipad, $data->additional_data, $document, $created_at, $created_at);
+
+			if($register->execute()){
+				$response['msg'] = "Charter Added";
+				$daily_hire_rate = (string) $data->daily_hire_rate;
+				$max_age = (string) $data->max_age;
+
+				$content = 	array(
+									array(
+										'name' => 'name', 'content' => $data->username
+									),
+									array(
+										'name' => 'preferred_shipowner_category', 'content' => $data->preferred_shipowner_category
+									),
+									array(
+										'name' => 'vessel_type', 'content' => $data->vessel_type
+									),
+									array(
+										'name' => 'identity', 'content' => $data->identity
+									),
+									array(
+										'name' => 'preferred_flag', 'content' => $data->preferred_flag
+									),
+									array(
+										'name' => 'max_age', 'content' => $max_age
+									),
+									array(
+										'name' => 'firm_duration', 'content' => $data->firm_duration
+									),
+									array(
+										'name' => 'tonnage_dwt_min', 'content' => $data->tonnage_dwt_min
+									),
+									array(
+										'name' => 'tonnage_dwt_max', 'content' => $data->tonnage_dwt_max
+									),
+									array(
+										'name' => 'tonnage_grt_min', 'content' => $data->tonnage_grt_min
+									),
+									array(
+										'name' => 'tonnage_grt_max', 'content' => $data->tonnage_grt_max
+									),
+									array(
+										'name' => 'expected_mob_date', 'content' => $data->expected_mob_date
+									),
+									array(
+										'name' => 'daily_hire_rate', 'content' => $daily_hire_rate
+									),
+									array(
+										'name' => 'location_of_operation', 'content' => $data->location_of_operation
+									),
+									array(
+										'name' => 'scope_of_work', 'content' => $data->scope_of_work
+									),
+									array(
+										'name' => 'performance_sbb_bp_min', 'content' => $data->performance_sbb_bp_min
+									),
+									array(
+										'name' => 'performance_sbb_bp_max', 'content' => $data->performance_sbb_bp_max
+									),
+									array(
+										'name' => 'performance_sbb_bhp_min', 'content' => $data->performance_sbb_bhp_min
+									),
+									array(
+										'name' => 'performance_sbb_bhp_max', 'content' => $data->performance_sbb_bhp_max
+									),
+									array(
+										'name' => 'performance_sbb_speed_min', 'content' => $data->performance_sbb_speed_min
+									),
+									array(
+										'name' => 'performance_sbb_speed_max', 'content' => $data->performance_sbb_speed_max
+									),
+									array(
+										'name' => 'dimensions_length_min', 'content' => $data->dimensions_length_min
+									),
+									array(
+										'name' => 'dimensions_length_max', 'content' => $data->dimensions_length_max
+									),
+									array(
+										'name' => 'dimensions_breadth_min', 'content' => $data->dimensions_breadth_min
+									),
+									array(
+										'name' => 'dimensions_breadth_max', 'content' => $data->dimensions_breadth_max
+									),
+									array(
+										'name' => 'dimensions_depth_min', 'content' => $data->dimensions_depth_min
+									),
+									array(
+										'name' => 'dimensions_depth_max', 'content' => $data->dimensions_depth_max
+									),
+									array(
+										'name' => 'dimensions_draft_min', 'content' => $data->dimensions_draft_min
+									),
+									array(
+										'name' => 'dimensions_draft_max', 'content' => $data->dimensions_draft_max
+									),
+									array(
+										'name' => 'end_client', 'content' => ($data->end_client ? $data->end_client : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'class', 'content' => ($data->class ? $data->class : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'ncdmb', 'content' => ($data->ncdmb ? $data->ncdmb : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'cleardeckarea_min', 'content' => ($data->cleardeckarea_min ? $data->cleardeckarea_min.' SQM' : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'cleardeckarea_max', 'content' => ($data->cleardeckarea_max ? $data->cleardeckarea_max.' SQM' : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'deckstrength_min', 'content' => ($data->deckstrength_min ? $data->deckstrength_min.' MT/sqm' : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'deckstrength_max', 'content' => ($data->deckstrength_max ? $data->deckstrength_max.' MT/sqm' : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'deckcrane', 'content' => ($data->deckcrane ? $data->deckcrane : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'dp1', 'content' => ($data->dp1 ? $data->dp1 : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'dp2', 'content' => ($data->dp2 ? $data->dp2 : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'valid_ovid_cmid', 'content' => ($data->valid_ovid_cmid ? $data->valid_ovid_cmid : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'inspection', 'content' => ($data->inspection ? $data->inspection : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'purpose', 'content' => ($data->purpose ? $data->purpose : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'port_of_delivery', 'content' => ($data->port_of_delivery ? $data->port_of_delivery : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'port_of_redelivery', 'content' => ($data->port_of_redelivery ? $data->port_of_redelivery : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'fuel_consumption_on_tow', 'content' => ($data->fuel_consumption_on_tow ? $data->fuel_consumption_on_tow : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'accommodation_passengers_min', 'content' => ($data->accommodation_passengers_min ? $data->accommodation_passengers_min : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'accommodation_passengers_max', 'content' => ($data->accommodation_passengers_max ? $data->accommodation_passengers_max : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'accommodation_hospital', 'content' => ($data->accommodation_hospital ? $data->accommodation_hospital : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'helipad', 'content' => ($data->helipad ? $data->helipad : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'additional_data', 'content' => ($data->additional_data ? $data->additional_data : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'vessel_specification_document', 'content' => $document
+									),
+									array(
+										'name' => 'created_at', 'content' => $date->format('d-m-Y H:i:s')
+									)
+								);
+					
+				$to = 	array(
+							'email' => $data->useremail,
+							'name' => $data->username
+						);
+
+				$this->sendMailPHPMailer('charter', $content, $to, 'MVXchange: Vessel Charter Order');
+
+				#Send sms to user
+				$message = "MVXchange received your Charter order!";
+				$message .= "\n\n";
+				$message .= "Hey ".$data->username.", your order for a Vessel has been received. You will now begin to get offers in line with the specifications provided.";
+
+				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $data->usermobile, BETASMS_SENDER);
+			}
+
+			return $response;
+		}
+
+		public function addvessel($data){
+			$response = [];
+
+			$date = new DateTime(null, new DateTimeZone('Africa/Lagos'));
+			$created_at = $date->getTimestamp();
+			$document = "";
+			$vessel_photos = [];
+
+			$folder = $data->userid.'_'.date('YmdHis',time()).mt_rand();
+			mkdir("../assets/images/vessels/".$folder, 0777, true);
+
+			if (isset($data->vessel_specification_document)) {
+				$cleanname = preg_replace('/\s+/', '', $data->vessel_specification_documentname);
+				$cleanname = str_replace(".", "", $cleanname);
+				$random_hash = $cleanname.date('YmdHis',time()).mt_rand();
+
+				$extension = substr($data->vessel_specification_documentname, strrpos($data->vessel_specification_documentname, '.') + 1);
+				
+				$document = "../assets/images/vessels/".$folder."/".$random_hash.'.'.$extension;
+				
+				$image = $this->base64_to_image( $data->vessel_specification_document, $document );
+			}
+			
+			foreach ($data->vessel_photopreview as $key => $photo) {
+				$extension = substr($photo->name, strrpos($photo->name, '.') + 1);
+				$photo_name = "../assets/images/vessels/".$folder."/".$folder.$key.'.'.$extension;
+				array_push($vessel_photos, $photo_name);
+				
+				$image = $this->base64_to_image( $photo->image, $photo_name );
+			}
+
+			if($data->vessel_availability == 'Unavailable'){
+				$vessel_availability = $data->unavailable_till;
+			}else{
+				$vessel_availability = $data->vessel_availability;
+			}
+
+			$register = $this->db->prepare("INSERT INTO vessels(user_id, vessel_availability, daily_hire_rate, vessel_photos, imo_number, vessel_name, ownership_status, current_location, year_built, specification_sheet, preferred_flag, classification, classification_expiry, purpose, vessel_type, bp, bhp, da, ds, dp, maximum_speed, dwt, grt, length, breadth_moulded, depth_moulded, maximum_draft, accommodation, deck_crane, helipad, valid_ncdmb_class, valid_ovidcmid, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$register->bind_param("issssssssssssssiiiiiiiiiiiiiisssss", $data->userid, $vessel_availability, $data->daily_hire_rate, json_encode($vessel_photos), $data->imo_number, $data->vessel_name, $data->ownership_status, $data->current_location, $data->year_built, $document, $data->flag, $data->class, $data->classification_expiry, $data->purpose, $data->vessel_type, $data->bp, $data->bhp, $data->da, $data->ds, $data->dynamic_positioning, $data->maximum_speed, $data->deadweight_tonnage, $data->gross_tonnage, $data->length_oa, $data->breadth_moulded, $data->depth_moulded, $data->maximum_draft, $data->accommodation, $data->deckcrane, $data->helipad, $data->valid_ncdmb_class, $data->valid_ovidcmid, $created_at, $created_at);
+
+			if($register->execute()){
+				$response['msg'] = "Vessel Added";
+				$daily_hire_rate = (string) $data->daily_hire_rate;
+
+				$content = 	array(
+									array(
+										'name' => 'name', 'content' => $data->username
+									),
+									array(
+										'name' => 'vessel_availability', 'content' => (($data->vessel_availability == 'Unavailable') ? "Unavailable till ".$data->unavailable_till : $data->vessel_availability)
+									),
+									array(
+										'name' => 'daily_hire_rate', 'content' => $daily_hire_rate
+									),
+									array(
+										'name' => 'imo_number', 'content' => $data->imo_number
+									),
+									array(
+										'name' => 'vessel_name', 'content' => $data->vessel_name
+									),
+									array(
+										'name' => 'ownership_status', 'content' => $data->ownership_status
+									),
+									array(
+										'name' => 'current_location', 'content' => $data->current_location
+									),
+									array(
+										'name' => 'year_built', 'content' => $data->year_built
+									),
+									array(
+										'name' => 'flag', 'content' => $data->flag
+									),
+									array(
+										'name' => 'class', 'content' => $data->class
+									),
+									array(
+										'name' => 'classification_expiry', 'content' => $data->classification_expiry
+									),
+									array(
+										'name' => 'purpose', 'content' => $data->purpose
+									),
+									array(
+										'name' => 'vessel_type', 'content' => $data->vessel_type
+									),
+									array(
+										'name' => 'bp', 'content' => $data->bp
+									),
+									array(
+										'name' => 'bhp', 'content' => $data->bhp
+									),
+									array(
+										'name' => 'da', 'content' => ($data->da ? $data->da : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'ds', 'content' => ($data->ds ? $data->ds : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'dynamic_positioning', 'content' => ($data->dynamic_positioning ? $data->dynamic_positioning : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'maximum_speed', 'content' => $data->maximum_speed
+									),
+									array(
+										'name' => 'deadweight_tonnage', 'content' => ($data->deadweight_tonnage ? $data->deadweight_tonnage : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'gross_tonnage', 'content' => $data->gross_tonnage
+									),
+									array(
+										'name' => 'length_oa', 'content' => ($data->length_oa ? $data->length_oa : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'breadth_moulded', 'content' => ($data->breadth_moulded ? $data->breadth_moulded : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'depth_moulded', 'content' => ($data->depth_moulded ? $data->depth_moulded : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'maximum_draft', 'content' => ($data->maximum_draft ? $data->maximum_draft : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'accommodation', 'content' => ($data->accommodation ? $data->accommodation : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'deckcrane', 'content' => ($data->deckcrane ? $data->deckcrane : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'helipad', 'content' => ($data->helipad ? $data->helipad : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'valid_ncdmb_class', 'content' => ($data->valid_ncdmb_class ? $data->valid_ncdmb_class : '<i style="font-weight: 300;">Not Specified</i>')
+									),
+									array(
+										'name' => 'valid_ovidcmid', 'content' => $data->valid_ovidcmid
+									),
+									array(
+										'name' => 'created_at', 'content' => $created_at
+									)
+								);
+					
+				$to = 	array(
+							'email' => $data->useremail,
+							'name' => $data->username
+						);
+
+				$this->sendMailPHPMailer('addvessel', $content, $to, 'MVXchange: Vessel Added');
+
+				#Send sms to user
+				$message = "MVXchange received your Vessel details!";
+				$message .= "\n\n";
+				$message .= "Hey ".$data->username.", your Vessel details have been received. You will now begin to get requests in line with the specifications provided.";
+
+				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $data->usermobile, BETASMS_SENDER);
+			}
+
+			return $response;
+		}
+
 		function generate($length) {
 		    $result = '';
 
@@ -170,64 +618,6 @@
 		    }
 
 		    return $result;
-		}
-
-		public function updatePayment($riderid, $rideremail, $ridermobile, $orderid, $amount, $status, $reference, $date, $fname, $lname, $driver){
-			$logpayment = $this->db->prepare("INSERT INTO payments(userid, orderid, amount, status, reference, date) VALUES(?, ?, ?, ?, ?, ?)");
-			$logpayment->bind_param("iissss", $riderid, $orderid, $amount, $status, $reference, $date);
-
-			if($logpayment->execute())
-			{
-				$recent_insert_id = $this->db->insert_id;
-
-				if($status == "success"){
-					$update_payment = $this->db->prepare("UPDATE orders SET charged = ? WHERE id = ?");
-					$update_payment->bind_param("ii", $recent_insert_id, $orderid);
-
-					$update_payment->execute();
-
-					if($driver){
-						$driverdetails = "with ".$driver;
-					}else{
-						$driverdetails = "";
-					}
-
-					$content = 	array(
-									array(
-										'name' => 'fname', 'content' => $fname
-									),
-									array(
-										'name' => 'driver', 'content' => $driver
-									),
-									array(
-										'name' => 'amount', 'content' => $amount
-									)
-								);
-
-					$to = 	array(
-								'email' => $rideremail,
-								'name' => $fname.' '.$lname
-							);
-
-					$this->sendMailSendgrid('656b40c8-e469-4f3c-9e19-3ed05f94edc0', $content, $to, 'Backseat.ng: Payment successful!');
-
-					#Send sms to user
-					$message = "Backseat.ng: Successful payment!";
-					$message .= "\n\n";
-					$message .= "Dear, ".$fname."\n";
-					$message .= "You have been successfully charged N".$amount." for your trip ".$driverdetails;
-					$message .= $link;
-
-					$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $ridermobile, BETASMS_SENDER);
-				}
-
-				$response['msg'] = "Payment updated";
-				
-			} else {
-				$response['msg'] = "Something went wrong. Please try again";
-			}
-
-			return $response;
 		}
 
 		public function update($userid, $fname, $lname, $address, $city, $state, $zip, $card_authorization_code, $card_bin, $card_last4, $card_exp_month, $card_exp_year, $card_channel, $card_card_type, $card_bank, $card_country_code, $card_brand, $card_reusable, $email, $mobile, $password, $car_owner, $car_ownerfirstname, $car_ownerlastname, $car_ownermobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurance_type, $car_insurancecompanyname, $car_paperscomplete){
@@ -295,155 +685,121 @@
 
 			return( $output_file ); 
 		}
-
-		public function order($address, $time, $orderdate, $duration, $cost, $userid){
-			$response = [];
-			$date = new DateTime(null, new DateTimeZone('Africa/Lagos'));
-			$created_at = $date->getTimestamp();
-
-			$order = $this->db->prepare("INSERT INTO orders(address, time, date, duration, cost, userid, orderdate) VALUES(?, ?, ?, ?, ?, ?, ?)");
-			$order->bind_param("sssssis", $address, $time, $orderdate, $duration, $cost, $userid, $created_at);
-
-			if($order->execute()){
-
-				$response['msg'] = "Application saved";
-				$_SESSION['application_submitted'] = 1;
-
-				$sql = $this->db->prepare('SELECT * FROM users WHERE id = ?');
-				$sql->bind_param('i', $userid);
-				$sql->execute();
-				$sql->store_result();
-				$sql->bind_result($dbid, $dbfname, $dblname, $dbaddress, $dbcity, $dbstate, $dbzip, $dbemail, $dbmobile, $dbpassword, $dbenabled, $dbverification, $dbverification_code, $dbtype, $dbcarowner, $dbcarowner_firstname, $dbcarowner_lastname, $dbcarowner_mobile, $dbcar_make, $dbcar_model, $dbcar_geartype, $dbcar_insurance, $dbcar_insurancetype, $dbcar_insurancecompany, $dbcar_paperscomplete, $dbdate);
-				$sql->fetch();
-
-				$content = 	array(
-									array(
-										'name' => 'orderaddress', 'content' => $address
-									),
-									array(
-										'name' => 'time', 'content' => $time
-									),
-									array(
-										'name' => 'orderdate', 'content' => $orderdate
-									),
-									array(
-										'name' => 'duration', 'content' => $duration
-									),
-									array(
-										'name' => 'cost', 'content' => $cost
-									),
-									array(
-										'name' => 'fname', 'content' => $dbfname
-									),
-									array(
-										'name' => 'lname', 'content' => $dblname
-									),
-									array(
-										'name' => 'useraddress', 'content' => $dbaddress
-									),
-									array(
-										'name' => 'city', 'content' => $dbcity
-									),
-									array(
-										'name' => 'state', 'content' => $dbstate
-									),
-									array(
-										'name' => 'zip', 'content' => $dbzip
-									),
-									array(
-										'name' => 'email', 'content' => $dbemail
-									),
-									array(
-										'name' => 'mobile', 'content' => $dbmobile
-									)
-								);
-					
-				$to = 	array(
-								'email' => $dbemail,
-								'name' => $dbfname.' '.$dblname
-							);
-					
-				$adminto = 	array(
-								'email' => BK_ADMIN,
-								'name' => 'Admin'
-							);
-
-				$this->sendMailSendgrid('91be02cb-bd88-49c0-a0da-728ae2e741db', $content, $to, 'Backseat.ng: We got your order!');
-				$this->sendMailSendgrid('ff1c35e1-46bd-446c-b93f-920b480a5ce0', $content, $adminto, 'Backseat.ng: Order!');
-
-				$message = "Backseat.ng: We got your order";
-				$message .= "\n\n";
-				$message .= "Your order is being processed. We would reach out to you in a bit."."\n\n";
-				$message .= "If you have any questions, kindly reach out to support on +234 813 094 3976 or send an email to info@backseat.ng"."\n";
-
-				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $dbmobile, BETASMS_SENDER);
-			}else{
-				$response['msg'] = "Something went wrong";
-			}
-
-			return $response;
-		}
 				
-		public function login($username, $password){
+		public function login($data){
+			$response = [];
 
-			$sql = $this->db->prepare('SELECT users.id, users.fname, users.lname, users.address, users.city, users.state, users.zip, users.email, users.mobile, users.password, users.enabled, users.verification, users.verification_code, users.type, users.carowner, users.carowner_firstname, users.carowner_lastname, users.carowner_mobile, users.car_make, users.car_model, users.car_geartype, users.car_insurance, users.car_insurancetype, users.car_insurancecompany, users.car_paperscomplete, users.date, card_authorizations.id, card_authorizations.authorization_code, card_authorizations.card_type, card_authorizations.card_brand, card_authorizations.last4, card_authorizations.exp_month, card_authorizations.exp_year, card_authorizations.bin, card_authorizations.bank, card_authorizations.channel, card_authorizations.reusable, card_authorizations.country_code FROM users LEFT JOIN card_authorizations ON users.id = card_authorizations.user_id WHERE email = ? AND password = ?');
-
-			$passwd = md5($password);
-			$sql->bind_param('ss', $username, $passwd);
+			$sql = $this->db->prepare('SELECT * FROM users WHERE email = ? AND password = ?');
+			$sql->bind_param('ss', strtolower($data->email), md5($data->password));
 			$sql->execute();
 			$sql->store_result();
-			$sql->bind_result($dbid, $dbfname, $dblname, $dbaddress, $dbcity, $dbstate, $dbzip, $dbemail, $dbmobile, $dbpassword, $dbenabled, $dbverification, $dbverification_code, $dbtype, $dbcarowner, $dbcarowner_firstname, $dbcarowner_lastname, $dbcarowner_mobile, $dbcar_make, $dbcar_model, $dbcar_geartype, $dbcar_insurance, $dbcar_insurancetype, $dbcar_insurancecompany, $dbcar_paperscomplete, $dbdate, $card_id, $authorization_code, $card_type, $card_brand, $last4, $exp_month, $exp_year, $bin, $bank, $channel, $reusable, $country_code);
+			$sql->bind_result($id, $email, $category, $password, $verificationcode, $verified, $enabled, $created_at);
 			$sql->fetch();
 			
 			$result = $sql->num_rows();
 			
-			if($result == 1){
-				if (($dbverification == 1) && ($dbenabled == 1)) {				
-					$login['data']['id'] = $dbid;
-					$login['data']['fname'] = $dbfname;
-					$login['data']['lname'] = $dblname;
-					$login['data']['address'] = $dbaddress;
-					$login['data']['city'] = $dbcity;
-					$login['data']['state'] = $dbstate;
-					$login['data']['zip'] = $dbzip;
-					$login['data']['email'] = $dbemail;
-					$login['data']['mobile'] = $dbmobile;
-					$login['data']['verification'] = $dbverification;
-					$login['data']['verification_code'] = $dbverification_code;
-					$login['data']['date'] = $dbdate;
+			if($result > 0){
+				if($category == "Charterer"){
+					$sql = $this->db->prepare('SELECT * FROM charterer WHERE userid = ?');
+					$sql->bind_param('i', $id);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($c_id, $c_userid, $c_name, $c_company_name, $c_email, $c_mobile, $c_updatedat);
+					$sql->fetch();
 
-					$login['data']['type'] = $dbtype;
-					$login['data']['carowner'] = $dbcarowner;
-					$login['data']['ownerfirstname'] = $dbcarowner_firstname;
-					$login['data']['ownerlastname'] = $dbcarowner_lastname;
-					$login['data']['ownermobile'] = $dbcarowner_mobile;
-					$login['data']['car_make'] = json_decode($dbcar_make);
-					$login['data']['car_model'] = json_decode($dbcar_model);
-					$login['data']['car_type'] = $dbcar_geartype;
-					$login['data']['carinsurance'] = $dbcar_insurance;
-					$login['data']['carinsurancetype'] = $dbcar_insurancetype;
-					$login['data']['carinsurancecompanyname'] = $dbcar_insurancecompany;
-					$login['data']['car_paperscomplete'] = $dbcar_paperscomplete;
+					$reachname = $c_name;
+					$reachmobile = $c_mobile;
+				}
 
-					$login['data']['card']['id'] = $card_id;
-					$login['data']['card']['authorization_code'] = $authorization_code;
-					$login['data']['card']['card_type'] = $card_type;
-					$login['data']['card']['brand'] = $card_brand;
-					$login['data']['card']['last4'] = $last4;
-					$login['data']['card']['exp_month'] = $exp_month;
-					$login['data']['card']['exp_year'] = $exp_year;
-					$login['data']['card']['bin'] = $bin;
-					$login['data']['card']['bank'] = $bank;
-					$login['data']['card']['channel'] = $channel;
-					$login['data']['card']['reusable'] = $reusable;
-					$login['data']['card']['country_code'] = $country_code;
+				if($category == "Ship Owner"){
+					$sql = $this->db->prepare('SELECT * FROM shipowner WHERE userid = ?');
+					$sql->bind_param('i', $id);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($s_id, $s_userid, $s_subcategory, $s_companylogo, $s_businessname, $s_companyregistrationnumber, $s_website, $s_businessemail, $s_businessmobile, $s_services, $s_corporateofficeaddress, $s_contactname, $s_contactmobile, $s_contactemail, $s_companyprofile, $s_permits, $s_updatedat);
+					$sql->fetch();
 
+					$reachname = $s_contactname.' ('.$s_businessname.')';
+					$reachmobile = $s_contactemail;
+				}
 
-					$login['data']['hashed_password'] = $dbpassword;
+				if($category == "Procurement Vendor / Supplier"){
+					$sql = $this->db->prepare('SELECT * FROM procurement_agent WHERE userid = ?');
+					$sql->bind_param('i', $id);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($p_id, $p_userid, $p_subcategory, $p_logo, $p_name, $p_company_registration_number, $p_website, $p_phone_number, $p_services, $p_country, $p_corporate_office_address, $p_name_contact_person, $p_mobile_contact_person, $p_email_contact_person, $p_permits, $p_company_profile, $p_updatedat);
+					$sql->fetch();
+
+					$reachname = $p_name_contact_person.' ('.$p_name.')';
+					$reachmobile = $p_email_contact_person;
+				}
+
+				if (($verified == 1) && ($enabled == 1)) {				
+					$login['data']['id'] = $id;
+					$login['data']['email'] = $email;
+					$login['data']['category'] = $category;
+					$login['data']['verificationcode'] = $verificationcode;
+					$login['data']['verified'] = $verified;
+					$login['data']['enabled'] = $enabled;
+					$login['data']['created_at'] = $created_at;
+
+					$login['data']['hashed_password'] = $password;
 					$login['msg'] = "Logged In";
-				}else if (($dbverification == 0) && ($dbenabled == 1)){
+					$login['data']['display_name'] = $reachname;
+
+					if($category == "Charterer"){
+						$login['data']['c_id'] = $c_id;
+						$login['data']['c_userid'] = $c_userid;
+						$login['data']['c_name'] = $c_name;
+						$login['data']['c_company_name'] = $c_company_name;
+						$login['data']['c_email'] = $c_email;
+						$login['data']['c_mobile'] = $c_mobile;
+						$login['data']['c_updatedat'] = $c_updatedat;
+					}
+
+					if($category == "Ship Owner"){
+						$login['data']['s_id'] = $s_id;
+						$login['data']['s_userid'] = $s_userid;
+						$login['data']['s_subcategory'] = $s_subcategory;
+						$login['data']['s_companylogo'] = $s_companylogo;
+						$login['data']['s_businessname'] = $s_businessname;
+						$login['data']['s_companyregistrationnumber'] = $s_companyregistrationnumber;
+						$login['data']['s_website'] = $s_website;
+						$login['data']['s_businessemail'] = $s_businessemail;
+						$login['data']['s_businessmobile'] = $s_businessmobile;
+						$login['data']['s_services'] = $s_services;
+						$login['data']['s_corporateofficeaddress'] = $s_corporateofficeaddress;
+						$login['data']['s_contactname'] = $s_contactname;
+						$login['data']['s_contactmobile'] = $s_contactmobile;
+						$login['data']['s_contactemail'] = $s_contactemail;
+						$login['data']['s_companyprofile'] = $s_companyprofile;
+						$login['data']['s_permits'] = $s_permits;
+						$login['data']['s_updatedat'] = $s_updatedat;
+					}
+
+					if($category == "Procurement Vendor / Supplier"){
+						$login['data']['p_id'] = p_id;
+						$login['data']['p_userid'] = p_userid;
+						$login['data']['p_subcategory'] = p_subcategory;
+						$login['data']['p_logo'] = p_logo;
+						$login['data']['p_name'] = p_name;
+						$login['data']['p_company_registration_number'] = p_company_registration_number;
+						$login['data']['p_website'] = p_website;
+						$login['data']['p_phone_number'] = p_phone_number;
+						$login['data']['p_services'] = p_services;
+						$login['data']['p_country'] = p_country;
+						$login['data']['p_corporate_office_address'] = p_corporate_office_address;
+						$login['data']['p_name_contact_person'] = p_name_contact_person;
+						$login['data']['p_mobile_contact_person'] = p_mobile_contact_person;
+						$login['data']['p_email_contact_person'] = p_email_contact_person;
+						$login['data']['p_permits'] = p_permits;
+						$login['data']['p_company_profile'] = p_company_profile;
+						$login['data']['p_updatedat'] = p_updatedat;
+					}
+				}else if (($verified == 0) && ($enabled == 1)){
 					$login['msg'] = "Account Not Verified";
-				}else if (($dbverification == 1) && ($dbenabled == 0)){
+				}else if (($verified == 1) && ($enabled == 0)){
 					$login['msg'] = "Your account has been suspended. Please send an email to complaints@backseat.ng for more information";
 				}
 			}else{
@@ -460,21 +816,56 @@
 			$sql->bind_param('s', $email);
 			$sql->execute();
 			$sql->store_result();
-			$sql->bind_result($id, $fname, $lname, $address, $city, $state, $zip, $email, $mobile, $password, $enabled, $verification, $verification_code, $type, $carowner, $carowner_firstname, $carowner_lastname, $carowner_mobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurancetype, $car_insurancecompany, $car_paperscomplete, $date);
+			$sql->bind_result($id, $email, $category, $password, $verificationcode, $verified, $enabled, $created_at);
 			$sql->fetch();
 
 			if($sql->num_rows() > 0){
-				$verification_check = ($verification_code == $code);
+				if($category == "Charterer"){
+					$sql = $this->db->prepare('SELECT * FROM charterer WHERE userid = ?');
+					$sql->bind_param('i', $id);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($c_id, $c_userid, $c_name, $c_company_name, $c_email, $c_mobile, $c_updatedat);
+					$sql->fetch();
 
-				if($verification_check && ($verification == 0)){
+					$reachname = $c_name;
+					$reachmobile = $c_mobile;
+				}
+
+				if($category == "Ship Owner"){
+					$sql = $this->db->prepare('SELECT * FROM shipowner WHERE userid = ?');
+					$sql->bind_param('i', $id);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($s_id, $s_userid, $s_subcategory, $s_companylogo, $s_businessname, $s_companyregistrationnumber, $s_website, $s_businessemail, $s_businessmobile, $s_services, $s_corporateofficeaddress, $s_contactname, $s_contactmobile, $s_contactemail, $s_companyprofile, $s_permits, $s_updatedat);
+					$sql->fetch();
+
+					$reachname = $s_contactname.' ('.$s_businessname.')';
+					$reachmobile = $s_contactemail;
+				}
+
+				if($category == "Procurement Vendor / Supplier"){
+					$sql = $this->db->prepare('SELECT * FROM procurement_agent WHERE userid = ?');
+					$sql->bind_param('i', $id);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($p_id, $p_userid, $p_subcategory, $p_logo, $p_name, $p_company_registration_number, $p_website, $p_phone_number, $p_services, $p_country, $p_corporate_office_address, $p_name_contact_person, $p_mobile_contact_person, $p_email_contact_person, $p_permits, $p_company_profile, $p_updatedat);
+					$sql->fetch();
+
+					$reachname = $p_name_contact_person.' ('.$p_name.')';
+					$reachmobile = $p_email_contact_person;
+				}
+
+				$verification_check = ($verificationcode == $code);
+
+				if($verification_check && ($verified == 0)){
 					$response = [
 									'verification' => $verification_check,
-									'fname' => $fname,
-									'lname' => $lname,
+									'name' => $reachname,
 									'email' => $email,
-									'mobile' => $mobile
+									'mobile' => $reachmobile
 								];
-				}else if($verification_check && ($verification == 1)){
+				}else if($verification_check && ($verified == 1)){
 					$response = [
 									'verification' => false,
 									'msg' => 'Account already verified'
@@ -495,36 +886,36 @@
 			return $response;
 		}
 				
-		public function verify($email, $code){
+		public function verify($data){
 			$response = [];
 			$verified = 1;
 
-			$verify = $this->verifyCode(strtolower($email), $code);
+			$verify = $this->verifyCode(strtolower($data->email), $data->code);
 
 			if($verify['verification']){
-				$sql = $this->db->prepare('UPDATE users SET verification = ? WHERE email = ?');
-				$sql->bind_param('is', $verified, strtolower($email));
+				$sql = $this->db->prepare('UPDATE users SET verified = ? WHERE email = ?');
+				$sql->bind_param('is', $verified, strtolower($data->email));
 				$sql->execute();
 
 				$response['msg'] = 'Account Verified';
 
 				$content = 	array(
 									array(
-										'name' => 'fname', 'content' => $verify['fname']
+										'name' => 'name', 'content' => $verify['name']
 									)
 								);
 					
 				$to = 	array(
 							'email' => $verify['email'],
-							'name' => $verify['fname'].' '.$verify['lname']
+							'name' => $verify['name']
 						);
 
-				$this->sendMailSendgrid('aaf6caa5-76b3-4b7a-b455-a85315c875b5', $content, $to, 'Backseat.ng: Account Verification successful');
+				$this->sendMailPHPMailer('verification', $content, $to, 'MVXchange: Verification successful');
 
 				#Send sms to user
-				$message = "Take the Backseat!";
+				$message = "MVXchange Verification Successful!";
 				$message .= "\n\n";
-				$message .= "You did it! Your account is now verified";
+				$message .= "You did it! ".$verify['name'].", your account is now verified";
 
 				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $verify['mobile'], BETASMS_SENDER);
 			}else{
@@ -737,37 +1128,68 @@
 			$sql->bind_param('s', $email);
 			$sql->execute();
 			$sql->store_result();
-			$sql->bind_result($id, $fname, $lname, $address, $city, $state, $zip, $email, $mobile, $password, $enabled, $verification, $verification_code, $type, $carowner, $carowner_firstname, $carowner_lastname, $carowner_mobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurancetype, $car_insurancecompany, $car_paperscomplete, $date);
-
+			$sql->bind_result($id, $email, $category, $password, $verificationcode, $verified, $enabled, $created_at);
 			$sql->fetch();
 
 			if($sql->num_rows > 0){
+				if($category == "Charterer"){
+					$sql = $this->db->prepare('SELECT * FROM charterer WHERE userid = ?');
+					$sql->bind_param('i', $id);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($c_id, $c_userid, $c_name, $c_company_name, $c_email, $c_mobile, $c_updatedat);
+					$sql->fetch();
+
+					$reachname = $c_name;
+					$reachmobile = $c_mobile;
+				}
+
+				if($category == "Ship Owner"){
+					$sql = $this->db->prepare('SELECT * FROM shipowner WHERE userid = ?');
+					$sql->bind_param('i', $userid);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($s_id, $s_userid, $s_subcategory, $s_companylogo, $s_businessname, $s_companyregistrationnumber, $s_website, $s_businessemail, $s_businessmobile, $s_services, $s_corporateofficeaddress, $s_contactname, $s_contactmobile, $s_contactemail, $s_companyprofile, $s_permits, $s_updatedat);
+					$sql->fetch();
+
+					$reachname = $s_contactname.' ('.$s_businessname.')';
+					$reachmobile = $s_contactemail;
+				}
+
+				if($category == "Procurement Vendor / Supplier"){
+					$sql = $this->db->prepare('SELECT * FROM procurement_agent WHERE userid = ?');
+					$sql->bind_param('i', $userid);
+					$sql->execute();
+					$sql->store_result();
+					$sql->bind_result($p_id, $p_userid, $p_subcategory, $p_logo, $p_name, $p_company_registration_number, $p_website, $p_phone_number, $p_services, $p_country, $p_corporate_office_address, $p_name_contact_person, $p_mobile_contact_person, $p_email_contact_person, $p_permits, $p_company_profile, $p_updatedat);
+					$sql->fetch();
+
+					$reachname = $p_name_contact_person.' ('.$p_name.')';
+					$reachmobile = $p_email_contact_person;
+				}
 				$content = 	array(
 										array(
-											'name' => 'fname', 'content' => $fname
+											'name' => 'name', 'content' => $reachname
 										),
 										array(
-											'name' => 'lname', 'content' => $lname
-										),
-										array(
-											'name' => 'link', 'content' => $verification_code
+											'name' => 'link', 'content' => $verificationcode
 										)
 									);
 
 				$to = 	array(
 								'email' => $email,
-								'name' => $fname.' '.$lname
+								'name' => $reachname
 							);
 
-				$this->sendMailSendgrid('9b3f0bce-8f02-4971-be3d-c4b766705478', $content, $to, 'Welcome to Backseat');
+				$this->sendMailPHPMailer('signup', $content, $to, 'Welcome to MVXchange');
 
 				#Send sms to user
-				$message = "Take the Backseat!";
+				$message = "Welcome to MVXchange!";
 				$message .= "\n\n";
-				$message .= "To verify your account, please use this code to verify account:"."\n";
-				$message .= $verification_code;
+				$message .= "To verify your account, please use this code on first login:"."\n";
+				$message .= $verificationcode;
 
-				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $mobile, BETASMS_SENDER);
+				// $this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $reachmobile, BETASMS_SENDER);
 
 				$response['msg'] = "Verification Sent";
 			}else{
@@ -798,376 +1220,322 @@
 		
 		}
 
-		public function getorders() {
-			$orders = [];
+		public function getvessels() {
+			$vessels = [];
 
-			$stmt = $this->db->prepare('SELECT users.id, users.fname, users.lname, users.address, users.city, users.state, users.zip, users.email, users.mobile, users.enabled, users.verification, users.type, users.carowner, users.carowner_firstname, users.carowner_lastname, users.carowner_mobile, users.car_make, users.car_model, users.car_geartype, users.car_insurance, users.car_insurancetype, users.car_insurancecompany, users.car_paperscomplete, users.date, orders.id, orders.address, orders.time, orders.date, orders.duration, orders.orderdate, orders.cost, orders.driverassigned, orders.charged, drivers.name, drivers.email, drivers.mobile, drivers.picture, card_authorizations.id, card_authorizations.authorization_code, card_authorizations.card_type, card_authorizations.card_brand, card_authorizations.last4, card_authorizations.exp_month, card_authorizations.exp_year, card_authorizations.bin, card_authorizations.bank, card_authorizations.channel, card_authorizations.reusable, card_authorizations.country_code FROM orders JOIN users ON orders.userid = users.id LEFT JOIN card_authorizations ON users.id = card_authorizations.user_id LEFT JOIN drivers ON orders.driverassigned = drivers.id');
-	        $stmt->bind_result($riderid, $fname, $lname, $address, $city, $state, $zip, $email, $mobile, $enabled, $verification, $type, $carowner, $carowner_firstname, $carowner_lastname, $carowner_mobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurancetype, $car_insurancecompany, $car_paperscomplete, $userregdate, $orderid, $orderaddress, $ordertime, $orderdate, $orderduration, $orderregdate, $ordercost, $driverassigned, $charged, $drivername, $driveremail, $drivermobile, $driverpicture, $card_id, $authorization_code, $card_type, $card_brand, $last4, $exp_month, $exp_year, $bin, $bank, $channel, $reusable, $country_code);
+			$stmt = $this->db->prepare('SELECT * FROM vessels');
+	        $stmt->bind_result($id, $user_id, $vessel_availability, $daily_hire_rate, $vessel_photos, $imo_number, $vessel_name, $ownership_status, $current_location, $year_built, $specification_sheet, $preferred_flag, $classification, $classification_expiry, $purpose, $vessel_type, $bp, $bhp, $da, $ds, $dp, $maximum_speed, $dwt, $grt, $length, $breadth_moulded, $depth_moulded, $maximum_draft, $accommodation, $deck_crane, $helipad, $valid_ncdmb_class, $valid_ovidcmid, $created_at, $updated_at);
 			$result = $stmt->execute();
 			$stmt->store_result();
 
 			if ($stmt->num_rows >= "1") {
 
 		        	while($data = $stmt->fetch()){ 
-		        		    $order = [
-		        		    		'riderid' => $riderid,
-			        				'id' => $orderid,
-			        				'fname' => $fname,
-			        				'lname' => $lname,
-			        				'email' => $email,
-			        				'mobile' => $mobile,
-			        				'address' => $address,
-			        				'city' => $city,
-			        				'state' => $state,
-			        				'zip' => $zip,
-			        				'orderaddress' => $orderaddress,
-			        				'ordertime' => $ordertime,
-			        				'orderdate' => $orderdate,
-			        				'orderduration' => $orderduration,
-			        				'ordercost' => $ordercost,
-			        				'enabled' => $enabled,
-			        				'driverassigned' => $driverassigned,
-			        				'charged' => $charged,
-			        				'drivername' => $drivername,
-			        				'driveremail' => $driveremail,
-			        				'drivermobile' => $drivermobile,
-			        				'driverpicture' => $driverpicture,
-			        				'card_id' => $card_id,
-			        				'authorization_code' => $authorization_code,
-			        				'card_type' => $card_type,
-			        				'card_brand' => $card_brand,
-			        				'last4' => $last4,
-			        				'exp_month' => $exp_month,
-			        				'exp_year' => $exp_year,
-			        				'bin' => $bin,
-			        				'bank' => $bank,
-			        				'channel' => $channel,
-			        				'reusable' => $reusable,
-			        				'country_code' => $country_code
-			        			];
-
-			        array_push($orders, $order);
-			    }
-	        }
-
-		    return $orders;
-		}
-
-		public function getuserorders($userid) {
-			$orders = [];
-
-			$stmt = $this->db->prepare('SELECT users.fname, users.lname, users.address, users.city, users.state, users.zip, users.email, users.mobile, users.enabled, users.verification, users.type, users.carowner, users.carowner_firstname, users.carowner_lastname, users.carowner_mobile, users.car_make, users.car_model, users.car_geartype, users.car_insurance, users.car_insurancetype, users.car_insurancecompany, users.car_paperscomplete, users.date, orders.id, orders.address, orders.time, orders.date, orders.duration, orders.orderdate, orders.cost, orders.driverassigned, orders.charged, drivers.name, drivers.email, drivers.mobile, drivers.picture, card_authorizations.id, card_authorizations.authorization_code, card_authorizations.card_type, card_authorizations.card_brand, card_authorizations.last4, card_authorizations.exp_month, card_authorizations.exp_year, card_authorizations.bin, card_authorizations.bank, card_authorizations.channel, card_authorizations.reusable, card_authorizations.country_code FROM orders JOIN users ON orders.userid = users.id LEFT JOIN card_authorizations ON users.id = card_authorizations.user_id LEFT JOIN drivers ON orders.driverassigned = drivers.id WHERE orders.userid = ?');
-			$stmt->bind_param("i", $userid);
-	        $stmt->bind_result($fname, $lname, $address, $city, $state, $zip, $email, $mobile, $enabled, $verification, $type, $carowner, $carowner_firstname, $carowner_lastname, $carowner_mobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurancetype, $car_insurancecompany, $car_paperscomplete, $userregdate, $orderid, $orderaddress, $ordertime, $orderdate, $orderduration, $orderregdate, $ordercost, $driverassigned, $charged, $drivername, $driveremail, $drivermobile, $driverpicture, $card_id, $authorization_code, $card_type, $card_brand, $last4, $exp_month, $exp_year, $bin, $bank, $channel, $reusable, $country_code);
-			$result = $stmt->execute();
-			$stmt->store_result();
-
-			if ($stmt->num_rows >= "1") {
-
-		        	while($data = $stmt->fetch()){ 
-		        		    $order = [
-			        				'id' => $orderid,
-			        				'fname' => $fname,
-			        				'lname' => $lname,
-			        				'email' => $email,
-			        				'mobile' => $mobile,
-			        				'address' => $address,
-			        				'city' => $city,
-			        				'state' => $state,
-			        				'zip' => $zip,
-			        				'orderaddress' => $orderaddress,
-			        				'ordertime' => $ordertime,
-			        				'orderdate' => $orderdate,
-			        				'orderduration' => $orderduration,
-			        				'ordercost' => $ordercost,
-			        				'enabled' => $enabled,
-			        				'driverassigned' => $driverassigned,
-			        				'charged' => $charged,
-			        				'drivername' => $drivername,
-			        				'driveremail' => $driveremail,
-			        				'drivermobile' => $drivermobile,
-			        				'driverpicture' => $driverpicture,
-			        				'card_id' => $card_id,
-			        				'authorization_code' => $authorization_code,
-			        				'card_type' => $card_type,
-			        				'card_brand' => $card_brand,
-			        				'last4' => $last4,
-			        				'exp_month' => $exp_month,
-			        				'exp_year' => $exp_year,
-			        				'bin' => $bin,
-			        				'bank' => $bank,
-			        				'channel' => $channel,
-			        				'reusable' => $reusable,
-			        				'country_code' => $country_code
-			        			];
-
-			        array_push($orders, $order);
-			    }
-	        }
-
-		    return $orders;
-		}
-
-		public function getusers() {
-			$users = [];
-
-			$stmt = $this->db->prepare('SELECT users.id, users.fname, users.lname, users.address, users.city, users.state, users.zip, users.email, users.mobile, users.enabled, users.verification, users.type, users.carowner, users.carowner_firstname, users.carowner_lastname, users.carowner_mobile, users.car_make, users.car_model, users.car_geartype, users.car_insurance, users.car_insurancetype, users.car_insurancecompany, users.car_paperscomplete, users.date, count(orders.id) FROM users LEFT JOIN orders ON users.id = orders.userid GROUP BY users.id');
-	        $stmt->bind_result($id, $fname, $lname, $address, $city, $state, $zip, $email, $mobile, $enabled, $verification, $type, $carowner, $carowner_firstname, $carowner_lastname, $carowner_mobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurancetype, $car_insurancecompany, $car_paperscomplete, $userregdate, $tripcount);
-			$result = $stmt->execute();
-			$stmt->store_result();
-
-			if ($stmt->num_rows >= "1") {
-
-		        	while($data = $stmt->fetch()){ 
-		        		    $user = [
+		        		    $vessel = [
 			        				'id' => $id,
-			        				'fname' => $fname,
-			        				'lname' => $lname,
-			        				'email' => $email,
-			        				'mobile' => $mobile,
-			        				'address' => $address,
-			        				'city' => $city,
-			        				'state' => $state,
-			        				'zip' => $zip,
-			        				'tripcount' => $tripcount,
-			        				'verification' => $verification,
-			        				'enabled' => $enabled
+			        				'user_id' => $user_id,
+			        				'vessel_availability' => $vessel_availability,
+			        				'daily_hire_rate' => $daily_hire_rate,
+			        				'vessel_photos' => $vessel_photos,
+			        				'imo_number' => $imo_number,
+			        				'vessel_name' => $vessel_name,
+			        				'ownership_status' => $ownership_status,
+			        				'current_location' => $current_location,
+			        				'year_built' => $year_built,
+			        				'specification_sheet' => $specification_sheet,
+			        				'preferred_flag' => $preferred_flag,
+			        				'classification' => $classification,
+			        				'classification_expiry' => $classification_expiry,
+			        				'purpose' => $purpose,
+			        				'vessel_type' => $vessel_type,
+			        				'bp' => $bp,
+			        				'bhp' => $bhp,
+			        				'da' => $da,
+			        				'ds' => $ds,
+			        				'dp' => $dp,
+			        				'maximum_speed' => $maximum_speed,
+			        				'dwt' => $dwt,
+			        				'grt' => $grt,
+			        				'length' => $length,
+			        				'breadth_moulded' => $breadth_moulded,
+			        				'depth_moulded' => $depth_moulded,
+			        				'maximum_draft' => $maximum_draft,
+			        				'accommodation' => $accommodation,
+			        				'deck_crane' => $deck_crane,
+			        				'helipad' => $helipad,
+			        				'valid_ncdmb_class' => $valid_ncdmb_class,
+			        				'valid_ovidcmid' => $valid_ovidcmid,
+			        				'created_at' => $created_at,
+			        				'updated_at' => $updated_at
 			        			];
 
-			        array_push($users, $user);
+			        array_push($vessels, $vessel);
 			    }
 	        }
 
-		    return $users;
+		    return $vessels;
 		}
 
-		public function getdrivers() {
-			$drivers = [];
-
-			$stmt = $this->db->prepare('SELECT * FROM drivers');
-	        $stmt->bind_result($id, $name, $email, $mobile, $picture, $enabled, $date);
+		public function getvessel($id) {
+			$stmt = $this->db->prepare('SELECT * FROM vessels WHERE id = ?');
+			$stmt->bind_param("i", $id);
+	        $stmt->bind_result($id, $user_id, $vessel_availability, $daily_hire_rate, $vessel_photos, $imo_number, $vessel_name, $ownership_status, $current_location, $year_built, $specification_sheet, $preferred_flag, $classification, $classification_expiry, $purpose, $vessel_type, $bp, $bhp, $da, $ds, $dp, $maximum_speed, $dwt, $grt, $length, $breadth_moulded, $depth_moulded, $maximum_draft, $accommodation, $deck_crane, $helipad, $valid_ncdmb_class, $valid_ovidcmid, $created_at, $updated_at);
 			$result = $stmt->execute();
 			$stmt->store_result();
 
 			if ($stmt->num_rows >= "1") {
 
 		        	while($data = $stmt->fetch()){ 
-		        		    $driver = [
+		        		    $vessel = [
 			        				'id' => $id,
-			        				'name' => $name,
-			        				'email' => $email,
-			        				'mobile' => $mobile,
-			        				'picture' => $picture,
-			        				'enabled' => $enabled,
-			        				'date' => $date
+			        				'user_id' => $user_id,
+			        				'vessel_availability' => $vessel_availability,
+			        				'daily_hire_rate' => $daily_hire_rate,
+			        				'vessel_photos' => $vessel_photos,
+			        				'imo_number' => $imo_number,
+			        				'vessel_name' => $vessel_name,
+			        				'ownership_status' => $ownership_status,
+			        				'current_location' => $current_location,
+			        				'year_built' => $year_built,
+			        				'specification_sheet' => $specification_sheet,
+			        				'preferred_flag' => $preferred_flag,
+			        				'classification' => $classification,
+			        				'classification_expiry' => $classification_expiry,
+			        				'purpose' => $purpose,
+			        				'vessel_type' => $vessel_type,
+			        				'bp' => $bp,
+			        				'bhp' => $bhp,
+			        				'da' => $da,
+			        				'ds' => $ds,
+			        				'dp' => $dp,
+			        				'maximum_speed' => $maximum_speed,
+			        				'dwt' => $dwt,
+			        				'grt' => $grt,
+			        				'length' => $length,
+			        				'breadth_moulded' => $breadth_moulded,
+			        				'depth_moulded' => $depth_moulded,
+			        				'maximum_draft' => $maximum_draft,
+			        				'accommodation' => $accommodation,
+			        				'deck_crane' => $deck_crane,
+			        				'helipad' => $helipad,
+			        				'valid_ncdmb_class' => $valid_ncdmb_class,
+			        				'valid_ovidcmid' => $valid_ovidcmid,
+			        				'created_at' => $created_at,
+			        				'updated_at' => $updated_at
 			        			];
-
-			        array_push($drivers, $driver);
 			    }
 	        }
 
-		    return $drivers;
+		    return $vessel;
 		}
 
-		public function addDriver($name, $email, $mobile, $picture){
-			$response = [];
-			$date = new DateTime(null, new DateTimeZone('Africa/Lagos'));
-			$created_at = $date->getTimestamp();
+		public function getoffers() {
+			$offers = [];
 
-			$check_driver = $this->db->prepare("SELECT * FROM drivers WHERE email = ? OR mobile = ?");
-			$check_driver->bind_param("ss", strtolower($email), $mobile);
-			$check_driver->execute();
-			$check_driver->store_result();
-        	$check_driver->bind_result($dbid, $dbname, $dbemail, $dbmobile, $dbpicture, $dbdate);
-			$check_driver->fetch();
+			$stmt = $this->db->prepare('SELECT vessels.id, vessels.user_id, vessels.vessel_availability, vessels.daily_hire_rate, vessels.vessel_photos, vessels.imo_number, vessels.vessel_name, vessels.ownership_status, vessels.current_location, vessels.year_built, vessels.specification_sheet, vessels.preferred_flag, vessels.classification, vessels.classification_expiry, vessels.purpose, vessels.vessel_type, vessels.bp, vessels.bhp, vessels.da, vessels.ds, vessels.dp, vessels.maximum_speed, vessels.dwt, vessels.grt, vessels.length, vessels.breadth_moulded, vessels.depth_moulded, vessels.maximum_draft, vessels.accommodation, vessels.deck_crane, vessels.helipad, vessels.valid_ncdmb_class, vessels.valid_ovidcmid, vessels.created_at, vessels.updated_at, offers.id, offers.charter_id, offers.vessel_id, offers.created_at, users.id, shipowner.businessname  FROM offers LEFT JOIN charters ON offers.charter_id = charters.id LEFT JOIN vessels ON offers.vessel_id = vessels.id LEFT JOIN users ON vessels.user_id = users.id LEFT JOIN shipowner ON users.id = shipowner.userid');
+	        $stmt->bind_result($vessels_id, $vessels_user_id, $vessels_vessel_availability, $vessels_daily_hire_rate, $vessels_vessel_photos, $vessels_imo_number, $vessels_vessel_name, $vessels_ownership_status, $vessels_current_location, $vessels_year_built, $vessels_specification_sheet, $vessels_preferred_flag, $vessels_classification, $vessels_classification_expiry, $vessels_purpose, $vessels_vessel_type, $vessels_bp, $vessels_bhp, $vessels_da, $vessels_ds, $vessels_dp, $vessels_maximum_speed, $vessels_dwt, $vessels_grt, $vessels_length, $vessels_breadth_moulded, $vessels_depth_moulded, $vessels_maximum_draft, $vessels_accommodation, $vessels_deck_crane, $vessels_helipad, $vessels_valid_ncdmb_class, $vessels_valid_ovidcmid, $vessels_created_at, $vessels_updated_at, $offers_id, $offers_charter_id, $offers_vessel_id, $offers_created_at, $user_id, $user_name);
+			$result = $stmt->execute();
+			$stmt->store_result();
 
-			$user_check = $check_driver->num_rows();
+			if ($stmt->num_rows >= "1") {
 
-			if($user_check > 0){
+		        	while($data = $stmt->fetch()){ 
+		        		    $offer = [
+			        				'vessels_id' => $vessels_id,
+			        				'vessels_user_id' => $vessels_user_id,
+			        				'vessels_vessel_availability' => $vessels_vessel_availability,
+			        				'vessels_daily_hire_rate' => $vessels_daily_hire_rate,
+			        				'vessels_vessel_photos' => $vessels_vessel_photos,
+			        				'vessels_imo_number' => $vessels_imo_number,
+			        				'vessels_vessel_name' => $vessels_vessel_name,
+			        				'vessels_ownership_status' => $vessels_ownership_status,
+			        				'vessels_current_location' => $vessels_current_location,
+			        				'vessels_year_built' => $vessels_year_built,
+			        				'vessels_specification_sheet' => $vessels_specification_sheet,
+			        				'vessels_preferred_flag' => $vessels_preferred_flag,
+			        				'vessels_classification' => $vessels_classification,
+			        				'vessels_classification_expiry' => $vessels_classification_expiry,
+			        				'vessels_purpose' => $vessels_purpose,
+			        				'vessels_vessel_type' => $vessels_vessel_type,
+			        				'vessels_bp' => $vessels_bp,
+			        				'vessels_bhp' => $vessels_bhp,
+			        				'vessels_da' => $vessels_da,
+			        				'vessels_ds' => $vessels_ds,
+			        				'vessels_dp' => $vessels_dp,
+			        				'vessels_maximum_speed' => $vessels_maximum_speed,
+			        				'vessels_dwt' => $vessels_dwt,
+			        				'vessels_grt' => $vessels_grt,
+			        				'vessels_length' => $vessels_length,
+			        				'vessels_breadth_moulded' => $vessels_breadth_moulded,
+			        				'vessels_depth_moulded' => $vessels_depth_moulded,
+			        				'vessels_maximum_draft' => $vessels_maximum_draft,
+			        				'vessels_accommodation' => $vessels_accommodation,
+			        				'vessels_deck_crane' => $vessels_deck_crane,
+			        				'vessels_helipad' => $vessels_helipad,
+			        				'vessels_valid_ncdmb_class' => $vessels_valid_ncdmb_class,
+			        				'vessels_valid_ovidcmid' => $vessels_valid_ovidcmid,
+			        				'vessels_created_at' => $vessels_created_at,
+			        				'vessels_updated_at' => $vessels_updated_at,
+			        				'offers_id' => $offers_id,
+			        				'offers_charter_id' => $offers_charter_id,
+			        				'offers_vessel_id' => $offers_vessel_id,
+			        				'offers_created_a' => $offers_created_at,
+			        				'user_id' => $user_id,
+			        				'user_name' => $user_name
+			        			];
 
-				if((strtolower($email) == strtolower($dbemail)) && ($mobile == $dbmobile)){
-					$response['msg'] = "Both email and mobile number have a driver account linked to them";
-				}else if($email == $dbemail){
-					$response['msg'] = "Email account has a driver account linked to it";
-				}else if($mobile == $dbmobile){
-					$response['msg'] = "Mobile number has a driver account linked to it";
-				}
+			        array_push($offers, $offer);
+			    }
+	        }
 
-			}else{
-
-				// Uploading driver profile picture
-				$random_hash = date('YmdHis',time()).mt_rand();
-				$extension = explode('/', explode(';', $picture)[0])[1];
-
-				$profile_photo_path = '../images/drivers/'.$random_hash.'.'.$extension;
-				$image = $this->base64_to_image( $picture, $profile_photo_path );
-
-				$register = $this->db->prepare("INSERT INTO drivers(name, email, mobile, picture, date) VALUES(?, ?, ?, ?, ?)");
-				$register->bind_param("sssss", $name, strtolower($email), $mobile, $profile_photo_path, $created_at);
-
-				$content = 	array(
-								array(
-									'name' => 'name', 'content' => $name
-								),
-								array(
-									'name' => 'mobile', 'content' => $mobile
-								)
-							);
-
-				$to = 	array(
-							'email' => $email,
-							'name' => $name
-						);
-
-				$this->sendMailSendgrid('c56ca260-fc8c-426c-ad47-4107d62bf300', $content, $to, 'Backseat.ng added you as a driver');
-
-				#Send sms to user
-				$message = "Backseat.ng added you as a driver!";
-				$message .= "\n\n";
-				$message .= "Going forward, We will assign trips to you. You will get both and email and text messages when you have requests."."\n";
-
-				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $mobile, BETASMS_SENDER);
-
-				if($register->execute()){
-					$response['msg'] = 'Driver added';
-				}else{
-					$response['msg'] = 'Something went wrong';
-				}
-			}
-
-			return $response;
+		    return $offers;
 		}
 
-		public function assignDriver($riderfname, $riderlname, $ridernumber, $rideremail, $orderid, $orderaddress, $ordertime, $orderdate, $orderduration, $ordercost, $driverid, $drivername, $driveremail, $drivermobile){
-			$response = [];
+		public function getcharterrequests() {
+			$charters = [];
 
-			$driverassigned = $this->db->prepare("SELECT * FROM orders WHERE id = ?");
-			$driverassigned->bind_param("i", $orderid);
-			$driverassigned->execute();
-			$driverassigned->store_result();
-        	$driverassigned->bind_result($dbid, $dbaddress, $dbdestination, $dbtime, $dbdate, $dbduration, $dbcost, $dbdistance, $dbuserid, $dbdriverassigned, $dbcharged, $dborderdate);
-			$driverassigned->fetch();
-				
-			$content = 	array(
-							array(
-								'name' => 'drivername', 'content' => $drivername
-							),
-							array(
-								'name' => 'riderfname', 'content' => $riderfname
-							),
-							array(
-								'name' => 'riderlname', 'content' => $riderlname
-							),
-							array(
-								'name' => 'ridernumber', 'content' => $ridernumber
-							),
-							array(
-								'name' => 'rideremail', 'content' => $rideremail
-							),
-							array(
-								'name' => 'orderaddress', 'content' => $orderaddress
-							),
-							array(
-								'name' => 'ordertime', 'content' => $ordertime
-							),
-							array(
-								'name' => 'orderdate', 'content' => $orderdate
-							),
-							array(
-								'name' => 'orderduration', 'content' => $orderduration
-							),
-							array(
-								'name' => 'ordercost', 'content' => $ordercost
-							)
-						);
+			$stmt = $this->db->prepare('SELECT * FROM charters');
+	        $stmt->bind_result($id, $user_id, $preferred_shipowner_category, $vessel_type, $identity, $preferred_flag, $max_age, $firm_duration, $tonnage_dwt_min, $tonnage_dwt_max, $tonnage_grt_min, $tonnage_grt_max, $expected_mob_date, $preferred_daily_hire_rate, $location_of_operation, $scope_of_work, $performance_sbp_bp_min, $performance_sbp_bp_max, $performance_sbp_bhp_min, $performance_sbp_bhp_max, $performance_sbp_speed_min, $performance_sbp_speed_max, $dimensions_length_min, $dimensions_length_max, $dimensions_breadth_min, $dimensions_breadth_max, $dimensions_depth_min, $dimensions_depth_max, $dimensions_draft_min, $dimensions_draft_max, $end_client, $reg_doc_class, $reg_doc_ncdmb, $dec_cargo_cleardeckarea_min, $dec_cargo_cleardeckarea_max, $dec_cargo_deckstrength_min, $dec_cargo_deckstrength_max, $dec_cargo_deckcrane, $dp_one, $dp_two, $valid_ovid_cmid, $add_inspection, $purpose, $port_of_delivery, $port_of_redelivery, $fuel_consumption_on_tow, $accommodation_passengers_min, $accommodation_passengers_max, $accommodation_hospital, $helipad, $additional_data, $vessel_specification_document, $created_at, $updated_at);
+			$result = $stmt->execute();
+			$stmt->store_result();
 
-			$to = 	array(
-						'email' => $driveremail,
-						'name' => $drivername
-					);
+			if ($stmt->num_rows >= "1") {
 
-			$this->sendMailSendgrid('b8684c20-cc67-466a-9f75-375871e17e34', $content, $to, 'Backseat.ng: Your service is needed!');
+		        	while($data = $stmt->fetch()){ 
+		        		    $charter = [
+		        		    		'id' => $id,
+		        		    		'user_id' => $user_id,
+		        		    		'preferred_shipowner_category' => $preferred_shipowner_category,
+		        		    		'vessel_type' => $vessel_type,
+		        		    		'identity' => $identity,
+		        		    		'preferred_flag' => $preferred_flag,
+		        		    		'max_age' => $max_age,
+		        		    		'firm_duration' => $firm_duration,
+		        		    		'tonnage_dwt_min' => $tonnage_dwt_min,
+		        		    		'tonnage_dwt_max' => $tonnage_dwt_max,
+		        		    		'tonnage_grt_min' => $tonnage_grt_min,
+		        		    		'tonnage_grt_max' => $tonnage_grt_max,
+		        		    		'expected_mob_date' => $expected_mob_date,
+		        		    		'preferred_daily_hire_rate' => $preferred_daily_hire_rate,
+		        		    		'location_of_operation' => $location_of_operation,
+		        		    		'scope_of_work' => $scope_of_work,
+		        		    		'performance_sbp_bp_min' => $performance_sbp_bp_min,
+		        		    		'performance_sbp_bp_max' => $performance_sbp_bp_max,
+		        		    		'performance_sbp_bhp_min' => $performance_sbp_bhp_min,
+		        		    		'performance_sbp_bhp_max' => $performance_sbp_bhp_max,
+		        		    		'performance_sbp_speed_min' => $performance_sbp_speed_min,
+		        		    		'performance_sbp_speed_max' => $performance_sbp_speed_max,
+		        		    		'dimensions_length_min' => $dimensions_length_min,
+		        		    		'dimensions_length_max' => $dimensions_length_max,
+		        		    		'dimensions_breadth_min' => $dimensions_breadth_min,
+		        		    		'dimensions_breadth_max' => $dimensions_breadth_max,
+		        		    		'dimensions_depth_min' => $dimensions_depth_min,
+		        		    		'dimensions_depth_max' => $dimensions_depth_max,
+		        		    		'dimensions_draft_min' => $dimensions_draft_min,
+		        		    		'dimensions_draft_max' => $dimensions_draft_max,
+		        		    		'end_client' => $end_client,
+		        		    		'reg_doc_class' => $reg_doc_class,
+		        		    		'reg_doc_ncdmb' => $reg_doc_ncdmb,
+		        		    		'dec_cargo_cleardeckarea_min' => $dec_cargo_cleardeckarea_min,
+		        		    		'dec_cargo_cleardeckarea_max' => $dec_cargo_cleardeckarea_max,
+		        		    		'dec_cargo_deckstrength_min' => $dec_cargo_deckstrength_min,
+		        		    		'dec_cargo_deckstrength_max' => $dec_cargo_deckstrength_max,
+		        		    		'dec_cargo_deckcrane' => $dec_cargo_deckcrane,
+		        		    		'dp_one' => $dp_one,
+		        		    		'dp_two' => $dp_two,
+		        		    		'valid_ovid_cmid' => $valid_ovid_cmid,
+		        		    		'add_inspection' => $add_inspection,
+		        		    		'purpose' => $purpose,
+		        		    		'port_of_delivery' => $port_of_delivery,
+		        		    		'port_of_redelivery' => $port_of_redelivery,
+		        		    		'fuel_consumption_on_tow' => $fuel_consumption_on_tow,
+		        		    		'accommodation_passengers_min' => $accommodation_passengers_min,
+		        		    		'accommodation_passengers_max' => $accommodation_passengers_max,
+		        		    		'accommodation_hospital' => $accommodation_hospital,
+		        		    		'helipad' => $helipad,
+		        		    		'additional_data' => $additional_data,
+		        		    		'vessel_specification_document' => $vessel_specification_document,
+		        		    		'created_at' => $created_at,
+		        		    		'updated_at' => $updated_at
+			        			];
 
-			#Send sms to user
-			$message = "Backseat.ng: ".$riderfname." needs your service!";
-			$message .= "\n\n";
-			$message .= "Here are the details of the trip:"."\n";
-			$message .= "Rider name: ".$riderfname." ".$riderlname."\n";
-			$message .= "Rider number: ".$ridernumber."\n";
-			$message .= "Pickup address: ".$orderaddress."\n";
-			$message .= "Pickup time: ".$ordertime."\n";
-			$message .= "Pickup date: ".$orderdate."\n";
-			$message .= "Order duration: ".$orderduration."\n";
-			$message .= "Order cost: ".$ordercost."\n";
+			        array_push($charters, $charter);
+			    }
+	        }
 
-			$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $drivermobile, BETASMS_SENDER);
+		    return $charters;
+		}
 
-			if($dbdriverassigned == 0){
-				$content = 	array(
-								array(
-									'name' => 'riderfname', 'content' => $riderfname
-								),
-								array(
-									'name' => 'drivername', 'content' => $drivername
-								),
-								array(
-									'name' => 'drivermobile', 'content' => $drivermobile
-								)
-							);
+		public function getcharterrequest($id) {
+			$stmt = $this->db->prepare('SELECT * FROM charters WHERE id = ?');
+			$stmt->bind_param("i", $id);
+	        $stmt->bind_result($charter_id, $user_id, $preferred_shipowner_category, $vessel_type, $identity, $preferred_flag, $max_age, $firm_duration, $tonnage_dwt_min, $tonnage_dwt_max, $tonnage_grt_min, $tonnage_grt_max, $expected_mob_date, $preferred_daily_hire_rate, $location_of_operation, $scope_of_work, $performance_sbp_bp_min, $performance_sbp_bp_max, $performance_sbp_bhp_min, $performance_sbp_bhp_max, $performance_sbp_speed_min, $performance_sbp_speed_max, $dimensions_length_min, $dimensions_length_max, $dimensions_breadth_min, $dimensions_breadth_max, $dimensions_depth_min, $dimensions_depth_max, $dimensions_draft_min, $dimensions_draft_max, $end_client, $reg_doc_class, $reg_doc_ncdmb, $dec_cargo_cleardeckarea_min, $dec_cargo_cleardeckarea_max, $dec_cargo_deckstrength_min, $dec_cargo_deckstrength_max, $dec_cargo_deckcrane, $dp_one, $dp_two, $valid_ovid_cmid, $add_inspection, $purpose, $port_of_delivery, $port_of_redelivery, $fuel_consumption_on_tow, $accommodation_passengers_min, $accommodation_passengers_max, $accommodation_hospital, $helipad, $additional_data, $vessel_specification_document, $created_at, $updated_at);
+			$result = $stmt->execute();
+			$stmt->store_result();
 
-				$to = 	array(
-							'email' => $driveremail,
-							'name' => $drivername
-						);
+			if ($stmt->num_rows >= "1") {
 
-				$this->sendMailSendgrid('fb1cce92-da32-4a47-8f9f-b53ea2e89c48', $content, $to, 'Backseat.ng: Your personal chauffeur here!');
+		        	while($data = $stmt->fetch()){ 
+		        		    $charter = [
+		        		    		'id' => $charter_id,
+		        		    		'user_id' => $user_id,
+		        		    		'preferred_shipowner_category' => $preferred_shipowner_category,
+		        		    		'vessel_type' => $vessel_type,
+		        		    		'identity' => $identity,
+		        		    		'preferred_flag' => $preferred_flag,
+		        		    		'max_age' => $max_age,
+		        		    		'firm_duration' => $firm_duration,
+		        		    		'tonnage_dwt_min' => $tonnage_dwt_min,
+		        		    		'tonnage_dwt_max' => $tonnage_dwt_max,
+		        		    		'tonnage_grt_min' => $tonnage_grt_min,
+		        		    		'tonnage_grt_max' => $tonnage_grt_max,
+		        		    		'expected_mob_date' => $expected_mob_date,
+		        		    		'preferred_daily_hire_rate' => $preferred_daily_hire_rate,
+		        		    		'location_of_operation' => $location_of_operation,
+		        		    		'scope_of_work' => $scope_of_work,
+		        		    		'performance_sbp_bp_min' => $performance_sbp_bp_min,
+		        		    		'performance_sbp_bp_max' => $performance_sbp_bp_max,
+		        		    		'performance_sbp_bhp_min' => $performance_sbp_bhp_min,
+		        		    		'performance_sbp_bhp_max' => $performance_sbp_bhp_max,
+		        		    		'performance_sbp_speed_min' => $performance_sbp_speed_min,
+		        		    		'performance_sbp_speed_max' => $performance_sbp_speed_max,
+		        		    		'dimensions_length_min' => $dimensions_length_min,
+		        		    		'dimensions_length_max' => $dimensions_length_max,
+		        		    		'dimensions_breadth_min' => $dimensions_breadth_min,
+		        		    		'dimensions_breadth_max' => $dimensions_breadth_max,
+		        		    		'dimensions_depth_min' => $dimensions_depth_min,
+		        		    		'dimensions_depth_max' => $dimensions_depth_max,
+		        		    		'dimensions_draft_min' => $dimensions_draft_min,
+		        		    		'dimensions_draft_max' => $dimensions_draft_max,
+		        		    		'end_client' => $end_client,
+		        		    		'reg_doc_class' => $reg_doc_class,
+		        		    		'reg_doc_ncdmb' => $reg_doc_ncdmb,
+		        		    		'dec_cargo_cleardeckarea_min' => $dec_cargo_cleardeckarea_min,
+		        		    		'dec_cargo_cleardeckarea_max' => $dec_cargo_cleardeckarea_max,
+		        		    		'dec_cargo_deckstrength_min' => $dec_cargo_deckstrength_min,
+		        		    		'dec_cargo_deckstrength_max' => $dec_cargo_deckstrength_max,
+		        		    		'dec_cargo_deckcrane' => $dec_cargo_deckcrane,
+		        		    		'dp_one' => $dp_one,
+		        		    		'dp_two' => $dp_two,
+		        		    		'valid_ovid_cmid' => $valid_ovid_cmid,
+		        		    		'add_inspection' => $add_inspection,
+		        		    		'purpose' => $purpose,
+		        		    		'port_of_delivery' => $port_of_delivery,
+		        		    		'port_of_redelivery' => $port_of_redelivery,
+		        		    		'fuel_consumption_on_tow' => $fuel_consumption_on_tow,
+		        		    		'accommodation_passengers_min' => $accommodation_passengers_min,
+		        		    		'accommodation_passengers_max' => $accommodation_passengers_max,
+		        		    		'accommodation_hospital' => $accommodation_hospital,
+		        		    		'helipad' => $helipad,
+		        		    		'additional_data' => $additional_data,
+		        		    		'vessel_specification_document' => $vessel_specification_document,
+		        		    		'created_at' => $created_at,
+		        		    		'updated_at' => $updated_at
+			        			];
+			    }
+	        }
 
-				#Send sms to user
-				$message = "Backseat.ng: You got a driver!";
-				$message .= "\n\n";
-				$message .= "Here are the details of your driver:"."\n";
-				$message .= "Driver name: ".$drivername."\n";
-				$message .= "Driver number: ".$drivermobile."\n";
-
-				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $ridernumber, BETASMS_SENDER);
-			}else{
-				$content = 	array(
-								array(
-									'name' => 'riderfname', 'content' => $riderfname
-								),
-								array(
-									'name' => 'drivername', 'content' => $drivername
-								),
-								array(
-									'name' => 'drivermobile', 'content' => $drivermobile
-								)
-							);
-
-				$to = 	array(
-							'email' => $driveremail,
-							'name' => $drivername
-						);
-
-				$this->sendMailSendgrid('f721abeb-b6f2-4133-b316-45f08115dbb4', $content, $to, 'Backseat.ng: Sorry, we changed your chauffeur!');
-
-				#Send sms to user
-				$message = "Backseat.ng: Sorry, we changed your chauffeur!";
-				$message .= "\n\n";
-				$message .= "Here are the details of your new driver:"."\n";
-				$message .= "Driver name: ".$drivername."\n";
-				$message .= "Driver number: ".$drivermobile."\n";
-
-				$this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $ridernumber, BETASMS_SENDER);
-			}
-
-			$register = $this->db->prepare("UPDATE orders SET driverassigned = ? WHERE id = ?");
-			$register->bind_param("ii", $driverid, $orderid);
-
-			if($register->execute()){
-				$response['msg'] = 'Driver Assigned';
-			}
-
-			return $response;
+		    return $charter;
 		}
 		
 		public function delete($from, $id){

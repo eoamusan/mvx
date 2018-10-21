@@ -1,13 +1,27 @@
 .radiolist {
-  width: 100%;
-  list-style: none;
-  padding-left: 0;
+    width: 100%;
+    list-style: none;
+    padding-left: 0;
+    padding-bottom: 1em;
+    margin-bottom: 0;
 }
 
 .radiolist__item {
   position: relative;
   width: 50%;
   float: left;
+}
+.radiolist__item.items_3 {
+  width: calc(100% / 3);
+}
+.radiolist__item.items_4 {
+  width: calc(100% / 4);
+}
+.radiolist__item.items_8_less {
+  width: calc((100% - 60px) / 8);
+}
+.radiolist__item.items_8_more {
+  width: calc(((100% - 60px) / 8) + 60px);
 }
 .radiolist__item:hover > .radiolabel {
   color: #00AFEF;

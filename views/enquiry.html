@@ -1,0 +1,999 @@
+<div class="mainArea" ng-class="{'showingLink': showLinks}">
+	<div class="relative-container">
+		<div class="dim" ng-class="{show_dim: showLinks}" ng-click="showLink();"></div>
+		<div class="mvx_header description_pages">
+			<div class="logo" ng-click="removeGoHome();">
+				<img src="assets/images/logo_stacked.png" height="100%">
+			</div>
+			<div class="mvx_headeraction" ng-class="{expanded: globals.currentUser}">
+				<div class="mvx_searchbarcontainer">
+					<div class="cover">
+						<div class="mvx_searchinput">
+							<input />
+						</div>
+						<div class="mvx_searchbtn">
+							<span class="center_item">SEARCH</span>
+						</div>
+					</div>
+				</div>
+				<div class="mvx_links" ng-class="{'fixed': showLinks}">
+					<div class="mvx_morelinks">
+						<div class="nowrap mvx_morelink join" ng-click="signup();" ng-if="!globals.currentUser">
+							<span>JOIN MVXCHANGE</span>
+						</div>
+						<div class="nowrap mvx_morelink signin" ng-click="login();" ng-if="!globals.currentUser">
+							<span>SIGN IN</span>
+						</div>
+						<div class="nowrap mvx_morelink_logged" ng-if="globals.currentUser">
+							<div class="profile" style="border: 1px solid {{getColor(globals.currentUser.userdata.data.display_name)}};">
+								<span class="center_item" style="color: {{getColor(globals.currentUser.userdata.data.display_name)}};">
+									{{getInitials(globals.currentUser.userdata.data.display_name)}}
+								</span>
+							</div>
+							<div class="profile_access" style="width: calc(100% - 71px); float: left; padding-left: 10px;">
+								<div style="width: 100%; height: 25px; padding-top: 5px;" class="text_truncate">
+									{{getName(globals.currentUser.userdata.data.display_name)}}
+								</div>
+								<div class="account_actions text_truncate">
+									<div class="account_action left" ng-click="dashboard();">DASHBOARD</div><div> \ </div><div class="account_action right" ng-click="logout();">LOGOUT</div>
+								</div>
+							</div>
+						</div>
+						<div class="mvx_toggle float-right" ng-class="{'showLinks': showLinks}" ng-click="showLink();">
+							<img src="assets/images/ham_black.png" height="28" class="center_item_vertically ham" style="right: 0;">
+							<img src="assets/images/icons/close.png" height="30" class="center_item_vertically close-flyout" style="right: 5px;">
+						</div>
+					</div>
+					<div class="nowrap mvx_link addad" ng-if="(globals.currentUser.userdata.data.category == 'Procurement Vendor / Supplier') || !globals.currentUser">
+						<span>POST PROCUREMENT AD</span>
+					</div>
+					<div class="nowrap mvx_link addvessel" ng-click="addvessel();" ng-if="(globals.currentUser.userdata.data.category == 'Ship Owner') || !globals.currentUser">
+						<span>POST A VESSEL</span>
+					</div>
+					<div class="nowrap mvx_link addvessel" ng-click="addvessel();" ng-if="(globals.currentUser.userdata.data.category == 'Charterer') && globals.currentUser">
+						<span>CHARTER VESSEL</span>
+					</div>
+					<div class="nowrap mvx_link addvessel" ng-if="globals.currentUser" ng-click="dashboard();">
+						<span>DASHBOARD</span>
+					</div>
+				</div>
+				<div class="mvx_search">
+					<i class="material-icons center_item">search</i>
+				</div>
+			</div>
+		</div>
+		<div class="mvx_descriptionarea">
+			<div class="product_tag">
+				OFFER VESSEL
+			</div>
+			<div class="product_title">
+				{{charter.vessel_type}}
+			</div>
+			<div class="product_area">
+				<div class="product_details" style="margin-left: 0; width: 100%;">
+					<div class="product_section">
+						<div class="icon">
+							<i class="material-icons center_item_vertically">person</i>
+						</div>
+						<div class="label">
+							AUTHOR
+						</div>
+						<div class="content">
+							OLUWATOBI AMUSAN (SHIP MOGUL)
+						</div>
+						<div class="contact">
+							<span class="center_item nowrap">CHAT NOW</span>
+						</div>
+						<div class="clear-both"></div>
+					</div>
+					<div class="product_section">
+						<div class="icon">
+							<i class="material-icons center_item_vertically">timelapse</i>
+						</div>
+						<div class="label">
+							TIME CREATED
+						</div>
+						<div class="content">
+							{{charter.created_at * 1000 | date : 'medium'}}
+						</div>
+						<div class="clear-both"></div>
+					</div>
+					<div class="product_information">
+						<div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    PREFERRED SHIP-OWNER CATEGORY
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.preferred_shipowner_category}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    VESSEL TYPE
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.vessel_type}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    PREFERRED FLAG
+				                </div>
+				                <div class="inputcontainer" style="padding-bottom: 10px;">
+				                    <div class="flag-icon">
+				                        <img src="assets/images/icons/countries/{{charter.preferred_flag | lowercase}}.png">
+				                    </div>
+				                    <div class="flag-label">
+				                        {{countries[charter.preferred_flag]}}
+				                    </div>
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    CHARTERER IDENTITY
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.identity}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    PREFERRED DAILY HIRE RATE
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.preferred_daily_hire_rate}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    MAX AGE
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.max_age}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    LOCATION OF OPERATION
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.location_of_operation}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    FIRM DURATION
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.firm_duration}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    SCOPE OF WORK
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.scope_of_work}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    DEADWEIGHT TONNAGE (DWT) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.tonnage_dwt_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    DEADWEIGHT TONNAGE (DWT) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.tonnage_dwt_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    GROSS TONNAGE (GRT) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.tonnage_grt_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    GROSS TONNAGE (GRT) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.tonnage_grt_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    BOLLARD PULL (BP) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.performance_sbp_bp_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    BOLLARD PULL (BP) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.performance_sbp_bp_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    BRAKE HORSE POWER (BHP) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.performance_sbp_bhp_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    BRAKE HORSE POWER (BHP) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.performance_sbp_bhp_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    SPEED (KNOTS) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.performance_sbp_speed_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    SPEED (KNOTS) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.performance_sbp_speed_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    LENGTH OA (METRES) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_length_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    LENGTH OA (METRES) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_length_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    BREADTH MOULDED (METRES) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_breadth_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    BREADTH MOULDED (METRES) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_breadth_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    DEPTH MOULDED (METRES) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_depth_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    DEPTH MOULDED (METRES) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_depth_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    DRAFT (METRES) - MIN
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_draft_min}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    DRAFT (METRES) - MAX
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.dimensions_draft_max}}
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    EXPECTED MOBILIZATION DATE
+				                </div>
+				                <div class="inputcontainer">
+				                    {{charter.expected_mob_date}}
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    END CLIENT
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.end_client">
+				                    {{charter.end_client}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.end_client">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    PURPOSE
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.purpose">
+				                    {{charter.purpose}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.purpose">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    REGISTRATION / DOCUMENTATION CLASS
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.reg_doc_class">
+				                    {{charter.reg_doc_class}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.reg_doc_class">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    NCDMB
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.reg_doc_ncdmb">
+				                    {{charter.reg_doc_ncdmb}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.reg_doc_ncdmb">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">   
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    PORTS OF DELIVERY
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.port_of_delivery">
+				                    {{charter.port_of_delivery}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.port_of_delivery">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    PORTS OF RE-DELIVERY
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.port_of_redelivery">
+				                    {{charter.port_of_redelivery}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.port_of_redelivery">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    CLEAR DECK AREA (SQM) - MIN
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.dec_cargo_cleardeckarea_min">
+				                    {{charter.dec_cargo_cleardeckarea_min}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.dec_cargo_cleardeckarea_min">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    CLEAR DECK AREA (SQM) - MAX
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.dec_cargo_cleardeckarea_max">
+				                    {{charter.dec_cargo_cleardeckarea_max}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.dec_cargo_cleardeckarea_max">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    DECK STRENGTH (MT/SQM) - MIN
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.dec_cargo_deckstrength_min">
+				                    {{charter.dec_cargo_deckstrength_min}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.dec_cargo_deckstrength_min">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    DECK STRENGTH (MT/SQM) - MAX
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.dec_cargo_deckstrength_max">
+				                    {{charter.dec_cargo_deckstrength_max}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.dec_cargo_deckstrength_max">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    DECK CRANE
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.dec_cargo_deckcrane">
+				                    {{charter.dec_cargo_deckcrane}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.dec_cargo_deckcrane">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    DYNAMIC POSITIONING (DP 1)
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.dp_one">
+				                    {{charter.dp_one}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.dp_one">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    DYNAMIC POSITIONING (DP 2)
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.dp_two">
+				                    {{charter.dp_two}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.dp_two">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    Valid OVID/CMID
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.valid_ovid_cmid">
+				                    {{charter.valid_ovid_cmid}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.valid_ovid_cmid">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    ADD INSPECTION
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.add_inspection">
+				                    {{charter.add_inspection}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.add_inspection">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    PERFORMANCE (FUEL CONSUMPTION) - MAX LITRES
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.fuel_consumption_on_tow">
+				                    {{charter.fuel_consumption_on_tow}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.fuel_consumption_on_tow">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    ACCOMMODATION (PASSENGERS) - MIN
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.accommodation_passengers_min">
+				                    {{charter.accommodation_passengers_min}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.accommodation_passengers_min">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    ACCOMMODATION (PASSENGERS) - MAX
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.accommodation_passengers_max">
+				                    {{charter.accommodation_passengers_max}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.accommodation_passengers_max">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    HOSPITAL
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.accommodation_hospital">
+				                    {{charter.accommodation_hospital}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.accommodation_hospital">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    HELIPAD/HELIDECK
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.helipad">
+				                    {{charter.helipad}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.helipad">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+				        <div class="input-box">
+				            <div class="input-box box-half">
+				                <div class="label display">
+				                    SPECIFICATION SHEET
+				                </div>
+				                <a ng-href="{{stripped(charter.vessel_specification_document)}}" ng-if="charter.vessel_specification_document" target="_blank">
+				                    <div class="inputcontainer filepath">
+				                        <div class="spec-name text_truncate">{{getFileName(charter.vessel_specification_document)}}</div>
+				                            <div class="download-icon">
+				                                <i class="material-icons">file_download</i>
+				                            </div>
+				                        <div class="clear-both"></div>
+				                    </div>
+				                </a>
+				                <div class="inputcontainer italics light" ng-if="!charter.vessel_specification_document">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="input-box box-half last">
+				                <div class="label display">
+				                    ADDITIONAL DATA
+				                </div>
+				                <div class="inputcontainer" ng-if="charter.additional_data">
+				                    {{charter.additional_data}}
+				                </div>
+				                <div class="inputcontainer italics light" ng-if="!charter.additional_data">
+				                    Not Specified
+				                </div>
+				            </div>
+				            <div class="clear-both"></div>
+				        </div>
+			        </div>
+				</div>
+				<div class="clear-both"></div>
+			</div>
+		</div>
+		<div class="mvx_featuredlabel">
+			<div class="mvx_labels">
+				<div>
+					OTHER CHARTERS
+				</div>
+			</div>
+		</div>
+		<div class="mvx_featuredcontent">
+			<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
+				<div class="relative-container">
+					<div class="center_item navigation_arrow left"></div>
+				</div>
+			</div>
+			<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
+				<div class="relative-container">
+					<div class="center_item navigation_arrow right"></div>
+				</div>
+			</div>
+			<div class="relative-container web">
+				<slick id="slideWeb" infinite=true slides-to-show=4 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn" lazy-load="ondemand" init-onload='true' data="charters">
+					<div class="featuredVessel btnHover" ng-repeat="charter in charters" ng-click="charterInformation(charter);" style="background: #FEFEFE;">
+						<div class="layer">
+							<div class="content">
+								<div class="charter_details">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">attach_money</i>
+											</div>
+											<div class="text">
+												HIRE RATE
+											</div>
+										</div>
+										<div class="copy">
+											${{charter.preferred_daily_hire_rate}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">timer</i>
+											</div>
+											<div class="text">
+												MAX AGE
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.max_age}} years
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">flag</i>
+											</div>
+											<div class="text">
+												FLAG
+											</div>
+										</div>
+										<div class="copy" style="padding-top: 5px;">
+											<div class="flag-icon">
+												<img src="assets/images/icons/countries/{{charter.preferred_flag | lowercase}}.png">
+											</div>
+											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
+												{{countries[charter.preferred_flag]}}
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="title text_truncate">
+									{{charter.vessel_type}}
+								</div>
+								<div class="vessel_info">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">date_range</i>
+											</div>
+											<div class="text">
+												FIRM DURATION
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.firm_duration}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">event</i>
+											</div>
+											<div class="text">
+												EXPECTED MOB DATE
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.expected_mob_date}}
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">location_on</i>
+											</div>
+											<div class="text">
+												LOCATION OF OPERATION
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.location_of_operation}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="menu-link menu-link-left offer_vessel">
+							<div class="menu-link-txt">
+							    <div class="menu-link-default">
+							        <div class="menu-link-default-txt">OFFER VESSEL</div>
+							    </div>
+							    <div class="menu-link-hover">OFFER VESSEL</div>
+							</div>
+						</div>
+					</div>
+				</slick>
+			</div>
+			<div class="relative-container mobile">
+				<slick id="slideWeb" infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn">
+					<div class="featuredVessel btnHover" ng-repeat="charter in charters" ng-click="vesselInformation();" style="background: #FEFEFE;">
+						<div class="layer">
+							<div class="content">
+								<div class="charter_details">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">attach_money</i>
+											</div>
+											<div class="text">
+												HIRE RATE
+											</div>
+										</div>
+										<div class="copy">
+											${{charter.preferred_daily_hire_rate}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">timer</i>
+											</div>
+											<div class="text">
+												MAX AGE
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.max_age}} years
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">flag</i>
+											</div>
+											<div class="text">
+												FLAG
+											</div>
+										</div>
+										<div class="copy" style="padding-top: 5px;">
+											<div class="flag-icon">
+												<img src="assets/images/icons/countries/{{charter.preferred_flag | lowercase}}.png">
+											</div>
+											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
+												{{charter.preferred_flag}}
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="title text_truncate">
+									{{charter.vessel_type}}
+								</div>
+								<div class="vessel_info">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">date_range</i>
+											</div>
+											<div class="text">
+												FIRM DURATION
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.firm_duration}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">event</i>
+											</div>
+											<div class="text">
+												EXPECTED MOB DATE
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.expected_mob_date}}
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">location_on</i>
+											</div>
+											<div class="text">
+												LOCATION OF OPERATION
+											</div>
+										</div>
+										<div class="copy">
+											{{charter.location_of_operation}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="menu-link menu-link-left offer_vessel">
+							<div class="menu-link-txt">
+							    <div class="menu-link-default">
+							        <div class="menu-link-default-txt">OFFER VESSEL</div>
+							    </div>
+							    <div class="menu-link-hover">OFFER VESSEL</div>
+							</div>
+						</div>
+					</div>
+				</slick>
+			</div>
+		</div>
+		<div class="mvx_footer">
+			<div class="top">
+				<div class="left">
+					<div class="header">
+						Subscribe for our weekly newsletters.
+					</div>
+					<div class="copy">
+						Keep abreast of recent happenings in the Oil and Gas industry by subscribing. We won't spam you, we promise :)
+					</div>
+					<div class="mvx_newsletter">
+						<div class="input">
+							<input type="text" class="mvx_btn" placeholder="Email address">
+						</div>
+						<div class="mvx_nbtn">
+							<button>
+								SUBSCRIBE
+							</button>
+						</div>
+						<div class="clear-both"></div>
+					</div>
+				</div>
+				<div class="right">
+					<div class="header">
+						FOLLOW US
+					</div>
+					<div class="mvx_socials">
+						<div class="mvx_social">
+							<i class="fa fa-facebook center_item_vertically"></i>
+						</div>
+						<div class="mvx_social">
+							<i class="fa fa-twitter center_item_vertically"></i>
+						</div>
+						<div class="mvx_social">
+							<i class="fa fa-instagram center_item_vertically"></i>
+						</div>
+					</div>
+					<div class="header">
+						QUICK LINKS
+					</div>
+					<div class="mvx_quicklinks">
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								LOGIN
+							</span>
+						</div>
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								SIGN UP
+							</span>
+						</div>
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								CREATE AD
+							</span>
+						</div>
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								HELP
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="bottom">
+				<span class="center_item_vertically nowrap">
+					&copy; 2018 MVXchange. All rights reserved
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="links fixed" ng-class="{'showingLink': showLinks}">
+	<div class="link" ng-click="signup(); showLink();">
+		<div class="icon">
+			<i class="material-icons center_item">assignment_ind</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">JOIN MVXCHANGE</span>
+		</div>
+	</div>
+	<div class="link" ng-click="login(); showLink();">
+		<div class="icon">
+			<i class="material-icons center_item">fingerprint</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">LOGIN</span>
+		</div>
+	</div>
+	<div class="link">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">POST VESSEL</span>
+		</div>
+	</div>
+	<div class="link">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">POST PROCUREMENT</span>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,62 @@
+<div class="relative-container">
+	<div class="signupContainer center_item extratop" click-anywhere-but-here="click();" data-simplebar>
+		<form ng-submit="login();">
+			<div class="signupForm">
+				<div class="alertMessage">
+					<div class="alertBox" ng-class="{showingError: showingError, 'error-bg': loginError}">
+						<div class="icon">
+							<i class="material-icons center_item">info</i>
+						</div>
+						<div class="text">
+							<span class="center_item_vertically" style="color: #aee4ff;" ng-if="!loginError">
+								EMAIL TAKEN. <span class="emphasis" ng-click="login();">LOGIN</span> or <span class="emphasis" ng-click="useAnother();">USE ANOTHER</span>
+							</span>
+							<span class="center_item_vertically" ng-if="loginError">
+								<span class="emphasis">{{loginError}}</span>
+							</span>
+						</div>
+						<div class="close" ng-click="closeError();">
+							<i class="pe-7s-close center_item"></i>
+						</div>
+					</div>
+				</div>
+				<div style="width: 80%; height: 40px; padding-top: 25px; margin: auto; color: #000; font-weight: bold; font-size: 1.1rem; text-align: center; margin-bottom: 20px;">
+					LOG IN
+				</div>
+				<div class="input-box" data-validate="Email address">
+					<div class="label display">
+						EMAIL ADDRESS <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<input type="text" ng-model="user.email" ng-disabled="user.carinsurance == 'no'" autocomplete="new-password">
+					</div>
+					<div class="status error"></div>
+				</div>
+				<div class="input-box" data-validate="Password">
+					<div class="label display">
+						PASSWORD <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<input type="password" ng-model="user.password" ng-disabled="user.carinsurance == 'no'" autocomplete="new-password">
+					</div>
+					<div class="status error"></div>
+				</div>
+				<div class="input-box">
+					<button type="submit" class="of_btn" ng-class="{'success-bg': !processing && ((loginStatus == 'Logged In'))}" ng-disabled="user.carinsurance == 'no'">
+						<span class="center_item" ng-if="!processing && !((loginStatus == 'Logged In') || (loginStatus == 'Account Not Verified'))">LOG IN</span>
+						<span class="center_item" ng-if="!processing && (loginStatus == 'Logged In')">SUCCESS</span>
+						<span class="center_item" ng-if="!processing && (loginStatus == 'Account Not Verified')">{{loginStatus}}</span>
+			            <div class="spinner" ng-if="processing">
+					        <div class="bounce1"></div>
+					        <div class="bounce2"></div>
+					        <div class="bounce3"></div>
+					    </div>
+					</button>
+				</div>
+				<div class="input-box align-center alt-opts">
+					Not one of US? <span class="emphasis" ng-click="signup();">SIGN UP</span>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

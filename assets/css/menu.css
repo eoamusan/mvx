@@ -1,0 +1,144 @@
+.menu-link {
+    display: block;
+    color: #fff;
+    overflow: hidden;
+    font-size: 0.7rem;
+    width: auto;
+    display: inline-block;
+    text-transform: uppercase;
+    border: 1px solid #FFF;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.btnHover:hover .menu-link{
+    border: 1px dashed #8CB429;
+}
+
+.menu-link:before {
+    -moz-transform: translate(-50%, 0) scale(0, 1);
+    -ms-transform: translate(-50%, 0) scale(0, 1);
+    -webkit-transform: translate(-50%, 0) scale(0, 1);
+    transform: translate(-50%, 0) scale(0, 1);
+    -moz-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    -o-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    -webkit-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1)
+}
+
+.menu-link:after {
+    -moz-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -o-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -webkit-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: all 1s cubic-bezier(0.77, 0, 0.175, 1)
+}
+
+.btnHover:hover:before {
+    -moz-transform: translate(0%, 0) scale(1, 1);
+    -ms-transform: translate(0%, 0) scale(1, 1);
+    -webkit-transform: translate(0%, 0) scale(1, 1);
+    transform: translate(0%, 0) scale(1, 1);
+    -moz-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -o-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -webkit-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: all 1s cubic-bezier(0.77, 0, 0.175, 1)
+}
+
+.btnHover:hover:after {
+    -moz-transform: translate(50%, 0) scale(0, 1);
+    -ms-transform: translate(50%, 0) scale(0, 1);
+    -webkit-transform: translate(50%, 0) scale(0, 1);
+    transform: translate(50%, 0) scale(0, 1);
+    -moz-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    -o-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    -webkit-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1)
+}
+
+.btnHover:hover .menu-link-default {
+    width: 0%;
+}
+
+.btnHover:hover .menu-link-hover {
+    width: calc(100% - 20px);
+}
+
+.menu-link-left .menu-link-txt {
+    float: left;
+    position: relative
+}
+
+.menu-link-left .menu-link-default {
+    float: right;
+    width: 100%;
+    padding: 6px 0;
+    background: #8CB429;
+    white-space: nowrap;
+    -moz-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -o-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -webkit-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    overflow: hidden;
+    z-index: 9;
+    position: relative;
+}
+
+.menu-link-left .menu-link-default-txt {
+    float: right;
+    padding: 0 10px;
+}
+
+.menu-link-left .menu-link-hover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0%;
+    padding: 6px 0;
+    color: #8CB429;
+    background: #FFF;
+    white-space: nowrap;
+    overflow: hidden;
+    -moz-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -o-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -webkit-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    padding-left: 10px;
+}
+
+.menu-link-right .menu-link-txt {
+    float: right;
+    position: relative
+}
+
+.menu-link-right .menu-link-default {
+    float: left;
+    width: 100%;
+    padding: 6px 0;
+    white-space: nowrap;
+    -moz-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -o-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -webkit-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    overflow: hidden;
+}
+
+.menu-link-right .menu-link-default-txt {
+    float: right;
+    width: 100%;
+}
+
+.menu-link-right .menu-link-hover {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0%;
+    padding: 6px 0;
+    color: #8CB429;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    -moz-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -o-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    -webkit-transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: all 1s cubic-bezier(0.77, 0, 0.175, 1)
+}

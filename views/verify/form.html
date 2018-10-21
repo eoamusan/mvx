@@ -1,0 +1,109 @@
+<div class="relative-container">
+	<div id="signupContainer" class="center_item signupContainer extratop" click-anywhere-but-here="click();" ng-class="{'expanded': signUpStep == 3}" data-simplebar>
+		<form ng-submit="verify();">
+			<div class="signupForm" ng-class="{'extended': !verificationSent && !sendingVerification && onceSent}">
+				<div class="alertMessage">
+					<div class="alertBox" ng-class="{showingError: showingError, 'error-bg': verificationError, 'success-bg': verificationSuccess}">
+						<div class="icon">
+							<i class="material-icons center_item">info</i>
+						</div>
+						<div class="text">
+							<span class="center_item_vertically" ng-if="verificationError || verificationSuccess">
+								<span class="emphasis" ng-if="verificationError">{{verificationError}}</span>
+								<span class="emphasis" ng-if="verificationSuccess">{{verificationSuccess}}</span>
+							</span>
+						</div>
+						<div class="close" ng-click="closeError();">
+							<i class="pe-7s-close center_item"></i>
+						</div>
+					</div>
+				</div>
+				<div style="width: 100%; height: calc(100% - 56px);">
+					<div style="width: 80%; height: 40px; padding-top: 25px; margin: auto; color: #000; font-weight: bold; font-size: 1.1rem; text-align: center; margin-bottom: 20px;">
+						<span class="noselect">VERIFY MVXCHANGE ACCOUNT</span>
+					</div>
+					<div>
+						<div class="input-box" data-validate="Email address" ng-if="!emailSent">
+							<div class="inputcontainer">
+								<input id="useAnother" type="text" ng-model="user.email" placeholder="Email Address" show-label>
+							</div>
+							<div class="status error"></div>
+						</div>
+						<div class="input-box" ng-if="emailSent">
+							<div class="inputcontainer" style="border: 1px solid #EEE;">
+								<div style="width: 45px; height: 45px; float: left; position: relative; font-size: 2rem; color: #CCC;">
+									<i class="center_item pe-7s-mail"></i>
+								</div>
+								<div style="width: calc(100% - 60px); height: 45px; float: left; margin-left: 15px; position: relative;">
+									<span class="center_item_vertically" style="left: 0;">{{user.email}}</span>
+								</div>
+							</div>
+							<div class="status error"></div>
+						</div>
+						<div class="input-box">
+							<div class="verification-code-label">
+								<span class="center_item_vertically noselect align-left abs-left"><span class="no-display-small">VERIFICATION </span>CODE</span>
+							</div>
+							<div class="verification-code-input">
+								<div class="input-box" data-validate="Code" data-option="multiple" style="width: 100%;">
+									<div class="inputcontainer verify">
+										<div class="input" ng-repeat="code in user.codes track by $index">
+											<input type="text" ng-model="code.value" verification-boxes pattern="\d*" maxlength="1">
+										</div>
+									</div>
+									<div class="status error"></div>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+					</div>
+					<div class="input-box extend">
+						<button type="submit" class="of_btn">
+							<span class="center_item" ng-show="!processing">VERIFY</span>
+							<div class="spinner" ng-show="processing">
+						        <div class="bounce1"></div>
+						        <div class="bounce2"></div>
+						        <div class="bounce3"></div>
+						    </div>
+						</button>
+					</div>
+				</div>
+				<div class="input-box align-center noselect alt-opts" ng-class="{'extended': !verificationSent && !sendingVerification && onceSent}">
+					No code yet? 
+					<span class="emphasis" ng-click="resendVerification();" ng-if="!sendingVerification && !moreOptions && !onceSent && !verificationSent">RESEND</span>
+					<span class="emphasis" style="cursor: pointer; font-size: 0.76rem;" ng-if="sendingVerification">SENDING ...</span>
+					<span class="emphasis" style="cursor: pointer; font-weight: 500; font-size: 0.76rem;" ng-if="verificationSent && !sendingVerification && onceSent">SENT. RESEND IN </span>
+					<div ng-show="verificationSent && !sendingVerification && onceSent" style="display: inline-block;">
+						<div id="seconds" style="width: 15px;"></div>:<div id="milliseconds"></div> s
+					</div>
+					<div ng-if="moreOptions && !sendingVerification">
+						Call me & Send SMS
+					</div>
+				</div>
+				<div id="moreVerificationOptions" class="moreVerificationOptions" ng-class="{'showOptions': !verificationSent && !sendingVerification && onceSent}">
+					<div ng-click="resendVerification();" class="resend">
+						<div style="display: inline-block;">
+							<div style="width: 50px; height: 50px; position: relative; float: left;">
+								<i class="pe-7s-mail center_item" style="font-size: 1.4rem;"></i>
+							</div>
+							<div style="width: auto; height: 34px; float: left; padding-top: 16px;">
+								SEND SMS
+							</div>
+						</div>
+					</div>
+					<div class="resend">
+						<div style="display: inline-block;">
+							<div style="width: 50px; height: 50px; position: relative; float: left;">
+								<i class="pe-7s-signal center_item" style="font-size: 1.4rem;"></i>
+							</div>
+							<div style="width: auto; height: 34px; float: left; padding-top: 16px;">
+								CALL ME
+							</div>
+						</div>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

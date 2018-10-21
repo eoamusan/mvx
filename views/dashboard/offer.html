@@ -1,0 +1,325 @@
+<div class="caret">
+    <i class="material-icons caret-right" ng-show="!(offerShow == offer.offers_id)">chevron_right</i>
+    <div class="relative-container close-show" ng-show="(offerShow == offer.offers_id)">
+        <i class="material-icons center_item_horizontally">close</i>
+    </div>
+</div>
+<div class="img" ng-class="{'hide': (offerShow == offer.offers_id)}">
+    <div class="relative-container">
+        <slick id="slideWeb" infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1 arrows=false>
+            <div class="vessel_images" ng-repeat="image in offer.vessels_vessel_photos track by $index" style="background-image: url({{stripped(image)}});"></div>
+        </slick>
+    </div>
+</div>
+<div class="title margin-left-15 vessel_name" ng-class="{'reduced': (offerShow != offer.offers_id), 'vessel_name': (offerShow != offer.offers_id)}">
+    <div class="hire_rate_label" ng-hide="(offerShow == offer.offers_id)">VESSEL NAME</div>
+    <div class="hire_rate_rate text_truncate" ng-hide="(offerShow == offer.offers_id)">{{offer.vessels_vessel_name}}</div>
+    <span ng-show="(offerShow == offer.offers_id)">{{offer.vessels_vessel_name}}</span>
+</div>
+<div class="hire_rate margin-left-15 offer_rate" ng-hide="(offerShow == offer.offers_id)">
+    <div class="hire_rate_label">HIRE RATE</div>
+    <div class="hire_rate_rate">${{offer.vessels_daily_hire_rate}}</div>
+</div>
+<div class="hire_rate margin-left-15 offer_author" ng-hide="(offerShow == offer.offers_id)">
+    <div class="hire_rate_label">FROM</div>
+    <div class="hire_rate_rate text_truncate capitalize">{{offer.user_name}}</div>
+</div>
+<div class="show_area" click-anywhere-but-here="click();" ng-class="{'reveal': offerShow == offer.offers_id}">
+    <div class="left_area">
+        <div class="img" style="margin-bottom: 50px;">
+            <div class="relative-container">
+                <slick id="slideWeb{{offer.offers_id}}" infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1 arrows=true dots=true>
+                    <div class="vessel_images" ng-repeat="image in offer.vessels_vessel_photos track by $index" style="background-image: url({{stripped(image)}});"></div>
+                </slick>
+            </div>
+        </div>
+        <!-- <div class="img_thumbs">
+            <div class="img_thumb" ng-repeat="image in offer.vessels_vessel_photos track by $index" style="background-image: url({{stripped(image)}});" ng-click="setActive($index)"></div>
+        </div> -->
+        <div class="hire_rate">
+            <div class="hire_rate_label">HIRE RATE</div>
+            <div class="hire_rate_rate">${{offer.vessels_daily_hire_rate}}</div>
+        </div>
+        <div class="action-btn">
+            <div class="icon">
+                <i class="material-icons center_item">share</i>
+            </div>
+            <div class="label">
+                SHARE VESSEL
+            </div>
+        </div>
+        <div class="action-btn" ng-click="vesselInformationTab(offer, 'offer')">
+            <div class="icon">
+                <i class="material-icons center_item">zoom_out_map</i>
+            </div>
+            <div class="label">
+                FULL VIEW
+            </div>
+        </div>
+        <div class="availability" ng-if="offer.vessels_vessel_availability == 'Available'">
+            <div class="available">{{offer.vessels_vessel_availability}}</div>
+        </div>
+        <div class="availability unavailability" ng-if="offer.vessels_vessel_availability != 'Available'">
+            <div class="unavailable">UNAVAILABLE</div>
+            <div class="till">TILL <span>{{offer.vessels_vessel_availability}}</span></div>
+        </div>
+        <div class="product_section">
+            <div class="icon">
+                <i class="material-icons center_item_vertically">timelapse</i>
+            </div>
+            <div class="label">
+                CREATED
+            </div>
+            <div class="content">
+                5:15pm 26th August, 2018
+            </div>
+            <div class="clear-both"></div>
+        </div>
+        <div class="details_header">
+            VESSEL DETAILS
+        </div>
+        <div class="details_container">
+            <div class="input-box">
+                <div class="label display">
+                    IMO NUMBER
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_imo_number}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    VESSEL NAME
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_vessel_name}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    OWNERSHIP STATUS
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_ownership_status}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    CURRENT LOCATION
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_current_location}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    YEAR BUILT
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_year_built}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    SPECIFICATION SHEET
+                </div>
+                <a ng-href="{{stripped(offer.vessels_specification_sheet)}}" target="_blank">
+                    <div class="inputcontainer filepath">
+                        <div class="spec-name text_truncate">{{getFileName(offer.vessels_specification_sheet)}}</div>
+                            <div class="download-icon">
+                                <i class="material-icons">file_download</i>
+                            </div>
+                        <div class="clear-both"></div>
+                    </div>
+                </a>                       
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    FLAG
+                </div>
+                <div class="inputcontainer" style="padding-bottom: 10px;">
+                    <div class="flag-icon">
+                        <img src="assets/images/icons/countries/{{offer.vessels_preferred_flag | lowercase}}.png">
+                    </div>
+                    <div class="flag-label">
+                        {{countries[offer.vessels_preferred_flag]}}
+                    </div>
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    CLASSIFICATION
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_classification}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    CLASSIFICATION EXPIRY
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_classification_expiry}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    PURPOSE
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_purpose}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    VESSEL TYPE
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_vessel_type}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    ACCOMMODATION (MAXIMUM PASSENGERS)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_accommodation}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    HELIPAD / HELIDECK
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_helipad}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    VALID NCDMB CLASS (NIGERIA ONLY)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_valid_ncdmb_class}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    VALID OVID/CMID
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_valid_ovidcmid}}
+                </div>                          
+            </div>
+        </div>
+    </div>
+    <div class="right_area">
+        <div class="details_container">
+            <div class="input-box">
+                <div class="label display">
+                    BOLLARD PULL (BP)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_bp}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    BRAKE HORSE POWER (BHP)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_bhp}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    DECK AREA (SQM)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_da}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    DECK STRENGTH (TON/SQM)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_ds}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    DYNAMIC POSITIONING (DP)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_dp}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    MAXIMUM SPEED
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_maximum_speed}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    DEADWEIGHT TONNAGE (DWT)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_dwt}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    GROSS TONNAGE (GRT)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_grt}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    LENGTH OA (METRES)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_length}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    BREADTH MOULDED (METRES)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_breadth_moulded}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    DEPTH MOULDED (METRES)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_depth_moulded}}
+                </div>                          
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    MAXIMUM DRAFT (METRES)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_maximum_draft}}
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="label display">
+                    DECK CRANE (TONNE)
+                </div>
+                <div class="inputcontainer">
+                    {{offer.vessels_deck_crane}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear-both"></div>
+</div>
+<div class="clear-both"></div>

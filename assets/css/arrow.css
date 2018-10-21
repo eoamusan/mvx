@@ -1,0 +1,52 @@
+div.navigation_arrow {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+div.navigation_arrow.left {
+    left: 30%;
+    top: 59%;
+    transform: translate(-50%, -50%) rotate(-135deg);
+    -webkit-transform: translate(-50%, -50%) rotate(-135deg);
+    -moz-transform: translate(-50%, -50%) rotate(-135deg);
+}
+div.navigation_arrow.right {
+    left: 70%;
+    top: 42%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    -webkit-transform: translate(-50%, -50%) rotate(45deg);
+    -moz-transform: translate(-50%, -50%) rotate(45deg);
+}
+div.navigation_arrow::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    border-width: 0.8vmin 0.8vmin 0 0;
+    border-style: solid;
+    border-color: #00afef;
+    transition: 0.2s ease;
+    display: block;
+    transform-origin: 100% 0;
+}
+div.navigation_arrow:after {
+    content: "";
+    float: left;
+    position: relative;
+    top: -100%;
+    width: 100%;
+    height: 100%;
+    border-width: 0 0.8vmin 0 0;
+    border-style: solid;
+    border-color: #00afef;
+    transform-origin: 100% 0;
+    transition: 0.2s ease;
+}
+div.navigation_arrow:hover::after {
+    transform: rotate(45deg);
+    border-color: #056A9F;
+    height: 120%;
+}
+div.navigation_arrow:hover::before {
+    border-color: #056A9F;
+    transform: scale(0.8);
+}

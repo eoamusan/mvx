@@ -1,14 +1,37 @@
-<div class="mvx_overlay" ng-click="removeGoHome();">
+<div class="mvx_overlay">
 	<div class="relative-container">
-		<div class="center_item signupContainer" click-anywhere-but-here="click();" ng-class="{'expanded': signUpStep == 3}" data-simplebar>
-			<form ng-submit="proceed();">
-				<div style="width: 100%; min-height: calc(100% - 62px); height: auto; background: #FFF; max-height: 100%;">
+		<div id="signupContainer" class="center_item signupContainer extratop" click-anywhere-but-here="click();" ng-class="{'expanded': signUpStep == 3}" data-simplebar ng-if="signUpStep != 4">
+			<form ng-submit="proceed();" ng-if="signUpStep != 5">
+				<div class="signupForm">
+					<div class="alertMessage">
+						<div class="alertBox" ng-class="{showingError: showingError, 'error-bg': signupError}">
+							<div class="icon">
+								<i class="material-icons center_item">info</i>
+							</div>
+							<div class="text">
+								<span class="center_item_vertically" style="color: #aee4ff;" ng-if="!signupError">
+									EMAIL TAKEN. <span class="emphasis" ng-click="login();">LOGIN</span> or <span class="emphasis" ng-click="useAnother();">USE ANOTHER</span>
+								</span>
+								<span class="center_item_vertically" ng-if="signupError">
+									<span class="emphasis">{{signupError}}</span>
+								</span>
+							</div>
+							<div class="close" ng-click="closeError();">
+								<i class="pe-7s-close center_item"></i>
+							</div>
+						</div>
+					</div>
 					<div style="width: 100%; height: calc(100% - 56px);">
 						<div style="width: 80%; height: 40px; padding-top: 25px; margin: auto; color: #000; font-weight: bold; font-size: 1.1rem; text-align: center; margin-bottom: 20px;">
+							<div class="backButton" ng-if="signUpStep > 1 && !showingError" ng-click="goBack();">
+								<div class="relative-container">
+									<i class="material-icons center_item_vertically">arrow_back</i>
+								</div>
+							</div>
 							<span ng-if="signUpStep != 3">JOIN MVXCHANGE</span>
 							<span ng-if="(signUpStep == 3) && (user.category == 'Ship Owner')">SHIP OWNER REGISTRATION</span>
 							<span ng-if="(signUpStep == 3) && (user.category == 'Charterer')">CHARTERER</span>
-							<span ng-if="(signUpStep == 3) && (user.category == 'Procurement Agent')">PROCUREMENT AGENT</span>
+							<span ng-if="(signUpStep == 3) && (user.category == 'Procurement Vendor / Supplier')">PROCUREMENT VENDOR / SUPPLIER</span>
 						</div>
 						<div ng-if="signUpStep == 1">
 							<div class="input-box" data-validate="Email address">
@@ -18,577 +41,56 @@
 									</div>
 								</div>
 								<div class="inputcontainer">
-									<input type="text" ng-model="user.email" ng-disabled="user.carinsurance == 'no'" placeholder="Email Address" show-label>
+									<input id="useAnother" type="text" ng-model="user.email" placeholder="Email Address" show-label>
 								</div>
 								<div class="status error"></div>
 							</div>
 						</div>
-						<div ng-if="signUpStep == 2">
-							<div style="width: 80%; min-height: 60px; margin: auto;">
-								<div style="width: 100px; height: 49px; float: left; position: relative;">
-									<span class="center_item_vertically">I am a/an</span>
-								</div>
-								<div style="width: calc(100% - 100px); min-height: 60px; float: left;">
-									<div class="input-box" data-validate="Category" style="width: 100%;">
-										<div class="label">
-											<div class="hidden_label">
-												Choose Category <span class="required">*</span>
-											</div>
-										</div>
-										<div class="inputcontainer">
-											<select ng-model="user.category">
-												<option value="">
-													Choose Category
-												</option>
-												<option value="Ship Owner">
-													Ship (Vessel) Owner
-												</option>
-												<option value="Charterer">
-													Charterer
-												</option>
-												<option value="Procurement Agent">
-													Procurement Agent
-												</option>
-											</select>
-										</div>
-										<div class="status error"></div>
-									</div>
-								</div>
-							</div>
-							<div class="input-box" data-validate="Password">
-								<div class="label">
-									<div class="hidden_label">
-										PASSWORD <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="password" ng-model="user.password" ng-disabled="user.carinsurance == 'no'" placeholder="Choose a Password">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box midiextend" data-validate="Confirm Password">
-								<div class="label">
-									<div class="hidden_label">
-										CONFIRM PASSWORD <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="password" ng-model="user.confirmpassword" ng-disabled="user.carinsurance == 'no'" placeholder="Confirm Password">
-								</div>
-								<div class="status error"></div>
-							</div>
+						<div ui-view="choosecategory" ng-if="signUpStep == 2">
+							
 						</div>
-						<div ng-if="(signUpStep == 3) && (user.category == 'Ship Owner')">
-							<div class="input-box verbose" data-validate="Category">
-								<div class="label">
-									CATEGORY
-								</div>
-								<div class="inputcontainer">
-									<select ng-model="user.usercategory">
-										<option value="">
-											Choose Ship Owner Category
-										</option>
-										<option value="Ship Owner">
-											Ship Owner
-										</option>
-										<option value="Ship Management Company">
-											Ship Management Company
-										</option>
-										<option value="Brokerage Firm">
-											Brokerage Firm
-										</option>
-									</select>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="section-label">
-								BUSINESS DETAILS
-							</div>
-							<div class="input-box" data-validate="Company Logo">
-								<div class="inputcontainer">
-									<div class="image-field">
-										<div class="icon">
-											<i class="fa fa-picture-o center_item"></i>
-										</div>
-										<div class="copy">
-											<span class="center_item_vertically">Upload Company Logo</span>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Business Name">
-								<div class="label">
-									<div class="hidden_label">
-										BUSINESS NAME <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Business Name">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Company Registration Number">
-									<div class="label">
-										<div class="hidden_label">
-											COMPANY REGISTRATION NUMBER <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Company Registration Number">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Website">
-									<div class="label">
-										<div class="hidden_label">
-											WEBSITE <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.website" ng-disabled="user.carinsurance == 'no'" placeholder="Website">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Email">
-									<div class="label">
-										<div class="hidden_label">
-											Email <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.bizemail" ng-disabled="user.carinsurance == 'no'" placeholder="Email">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Phone Number">
-									<div class="label">
-										<div class="hidden_label">
-											Phone Number <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.mobile" ng-disabled="user.carinsurance == 'no'" placeholder="Phone Number">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div class="input-box" data-validate="Service" ng-repeat="service in user.services">
-								<div class="label">
-									<div class="hidden_label">
-										Service {{$index+1}} <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Service {{$index+1}}">
-								</div>
-								<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.services.length > 1" ng-click="removeService(service)">
-									<div class="relative-container">
-										<div class="delete_btn center_item">
-											<div class="relative-container">
-												<i class="pe-7s-close center_item"></i>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; height: auto; margin: auto; margin-bottom: 20px;">
-								<span class="action_btn" ng-click="addNewservice();">
-									Add Service
-								</span>
-							</div>
-							<div class="input-box" data-validate="Corporate Office Address">
-								<div class="label">
-									<div class="hidden_label">
-										Corporate Office Address <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Corporate Office Address">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Name of Contact Person">
-									<div class="label">
-										<div class="hidden_label">
-											Name of Contact Person <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.biz" ng-disabled="user.carinsurance == 'no'" placeholder="Name of Contact Person">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Phone Number of Contact Person">
-									<div class="label">
-										<div class="hidden_label">
-											Phone Number of Contact Person <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.mobile" ng-disabled="user.carinsurance == 'no'" placeholder="Phone Number of Contact Person">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Email of Contact Person <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.biz" ng-disabled="user.carinsurance == 'no'" placeholder="Email of Contact Person">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="inputcontainer">
-									<div class="image-field">
-										<div class="icon">
-											<i class="fa fa-picture-o center_item"></i>
-										</div>
-										<div class="copy">
-											<span class="center_item_vertically">Upload Brochure / Company Profile</span>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name" ng-repeat="permit in user.permits">
-								<div class="label">
-									<div class="hidden_label">
-										Permit (DPR. NIMASA etc) {{$index+1}} <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Permit (DPR. NIMASA etc) {{$index+1}}">
-								</div>
-								<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.permits.length > 1" ng-click="removePermit(permit)">
-									<div class="relative-container">
-										<div class="delete_btn center_item">
-											<div class="relative-container">
-												<i class="pe-7s-close center_item"></i>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; height: auto; margin: auto; margin-bottom: 20px;">
-								<span class="action_btn" ng-click="addNewPermit();">
-									Add Permit
-								</span>
-							</div>
+						<div ui-view="shipowner" ng-if="(signUpStep == 3) && (user.category == 'Ship Owner')">
+							
 						</div>
-						<div ng-if="(signUpStep == 3) && (user.category == 'Charterer')">
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										NAME <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Name">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										COMPANY NAME <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Company Name">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											EMAIL <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Email">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											PHONE NUMBER <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.website" ng-disabled="user.carinsurance == 'no'" placeholder="Phone Number">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
+						<div ui-view="charterer" ng-if="(signUpStep == 3) && (user.category == 'Charterer')">
+							
 						</div>
-						<div ng-if="(signUpStep == 3) && (user.category == 'Procurement Agent')">
-							<div class="input-box verbose" data-validate="Last Name">
-								<div class="label">
-									CATEGORY
-								</div>
-								<div class="inputcontainer">
-									<select>
-										<option>
-											OEM
-										</option>
-										<option>
-											Supplier
-										</option>
-										<option>
-											Distributor
-										</option>
-										<option>
-											Procurement Company
-										</option>
-										<option>
-											Oil and Gas Servicing
-										</option>
-									</select>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="section-label">
-								BUSINESS DETAILS
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="inputcontainer">
-									<div class="image-field">
-										<div class="icon">
-											<i class="fa fa-picture-o center_item"></i>
-										</div>
-										<div class="copy">
-											<span class="center_item_vertically">Upload Logo</span>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										NAME <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Name">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											COMPANY REGISTRATION NUMBER <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Company Registration Number">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											WEBSITE <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.website" ng-disabled="user.carinsurance == 'no'" placeholder="Website">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Email <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.bizemail" ng-disabled="user.carinsurance == 'no'" placeholder="Email">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Phone Number <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.mobile" ng-disabled="user.carinsurance == 'no'" placeholder="Phone Number">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name" ng-repeat="service in user.services">
-								<div class="label">
-									<div class="hidden_label">
-										Service {{$index+1}} <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Service {{$index+1}}">
-								</div>
-								<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.services.length > 1" ng-click="removeService(service)">
-									<div class="relative-container">
-										<div class="delete_btn center_item">
-											<div class="relative-container">
-												<i class="pe-7s-close center_item"></i>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; height: auto; margin: auto; margin-bottom: 20px;">
-								<span class="action_btn" ng-click="addNewservice();">
-									Add Service
-								</span>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										COUNTRY <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Country">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="label">
-									<div class="hidden_label">
-										Corporate Office Address <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Corporate Office Address">
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Name of Contact Person <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.biz" ng-disabled="user.carinsurance == 'no'" placeholder="Name of Contact Person">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="input-box box-half last" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Phone Number of Contact Person <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.mobile" ng-disabled="user.carinsurance == 'no'" placeholder="Phone Number of Contact Person">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div style="width: 80%; margin: auto;">
-								<div class="input-box box-half" data-validate="Last Name">
-									<div class="label">
-										<div class="hidden_label">
-											Email of Contact Person <span class="required">*</span>
-										</div>
-									</div>
-									<div class="inputcontainer">
-										<input type="text" ng-model="user.biz" ng-disabled="user.carinsurance == 'no'" placeholder="Email of Contact Person">
-									</div>
-									<div class="status error"></div>
-								</div>
-								<div class="clear-both"></div>
-							</div>
-							<div class="input-box" data-validate="Last Name" ng-repeat="permit in user.permits">
-								<div class="label">
-									<div class="hidden_label">
-										Permit (DPR. NIMASA etc) {{$index+1}} <span class="required">*</span>
-									</div>
-								</div>
-								<div class="inputcontainer">
-									<input type="text" ng-model="user.businessname" ng-disabled="user.carinsurance == 'no'" placeholder="Permit (DPR. NIMASA etc) {{$index+1}}">
-								</div>
-								<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.permits.length > 1" ng-click="removePermit(permit)">
-									<div class="relative-container">
-										<div class="delete_btn center_item">
-											<div class="relative-container">
-												<i class="pe-7s-close center_item"></i>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
-							<div style="width: 80%; height: auto; margin: auto; margin-bottom: 20px;">
-								<span class="action_btn" ng-click="addNewPermit();">
-									Add Permit
-								</span>
-							</div>
-							<div class="input-box" data-validate="Last Name">
-								<div class="inputcontainer">
-									<div class="image-field">
-										<div class="icon">
-											<i class="fa fa-picture-o center_item"></i>
-										</div>
-										<div class="copy">
-											<span class="center_item_vertically">Upload Brochure / Company Profile</span>
-										</div>
-									</div>
-								</div>
-								<div class="status error"></div>
-							</div>
+						<div ui-view="procurement" ng-if="(signUpStep == 3) && (user.category == 'Procurement Vendor / Supplier')">
+							
 						</div>
 						<div class="input-box extend">
 							<button type="submit" class="of_btn">
 								<span class="center_item" ng-if="!processing && (signUpStep < 3)">CONTINUE</span>
 								<span class="center_item" ng-if="!processing && (signUpStep == 3)">SUBMIT</span>
-								<div class="loading_dots" ng-if="processing">
-					                <span></span>
-					                <span></span>
-					                <span></span>
-					            </div>
+								<div class="spinner" ng-show="processing">
+							        <div class="bounce1"></div>
+							        <div class="bounce2"></div>
+							        <div class="bounce3"></div>
+							    </div>
 							</button>
 							<span style="color: #AAA; font-size: 0.7rem; text-align: center;">
 								By joining I agree to receive emails from MvXchange.
 							</span>
 						</div>
 					</div>
-					<div class="input-box align-center" style="font-size: 0.85rem; width: 100%; padding-top: 20px; border-top: 1px solid #00AFEF; color: #666;">
+					<div class="input-box align-center alt-opts">
 						Already a member? <span class="emphasis" ng-click="login();">SIGN IN</span>
 					</div>
 				</div>
 			</form>
+		</div>
+		<div class="center_item signupContainer" click-anywhere-but-here="click();" ng-if="signUpStep == 4">
+			<div class="signupForm signupSuccess">
+				<div class="top" ui-view="successanimation"></div>
+				<div class="bottom">
+					<div class="header success">
+						SIGNUP SUCCESSFUL
+					</div>
+					<div class="details">
+						You will be redirected to <span class="bold">VERIFICATION</span> in <div id="seconds"></div>:<div id="milliseconds"></div> seconds
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

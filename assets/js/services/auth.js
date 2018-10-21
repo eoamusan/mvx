@@ -1,21 +1,16 @@
-app.factory('AuthenticationService', ['Base64', '$http', '$cookieStore', '$rootScope', '$timeout',
-    function(Base64, $http, $cookieStore, $rootScope, $timeout) {
+app.factory('AuthenticationService', ['Base64', '$http', '$cookies', '$rootScope', '$timeout',
+    function(Base64, $http, $cookies, $rootScope, $timeout) {
         var service = {};
 
         service.Login = function(credentials, callback) {
 
             var login_request = $http({
                 method: "post",
-                url: "https://docdial-api.herokuapp.com/api/v1/login",
-                data: credentials,
-                headers: {
-                    'x-api-key': 'doctordial'
-                }
+                url: "scripts/login.php",
+                data: credentials
             });
 
             login_request.then(function successCallback(data) {
-
-                console.log(data);
                
                 callback(data);
                 
@@ -27,24 +22,21 @@ app.factory('AuthenticationService', ['Base64', '$http', '$cookieStore', '$rootS
 
         };
 
-        service.SetCredentials = function(username, password, userdata) {
-            var authdata = Base64.encode(username + ':' + password);
-
+        service.SetCredentials = function(email, password, userdata) {
             $rootScope.globals = {
                 currentUser: {
-                    username: username,
+                    email: email,
                     password: password,
                     userdata: userdata
                 }
             };
 
-            // $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
-            $cookieStore.put('globals', $rootScope.globals);
+            $cookies.putObject('globals', $rootScope.globals);
         };
 
         service.ClearCredentials = function() {
             $rootScope.globals = {};
-            $cookieStore.remove('globals');
+            $cookies.remove('globals');
             // $http.defaults.headers.common.Authorization = 'Basic ';
         };
 

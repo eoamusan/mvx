@@ -1,0 +1,752 @@
+<div class="mainArea" ng-class="{'showingLink': showLinks}">
+	<div class="relative-container">
+		<div class="dim" ng-class="{show_dim: showLinks}" ng-click="showLink();"></div>
+		<div class="mvx_header description_pages">
+			<div class="logo" ng-click="removeGoHome();">
+				<img src="assets/images/logo_stacked.png" height="100%">
+			</div>
+			<div class="mvx_headeraction" ng-class="{expanded: globals.currentUser}">
+				<div class="mvx_searchbarcontainer">
+					<div class="cover">
+						<div class="mvx_searchinput">
+							<input />
+						</div>
+						<div class="mvx_searchbtn">
+							<span class="center_item">SEARCH</span>
+						</div>
+					</div>
+				</div>
+				<div class="mvx_links" ng-class="{'fixed': showLinks}">
+					<div class="mvx_morelinks">
+						<div class="nowrap mvx_morelink join" ng-click="signup();" ng-if="!globals.currentUser">
+							<span>JOIN MVXCHANGE</span>
+						</div>
+						<div class="nowrap mvx_morelink signin" ng-click="login();" ng-if="!globals.currentUser">
+							<span>SIGN IN</span>
+						</div>
+						<div class="nowrap mvx_morelink_logged" ng-if="globals.currentUser">
+							<div class="profile" style="border: 1px solid {{getColor(globals.currentUser.userdata.data.display_name)}};">
+								<span class="center_item" style="color: {{getColor(globals.currentUser.userdata.data.display_name)}};">
+									{{getInitials(globals.currentUser.userdata.data.display_name)}}
+								</span>
+							</div>
+							<div class="profile_access" style="width: calc(100% - 71px); float: left; padding-left: 10px;">
+								<div style="width: 100%; height: 25px; padding-top: 5px;" class="text_truncate">
+									{{getName(globals.currentUser.userdata.data.display_name)}}
+								</div>
+								<div class="account_actions text_truncate">
+									<div class="account_action left" ng-click="dashboard();">DASHBOARD</div><div> \ </div><div class="account_action right" ng-click="logout();">LOGOUT</div>
+								</div>
+							</div>
+						</div>
+						<div class="mvx_toggle float-right" ng-class="{'showLinks': showLinks}" ng-click="showLink();">
+							<img src="assets/images/ham_black.png" height="28" class="center_item_vertically ham" style="right: 0;">
+							<img src="assets/images/icons/close.png" height="30" class="center_item_vertically close-flyout" style="right: 5px;">
+						</div>
+					</div>
+					<div class="nowrap mvx_link addad" ng-if="(globals.currentUser.userdata.data.category == 'Procurement Vendor / Supplier') || !globals.currentUser">
+						<span>POST PROCUREMENT AD</span>
+					</div>
+					<div class="nowrap mvx_link addvessel" ng-click="addvessel();" ng-if="(globals.currentUser.userdata.data.category == 'Ship Owner') || !globals.currentUser">
+						<span>POST A VESSEL</span>
+					</div>
+					<div class="nowrap mvx_link addvessel" ng-click="addvessel();" ng-if="(globals.currentUser.userdata.data.category == 'Charterer') && globals.currentUser">
+						<span>CHARTER VESSEL</span>
+					</div>
+					<div class="nowrap mvx_link addvessel" ng-if="globals.currentUser" ng-click="dashboard();">
+						<span>DASHBOARD</span>
+					</div>
+				</div>
+				<div class="mvx_search">
+					<i class="material-icons center_item">search</i>
+				</div>
+			</div>
+		</div>
+		<div class="mvx_descriptionarea">
+			<div class="product_tag orange">
+				CHARTER VESSEL
+			</div>
+			<div class="product_title">
+				{{vessel.vessel_name}}
+			</div>
+			<div class="product_area">
+				<div class="product_image dark">
+					<slick id="slideWeb{{vessel.id}}" infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1 arrows=true dots=true lazy-load="ondemand" init-onload='true' data="vessel.vessel_photos">
+						<div class="product_image_slide" ng-repeat="image in vessel.vessel_photos track by $index" style="background-image: url({{stripped(image)}});"></div>
+	                </slick>
+				</div>
+				<div class="product_details">
+					<div class="product_section">
+						<div class="icon">
+							<i class="material-icons center_item_vertically">person</i>
+						</div>
+						<div class="label">
+							SHIP OWNER
+						</div>
+						<div class="content">
+							OLUWATOBI AMUSAN (SHIP MOGUL)
+						</div>
+						<div class="contact">
+							<span class="center_item nowrap">CHAT NOW</span>
+						</div>
+						<div class="clear-both"></div>
+					</div>
+					<div class="product_section">
+						<div class="icon">
+							<i class="material-icons center_item_vertically">timelapse</i>
+						</div>
+						<div class="label">
+							TIME CREATED
+						</div>
+						<div class="content">
+							{{vessel.created_at * 1000 | date : 'medium'}}
+						</div>
+						<div class="clear-both"></div>
+					</div>
+					<div class="product_information">
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									AVAILABILITY
+								</div>
+								<div class="inputcontainer" ng-class="{'error': vessel.vessel_availability != 'Available', success: vessel.vessel_availability == 'Available'}">
+									{{(vessel.vessel_availability == 'Available') ? vessel.vessel_availability : 'Not until ' + vessel.vessel_availability}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									DAILY HIRE RATE
+								</div>
+								<div class="inputcontainer">
+									$ {{vessel.daily_hire_rate}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									IMO NUMBER
+								</div>
+								<div class="inputcontainer">
+									{{vessel.imo_number}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									VESSEL NAME
+								</div>
+								<div class="inputcontainer">
+									{{vessel.vessel_name}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									OWNERSHIP STATUS
+								</div>
+								<div class="inputcontainer">
+									{{vessel.ownership_status}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									CURRENT LOCATION
+								</div>
+								<div class="inputcontainer">
+									{{vessel.current_location}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									YEAR BUILT
+								</div>
+								<div class="inputcontainer">
+									{{vessel.year_built}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									SPECIFICATION SHEET
+								</div>
+								<a ng-href="{{stripped(vessel.specification_sheet)}}" ng-if="vessel.specification_sheet" target="_blank">
+				                    <div class="inputcontainer filepath">
+				                        <div class="spec-name text_truncate">{{getFileName(vessel.specification_sheet)}}</div>
+				                            <div class="download-icon">
+				                                <i class="material-icons">file_download</i>
+				                            </div>
+				                        <div class="clear-both"></div>
+				                    </div>
+				                </a>
+				                <div class="inputcontainer italics light" ng-if="!vessel.specification_sheet">
+				                    Not Specified
+				                </div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									FLAG
+								</div>
+								<div class="inputcontainer" ng-if="vessel.preferred_flag">
+									<div class="flag-icon">
+										<img src="assets/images/icons/countries/{{vessel.preferred_flag | lowercase}}.png">
+									</div>
+									<div class="flag-label">
+										{{countries[vessel.preferred_flag]}}
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									CLASSIFICATION
+								</div>
+								<div class="inputcontainer">
+									{{vessel.classification}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									CLASSIFICATION EXPIRY
+								</div>
+								<div class="inputcontainer">
+									{{vessel.classification_expiry}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									PURPOSE
+								</div>
+								<div class="inputcontainer">
+									{{vessel.purpose}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									VESSEL TYPE
+								</div>
+								<div class="inputcontainer">
+									{{vessel.vessel_type}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									BOLLARD PULL (BP)
+								</div>
+								<div class="inputcontainer">
+									{{vessel.bp}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									BRAKE HORSE POWER (BHP)
+								</div>
+								<div class="inputcontainer">
+									{{vessel.bhp}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									DECK AREA (SQM)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.da, light: !vessel.da}">
+									{{(vessel.da) ? vessel.da : 'Not Specified'}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									DECK STRENGTH (TON/SQM)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.ds, light: !vessel.ds}">
+									{{(vessel.ds) ? vessel.ds : 'Not Specified'}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									DYNAMIC POSITIONING (DP)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.dp, light: !vessel.dp}">
+									{{(vessel.dp) ? vessel.dp : 'Not Specified'}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									MAXIMUM SPEED
+								</div>
+								<div class="inputcontainer">
+									{{vessel.maximum_speed}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									DEADWEIGHT TONNAGE (DWT)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.dwt, light: !vessel.dwt}">
+									{{(vessel.dwt) ? vessel.dwt : 'Not Specified'}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									GROSS TONNAGE (GRT)
+								</div>
+								<div class="inputcontainer">
+									{{vessel.grt}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									LENGTH OA (METRES)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.length, light: !vessel.length}">
+									{{(vessel.length) ? vessel.length : 'Not Specified'}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									BREADTH MOULDED (METRES)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.breadth_moulded, light: !vessel.breadth_moulded}">
+									{{(vessel.breadth_moulded) ? vessel.breadth_moulded : 'Not Specified'}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									DEPTH MOULDED (METRES)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.depth_moulded, light: !vessel.depth_moulded}">
+									{{(vessel.depth_moulded) ? vessel.depth_moulded : 'Not Specified'}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									MAXIMUM DRAFT (METRES)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.maximum_draft, light: !vessel.maximum_draft}">
+									{{(vessel.maximum_draft) ? vessel.maximum_draft : 'Not Specified'}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									ACCOMMODATION (MAXIMUM PASSENGERS)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.accommodation, light: !vessel.accommodation}">
+									{{(vessel.accommodation) ? vessel.accommodation : 'Not Specified'}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									DECK CRANE (TONNE)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.deck_crane, light: !vessel.deck_crane}">
+									{{(vessel.deck_crane) ? vessel.deck_crane : 'Not Specified'}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									HELIPAD / HELIDECK
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.helipad, light: !vessel.helipad}">
+									{{(vessel.helipad) ? vessel.helipad : 'Not Specified'}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box">
+							<div class="input-box box-half">
+								<div class="label display">
+									VALID NCDMB CLASS (NIGERIA ONLY)
+								</div>
+								<div class="inputcontainer" ng-class="{italics: !vessel.valid_ncdmb_class, light: !vessel.valid_ncdmb_class}">
+									{{(vessel.valid_ncdmb_class) ? vessel.valid_ncdmb_class : 'Not Specified'}}
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display">
+									VALID OVID/CMID
+								</div>
+								<div class="inputcontainer">
+									{{vessel.valid_ovidcmid}}
+								</div>							
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="clear-both"></div>
+					</div>
+				</div>
+				<div class="clear-both"></div>
+			</div>
+		</div>
+		<div class="mvx_featuredlabel">
+			<div class="mvx_labels">
+				<div>
+					OTHER VESSELS
+				</div>
+			</div>
+		</div>
+		<div class="mvx_featuredcontent">
+			<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
+				<div class="relative-container">
+					<div class="center_item navigation_arrow left"></div>
+				</div>
+			</div>
+			<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
+				<div class="relative-container">
+					<div class="center_item navigation_arrow right"></div>
+				</div>
+			</div>
+			<div class="relative-container web">
+				<slick id="slideWeb" infinite=true slides-to-show=4 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn" lazy-load="ondemand" init-onload='true' data="vessels">
+					<div ng-repeat="vessel_item in vessels" class="featuredVessel btnHover" ng-if="vessel.id != vessel_item.id" ui-sref="vessel({vessel: vessel_item, vessel_id: vessel_item.id})" style="background: #FEFEFE;">
+						<div class="layer">
+							<div class="content">
+								<div class="charter_details">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">attach_money</i>
+											</div>
+											<div class="text">
+												HIRE RATE
+											</div>
+										</div>
+										<div class="copy">
+											${{vessel_item.daily_hire_rate}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">timer</i>
+											</div>
+											<div class="text">
+												AGE
+											</div>
+										</div>
+										<div class="copy">
+											{{computeAge(vessel_item.year_built)}} years
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">flag</i>
+											</div>
+											<div class="text">
+												FLAG
+											</div>
+										</div>
+										<div class="copy" style="padding-top: 5px;" ng-if="vessel_item.preferred_flag">
+											<div class="flag-icon">
+												<img src="assets/images/icons/countries/{{vessel_item.preferred_flag | lowercase}}.png">
+											</div>
+											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
+												{{countries[vessel_item.preferred_flag]}}
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="title text_truncate">
+									{{vessel_item.vessel_name}}
+								</div>
+								<div class="vessel_info">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">date_range</i>
+											</div>
+											<div class="text">
+												VESSEL TYPE
+											</div>
+										</div>
+										<div class="copy">
+											{{vessel_item.vessel_type}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">event</i>
+											</div>
+											<div class="text">
+												PURPOSE
+											</div>
+										</div>
+										<div class="copy">
+											{{vessel_item.purpose}}
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">location_on</i>
+											</div>
+											<div class="text">
+												CURRENT LOCATION
+											</div>
+										</div>
+										<div class="copy">
+											{{vessel_item.current_location}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="menu-link menu-link-left offer_vessel">
+							<div class="menu-link-txt">
+							    <div class="menu-link-default">
+							        <div class="menu-link-default-txt">CHARTER VESSEL</div>
+							    </div>
+							    <div class="menu-link-hover">CHARTER VESSEL</div>
+							</div>
+						</div>
+					</div>
+				</slick>
+			</div>
+			<div class="relative-container mobile">
+				<slick id="slideWeb" infinite=true slides-to-show=4 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn" lazy-load="ondemand" init-onload='true' data="vessels">
+					<div ng-repeat="vessel in vessels" class="featuredVessel btnHover" ng-click="vesselInformation(vessel);" style="background: #FEFEFE;">
+						<div class="layer">
+							<div class="content">
+								<div class="charter_details">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">attach_money</i>
+											</div>
+											<div class="text">
+												HIRE RATE
+											</div>
+										</div>
+										<div class="copy">
+											${{vessel.daily_hire_rate}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">timer</i>
+											</div>
+											<div class="text">
+												AGE
+											</div>
+										</div>
+										<div class="copy">
+											{{computeAge(vessel.year_built)}} years
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">flag</i>
+											</div>
+											<div class="text">
+												FLAG
+											</div>
+										</div>
+										<div class="copy" style="padding-top: 5px;" ng-if="vessel.preferred_flag">
+											<div class="flag-icon">
+												<img src="assets/images/icons/countries/{{vessel.preferred_flag | lowercase}}.png">
+											</div>
+											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
+												{{countries[vessel.preferred_flag]}}
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="title text_truncate">
+									{{vessel.vessel_name}}
+								</div>
+								<div class="vessel_info">
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">date_range</i>
+											</div>
+											<div class="text">
+												VESSEL TYPE
+											</div>
+										</div>
+										<div class="copy">
+											{{vessel.vessel_type}}
+										</div>
+									</div>
+									<div class="vessel_info_box">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">event</i>
+											</div>
+											<div class="text">
+												PURPOSE
+											</div>
+										</div>
+										<div class="copy">
+											{{vessel.purpose}}
+										</div>
+									</div>
+									<div class="vessel_info_box" style="width: 100%;">
+										<div class="label">
+											<div class="icon">
+												<i class="material-icons">location_on</i>
+											</div>
+											<div class="text">
+												CURRENT LOCATION
+											</div>
+										</div>
+										<div class="copy">
+											{{vessel.current_location}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="menu-link menu-link-left offer_vessel">
+							<div class="menu-link-txt">
+							    <div class="menu-link-default">
+							        <div class="menu-link-default-txt">CHARTER VESSEL</div>
+							    </div>
+							    <div class="menu-link-hover">CHARTER VESSEL</div>
+							</div>
+						</div>
+					</div>
+				</slick>
+			</div>
+		</div>
+		<div class="mvx_footer">
+			<div class="top">
+				<div class="left">
+					<div class="header">
+						Subscribe for our weekly newsletters.
+					</div>
+					<div class="copy">
+						Keep abreast of recent happenings in the Oil and Gas industry by subscribing. We won't spam you, we promise :)
+					</div>
+					<div class="mvx_newsletter">
+						<div class="input">
+							<input type="text" class="mvx_btn" placeholder="Email address">
+						</div>
+						<div class="mvx_nbtn">
+							<button>
+								SUBSCRIBE
+							</button>
+						</div>
+						<div class="clear-both"></div>
+					</div>
+				</div>
+				<div class="right">
+					<div class="header">
+						FOLLOW US
+					</div>
+					<div class="mvx_socials">
+						<div class="mvx_social">
+							<i class="fa fa-facebook center_item_vertically"></i>
+						</div>
+						<div class="mvx_social">
+							<i class="fa fa-twitter center_item_vertically"></i>
+						</div>
+						<div class="mvx_social">
+							<i class="fa fa-instagram center_item_vertically"></i>
+						</div>
+					</div>
+					<div class="header">
+						QUICK LINKS
+					</div>
+					<div class="mvx_quicklinks">
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								LOGIN
+							</span>
+						</div>
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								SIGN UP
+							</span>
+						</div>
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								CREATE AD
+							</span>
+						</div>
+						<div class="mvx_quicklink">
+							<span class="center_item_vertically">
+								HELP
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="bottom">
+				<span class="center_item_vertically nowrap">
+					&copy; 2018 MVXchange. All rights reserved
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="links fixed" ng-class="{'showingLink': showLinks}">
+	<div class="link" ng-click="signup(); showLink();">
+		<div class="icon">
+			<i class="material-icons center_item">assignment_ind</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">JOIN MVXCHANGE</span>
+		</div>
+	</div>
+	<div class="link" ng-click="login(); showLink();">
+		<div class="icon">
+			<i class="material-icons center_item">fingerprint</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">LOGIN</span>
+		</div>
+	</div>
+	<div class="link">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">POST VESSEL</span>
+		</div>
+	</div>
+	<div class="link">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">POST PROCUREMENT</span>
+		</div>
+	</div>
+</div>

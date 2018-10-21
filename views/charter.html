@@ -1,0 +1,1112 @@
+<div id="charter" class="relative-container charter" data-simplebar ng-if="!charterSuccess">
+	<div class="innerContainer">
+		<div class="account_actions text_truncate">
+			<div class="account_action left" ng-click="home();">HOME</div><div> \ </div><div class="account_action right">CHARTER VESSEL</div>
+		</div>
+		<form ng-submit="charterVessel();" ng-class="{showingError: showingError}">
+			<div class="signupForm">
+				<div class="alertMessage" ng-if="charterError">
+					<div class="alertBox" ng-mouseover="showError()" ng-mouseleave="!enforceError && closeError()" ng-class="{showingError: showingError, 'error-bg': charterError}">
+						<div class="icon">
+							<i class="material-icons center_item">info</i>
+						</div>
+						<div class="text">
+							<span class="center_item_vertically" style="color: #aee4ff;" ng-if="!charterError">
+								EMAIL TAKEN. <span class="emphasis" ng-click="login();">CHARTER VESSEL</span> or <span class="emphasis" ng-click="useAnother();">USE ANOTHER</span>
+							</span>
+							<span class="center_item_vertically" ng-if="charterError">
+								<span class="emphasis">{{charterError}}</span>
+							</span>
+						</div>
+						<div class="close" ng-click="closeError();">
+							<i class="pe-7s-close center_item"></i>
+						</div>
+					</div>
+				</div>
+				<div class="charter_header">
+					CHARTER VESSEL
+				</div>
+				<div class="optional">
+					<div class="text">
+						<span class="left">[</span>CHARTER BRIEF<span class="right">]</span>
+					</div>
+					<div class="aesthetic">
+						<div class="ln center_item_vertically"></div>
+					</div>
+				</div>
+				<div class="input-box" data-validate="Ship-Owner Category" data-option="radio">
+					<div class="label display">
+						PREFERRED SHIP-OWNER CATEGORY <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<ul class="radiolist">
+							<li class="radiolist__item items_4">
+								<input type="radio" class="radio-btn" name="preferred_ship_owner_category" id="ship-owner-opt" value="Ship Owner" ng-model="charter.preferred_shipowner_category" ng-change="clearCharterError();" />
+								<label for="ship-owner-opt" class="radiolabel">Ship Owner</label>
+							</li>
+							<li class="radiolist__item items_4">
+								<input type="radio" class="radio-btn" name="preferred_ship_owner_category" id="ship-manager-opt" value="Ship Manager" ng-model="charter.preferred_shipowner_category" ng-change="clearCharterError();" />
+								<label for="ship-manager-opt" class="radiolabel">Ship Manager</label>
+							</li>
+							<li class="radiolist__item items_4">
+								<input type="radio" class="radio-btn" name="preferred_ship_owner_category" id="ship-broker-opt" value="Ship Broker" ng-model="charter.preferred_shipowner_category" ng-change="clearCharterError();" />
+								<label for="ship-broker-opt" class="radiolabel">Ship Broker</label>
+							</li>
+							<li class="radiolist__item items_4">
+								<input type="radio" class="radio-btn" name="preferred_ship_owner_category" id="any-opt" value="Any" ng-model="charter.preferred_shipowner_category" ng-change="clearCharterError();" />
+								<label for="any-opt" class="radiolabel">Any</label>
+							</li>
+							<div class="clear-both"></div>
+						</ul>
+					</div>
+					<div class="status error"></div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Vessel Type">
+						<div class="label display">
+							VESSEL TYPE <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<select ng-model="charter.vessel_type" ng-change="clearCharterError();">
+								<option value="">
+									Choose Vessel Type
+								</option>
+								<option value="Anchor Handling Tug Supply (AHTS)">
+									Anchor Handling Tug Supply (AHTS)
+								</option>
+								<option value="Anchor Handling Tug (AHT)">
+									Anchor Handling Tug (AHT)
+								</option>
+								<option value="Platform Support Vessel (PSV)">
+									Platform Support Vessel (PSV)
+								</option>
+								<option value="Diving Support Vessel (DSV)">
+									Diving Support Vessel (DSV)
+								</option>
+								<option value="Multipurpose Support Vessel">
+									Multipurpose Support Vessel
+								</option>
+								<option value="Tanker">
+									Tanker
+								</option>
+								<option value="Crew Vessel">
+									Crew Vessel
+								</option>
+								<option value="Cargo Barge">
+									Cargo Barge
+								</option>
+								<option value="Accommodation Barge">
+									Accommodation Barge
+								</option>
+								<option value="Heavy Lift Barge">
+									Heavy Lift Barge
+								</option>
+								<option value="Fast Supply Vessel">
+									Fast Supply Vessel
+								</option>
+								<option value="ROV Support Vessel">
+									ROV Support Vessel
+								</option>
+								<option value="Construction Support Vessel">
+									Construction Support Vessel
+								</option>
+								<option value="Pipe Lay Vessel">
+									Pipe Lay Vessel
+								</option>
+								<option value="Standby Vessel">
+									Standby Vessel
+								</option>
+								<option value="Survey Vessel">
+									Survey Vessel
+								</option>
+								<option value="Security Vessel">
+									Security Vessel
+								</option>
+								<option value="Construction Vessel">
+									Construction Vessel
+								</option>
+								<option value="Inland Barge">
+									Inland Barge
+								</option>
+								<option value="Laybarge">
+									Laybarge
+								</option>
+								<option value="Houseboat">
+									Houseboat
+								</option>
+								<option value="Push Tug">
+									Push Tug
+								</option>
+								<option value="Other">
+									Other
+								</option>
+							</select>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Preferred Flag">
+						<div class="label display">
+							PREFERRED FLAG <span class="required">*</span>
+						</div>
+						<div class="inputcontainer light-border with-content">
+							<div class="flag" ng-if="charter.preferred_flag">
+								<img ng-src="assets/images/icons/countries/{{charter.preferred_flag | lowercase}}.png">
+							</div>
+							<!-- <div style="float:left; height:100%; background:#222; color:white; padding:5px; max-width:80%; width: 50px; background: #000;"></div> -->
+							<div style="display: block; width: auto; height: 100%; overflow: hidden;">
+								<select class="noborder" ng-model="charter.preferred_flag" ng-change="clearCharterError();">
+									<option value="">
+										Choose Preferred Flag
+									</option>
+									<option value="AF">Afghanistan</option>
+									<option value="AX">Åland Islands</option>
+									<option value="AL">Albania</option>
+									<option value="DZ">Algeria</option>
+									<option value="AS">American Samoa</option>
+									<option value="AD">Andorra</option>
+									<option value="AO">Angola</option>
+									<option value="AI">Anguilla</option>
+									<option value="AQ">Antarctica</option>
+									<option value="AG">Antigua and Barbuda</option>
+									<option value="AR">Argentina</option>
+									<option value="AM">Armenia</option>
+									<option value="AW">Aruba</option>
+									<option value="AU">Australia</option>
+									<option value="AT">Austria</option>
+									<option value="AZ">Azerbaijan</option>
+									<option value="BS">Bahamas</option>
+									<option value="BH">Bahrain</option>
+									<option value="BD">Bangladesh</option>
+									<option value="BB">Barbados</option>
+									<option value="BY">Belarus</option>
+									<option value="BE">Belgium</option>
+									<option value="BZ">Belize</option>
+									<option value="BJ">Benin</option>
+									<option value="BM">Bermuda</option>
+									<option value="BT">Bhutan</option>
+									<option value="BO">Bolivia, Plurinational State of</option>
+									<option value="BQ">Bonaire, Sint Eustatius and Saba</option>
+									<option value="BA">Bosnia and Herzegovina</option>
+									<option value="BW">Botswana</option>
+									<option value="BV">Bouvet Island</option>
+									<option value="BR">Brazil</option>
+									<option value="IO">British Indian Ocean Territory</option>
+									<option value="BN">Brunei Darussalam</option>
+									<option value="BG">Bulgaria</option>
+									<option value="BF">Burkina Faso</option>
+									<option value="BI">Burundi</option>
+									<option value="KH">Cambodia</option>
+									<option value="CM">Cameroon</option>
+									<option value="CA">Canada</option>
+									<option value="CV">Cape Verde</option>
+									<option value="KY">Cayman Islands</option>
+									<option value="CF">Central African Republic</option>
+									<option value="TD">Chad</option>
+									<option value="CL">Chile</option>
+									<option value="CN">China</option>
+									<option value="CX">Christmas Island</option>
+									<option value="CC">Cocos (Keeling) Islands</option>
+									<option value="CO">Colombia</option>
+									<option value="KM">Comoros</option>
+									<option value="CG">Congo</option>
+									<option value="CD">Congo, the Democratic Republic of the</option>
+									<option value="CK">Cook Islands</option>
+									<option value="CR">Costa Rica</option>
+									<option value="CI">Côte d'Ivoire</option>
+									<option value="HR">Croatia</option>
+									<option value="CU">Cuba</option>
+									<option value="CW">Curaçao</option>
+									<option value="CY">Cyprus</option>
+									<option value="CZ">Czech Republic</option>
+									<option value="DK">Denmark</option>
+									<option value="DJ">Djibouti</option>
+									<option value="DM">Dominica</option>
+									<option value="DO">Dominican Republic</option>
+									<option value="EC">Ecuador</option>
+									<option value="EG">Egypt</option>
+									<option value="SV">El Salvador</option>
+									<option value="GQ">Equatorial Guinea</option>
+									<option value="ER">Eritrea</option>
+									<option value="EE">Estonia</option>
+									<option value="ET">Ethiopia</option>
+									<option value="FK">Falkland Islands (Malvinas)</option>
+									<option value="FO">Faroe Islands</option>
+									<option value="FJ">Fiji</option>
+									<option value="FI">Finland</option>
+									<option value="FR">France</option>
+									<option value="GF">French Guiana</option>
+									<option value="PF">French Polynesia</option>
+									<option value="TF">French Southern Territories</option>
+									<option value="GA">Gabon</option>
+									<option value="GM">Gambia</option>
+									<option value="GE">Georgia</option>
+									<option value="DE">Germany</option>
+									<option value="GH">Ghana</option>
+									<option value="GI">Gibraltar</option>
+									<option value="GR">Greece</option>
+									<option value="GL">Greenland</option>
+									<option value="GD">Grenada</option>
+									<option value="GP">Guadeloupe</option>
+									<option value="GU">Guam</option>
+									<option value="GT">Guatemala</option>
+									<option value="GG">Guernsey</option>
+									<option value="GN">Guinea</option>
+									<option value="GW">Guinea-Bissau</option>
+									<option value="GY">Guyana</option>
+									<option value="HT">Haiti</option>
+									<option value="HM">Heard Island and McDonald Islands</option>
+									<option value="VA">Holy See (Vatican City State)</option>
+									<option value="HN">Honduras</option>
+									<option value="HK">Hong Kong</option>
+									<option value="HU">Hungary</option>
+									<option value="IS">Iceland</option>
+									<option value="IN">India</option>
+									<option value="ID">Indonesia</option>
+									<option value="IR">Iran, Islamic Republic of</option>
+									<option value="IQ">Iraq</option>
+									<option value="IE">Ireland</option>
+									<option value="IM">Isle of Man</option>
+									<option value="IL">Israel</option>
+									<option value="IT">Italy</option>
+									<option value="JM">Jamaica</option>
+									<option value="JP">Japan</option>
+									<option value="JE">Jersey</option>
+									<option value="JO">Jordan</option>
+									<option value="KZ">Kazakhstan</option>
+									<option value="KE">Kenya</option>
+									<option value="KI">Kiribati</option>
+									<option value="KP">Korea, Democratic People's Republic of</option>
+									<option value="KR">Korea, Republic of</option>
+									<option value="KW">Kuwait</option>
+									<option value="KG">Kyrgyzstan</option>
+									<option value="LA">Lao People's Democratic Republic</option>
+									<option value="LV">Latvia</option>
+									<option value="LB">Lebanon</option>
+									<option value="LS">Lesotho</option>
+									<option value="LR">Liberia</option>
+									<option value="LY">Libya</option>
+									<option value="LI">Liechtenstein</option>
+									<option value="LT">Lithuania</option>
+									<option value="LU">Luxembourg</option>
+									<option value="MO">Macao</option>
+									<option value="MK">Macedonia, the former Yugoslav Republic of</option>
+									<option value="MG">Madagascar</option>
+									<option value="MW">Malawi</option>
+									<option value="MY">Malaysia</option>
+									<option value="MV">Maldives</option>
+									<option value="ML">Mali</option>
+									<option value="MT">Malta</option>
+									<option value="MH">Marshall Islands</option>
+									<option value="MQ">Martinique</option>
+									<option value="MR">Mauritania</option>
+									<option value="MU">Mauritius</option>
+									<option value="YT">Mayotte</option>
+									<option value="MX">Mexico</option>
+									<option value="FM">Micronesia, Federated States of</option>
+									<option value="MD">Moldova, Republic of</option>
+									<option value="MC">Monaco</option>
+									<option value="MN">Mongolia</option>
+									<option value="ME">Montenegro</option>
+									<option value="MS">Montserrat</option>
+									<option value="MA">Morocco</option>
+									<option value="MZ">Mozambique</option>
+									<option value="MM">Myanmar</option>
+									<option value="NA">Namibia</option>
+									<option value="NR">Nauru</option>
+									<option value="NP">Nepal</option>
+									<option value="NL">Netherlands</option>
+									<option value="NC">New Caledonia</option>
+									<option value="NZ">New Zealand</option>
+									<option value="NI">Nicaragua</option>
+									<option value="NE">Niger</option>
+									<option value="NG">Nigeria</option>
+									<option value="NU">Niue</option>
+									<option value="NF">Norfolk Island</option>
+									<option value="MP">Northern Mariana Islands</option>
+									<option value="NO">Norway</option>
+									<option value="OM">Oman</option>
+									<option value="PK">Pakistan</option>
+									<option value="PW">Palau</option>
+									<option value="PS">Palestinian Territory, Occupied</option>
+									<option value="PA">Panama</option>
+									<option value="PG">Papua New Guinea</option>
+									<option value="PY">Paraguay</option>
+									<option value="PE">Peru</option>
+									<option value="PH">Philippines</option>
+									<option value="PN">Pitcairn</option>
+									<option value="PL">Poland</option>
+									<option value="PT">Portugal</option>
+									<option value="PR">Puerto Rico</option>
+									<option value="QA">Qatar</option>
+									<option value="RE">Réunion</option>
+									<option value="RO">Romania</option>
+									<option value="RU">Russian Federation</option>
+									<option value="RW">Rwanda</option>
+									<option value="BL">Saint Barthélemy</option>
+									<option value="SH">Saint Helena, Ascension and Tristan da Cunha</option>
+									<option value="KN">Saint Kitts and Nevis</option>
+									<option value="LC">Saint Lucia</option>
+									<option value="MF">Saint Martin (French part)</option>
+									<option value="PM">Saint Pierre and Miquelon</option>
+									<option value="VC">Saint Vincent and the Grenadines</option>
+									<option value="WS">Samoa</option>
+									<option value="SM">San Marino</option>
+									<option value="ST">Sao Tome and Principe</option>
+									<option value="SA">Saudi Arabia</option>
+									<option value="SN">Senegal</option>
+									<option value="RS">Serbia</option>
+									<option value="SC">Seychelles</option>
+									<option value="SL">Sierra Leone</option>
+									<option value="SG">Singapore</option>
+									<option value="SX">Sint Maarten (Dutch part)</option>
+									<option value="SK">Slovakia</option>
+									<option value="SI">Slovenia</option>
+									<option value="SB">Solomon Islands</option>
+									<option value="SO">Somalia</option>
+									<option value="ZA">South Africa</option>
+									<option value="GS">South Georgia and the South Sandwich Islands</option>
+									<option value="SS">South Sudan</option>
+									<option value="ES">Spain</option>
+									<option value="LK">Sri Lanka</option>
+									<option value="SD">Sudan</option>
+									<option value="SR">Suriname</option>
+									<option value="SJ">Svalbard and Jan Mayen</option>
+									<option value="SZ">Swaziland</option>
+									<option value="SE">Sweden</option>
+									<option value="CH">Switzerland</option>
+									<option value="SY">Syrian Arab Republic</option>
+									<option value="TW">Taiwan, Province of China</option>
+									<option value="TJ">Tajikistan</option>
+									<option value="TZ">Tanzania, United Republic of</option>
+									<option value="TH">Thailand</option>
+									<option value="TL">Timor-Leste</option>
+									<option value="TG">Togo</option>
+									<option value="TK">Tokelau</option>
+									<option value="TO">Tonga</option>
+									<option value="TT">Trinidad and Tobago</option>
+									<option value="TN">Tunisia</option>
+									<option value="TR">Turkey</option>
+									<option value="TM">Turkmenistan</option>
+									<option value="TC">Turks and Caicos Islands</option>
+									<option value="TV">Tuvalu</option>
+									<option value="UG">Uganda</option>
+									<option value="UA">Ukraine</option>
+									<option value="AE">United Arab Emirates</option>
+									<option value="GB">United Kingdom</option>
+									<option value="US">United States</option>
+									<option value="UM">United States Minor Outlying Islands</option>
+									<option value="UY">Uruguay</option>
+									<option value="UZ">Uzbekistan</option>
+									<option value="VU">Vanuatu</option>
+									<option value="VE">Venezuela, Bolivarian Republic of</option>
+									<option value="VN">Viet Nam</option>
+									<option value="VG">Virgin Islands, British</option>
+									<option value="VI">Virgin Islands, U.S.</option>
+									<option value="WF">Wallis and Futuna</option>
+									<option value="EH">Western Sahara</option>
+									<option value="YE">Yemen</option>
+									<option value="ZM">Zambia</option>
+									<option value="ZW">Zimbabwe</option>
+								</select>
+							</div>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box" data-validate="Identity" data-option="radio">
+					<div class="label display">
+						I AM A/AN <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<ul class="radiolist">
+							<li class="radiolist__item items_3">
+								<input type="radio" class="radio-btn" name="identity" id="enduser-opt" value="End User / Operator" ng-model="charter.identity" ng-change="clearCharterError();" />
+								<label for="enduser-opt" class="radiolabel">End User / Operator</label>
+							</li>
+							<li class="radiolist__item items_3">
+								<input type="radio" class="radio-btn" name="identity" id="charterer-opt" value="Charterer" ng-model="charter.identity" ng-change="clearCharterError();" />
+								<label for="charterer-opt" class="radiolabel">Charterer</label>
+							</li>
+							<li class="radiolist__item items_3">
+								<input type="radio" class="radio-btn" name="identity" id="shipbroker-opt" value="Ship Broker" ng-model="charter.identity" ng-change="clearCharterError();" />
+								<label for="shipbroker-opt" class="radiolabel">Ship Broker</label>
+							</li>
+							<div class="clear-both"></div>
+						</ul>
+					</div>
+					<div class="status error"></div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Daily Hire Rate">
+						<div class="label display">
+							PREFERRED DAILY HIRE RATE <span class="required">*</span>
+						</div>
+						<div class="inputcontainer light-border with-content">
+							<div class="currency">
+								<span class="center_item">
+									$
+								</span>
+							</div>
+							<div class="amount">
+								<input type="number" ng-model="charter.daily_hire_rate" ng-change="clearCharterError();" placeholder="Amount">
+							</div>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Max Age">
+						<div class="label display">
+							MAX AGE <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="number" ng-model="charter.max_age" ng-change="clearCharterError();" placeholder="Type Number">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half" data-validate="Location of Operation">
+						<div class="label display">
+							LOCATION OF OPERATION <span class="required">*</span>
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="charter.location_of_operation" ng-change="clearCharterError();" placeholder="Type text">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last" data-validate="Firm Duration">
+						<div class="label display">
+							ADD FIRM DURATION <span class="required">*</span>
+						</div>
+						<div class="inputcontainer" ng-if="charter.firm_duration != 'Enter Firm Duration'">
+							<select ng-model="charter.firm_duration" ng-change="clearCharterError();">
+								<option value="">
+									Choose Firm Duration
+								</option>
+								<option value="1 - 15 Days">
+									1 - 15 Days
+								</option>
+								<option value="16 - 30 days">
+									16 - 30 days
+								</option>
+								<option value="31 - 60 days">
+									31 - 60 days
+								</option>
+								<option value="61 - 120 days">
+									61 - 120 days
+								</option>
+								<option value="Above 121 days">
+									Above 121 days
+								</option>
+								<option value="Enter Firm Duration">
+									Enter Firm Duration
+								</option>
+							</select>
+						</div>
+						<div class="inputcontainer light-border with-content" ng-if="charter.firm_duration == 'Enter Firm Duration'">
+							<div class="currency" ng-click="chooseDuration();">
+								<i class="material-icons center_item">arrow_back</i>
+							</div>
+							<div class="amount">
+								<input type="text" ng-model="charter.firm_duration_entered" ng-change="clearCharterError();" placeholder="Type Duration">
+							</div>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box" data-validate="Scope of Work">
+					<div class="label display">
+						SCOPE OF WORK <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<textarea placeholder="Type here" ng-model="charter.scope_of_work" ng-change="clearCharterError();"></textarea>
+					</div>
+					<div class="status error"></div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						ADD TONNAGE (GRT/DWT) <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<div class="input-box" style="width: 100%; padding-bottom: 0;">
+							<div class="input-box box-half">
+								<div class="label display gray">
+									Deadweight Tonnage (DWT)
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Tonnes">
+										<input type="text" ng-model="charter.tonnage_dwt_min" placeholder="Min Tonnes">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Tonnes">
+										<input type="text" ng-model="charter.tonnage_dwt_max" ng-change="clearCharterError();" placeholder="Max Tonnes">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display gray">
+									Gross Tonnage (GRT)
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Tonnes">
+										<input type="text" ng-model="charter.tonnage_grt_min" ng-change="clearCharterError();" placeholder="Min Tonnes">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Tonnes">
+										<input type="text" ng-model="charter.tonnage_grt_max" ng-change="clearCharterError();" placeholder="Max Tonnes">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+					</div>
+				</div>
+				<div class="input-box" data-validate="Password">
+					<div class="label display">
+						ADD PERFORMANCE (Speed/Bollard Pull/BHP) <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<div class="input-box" style="width: 100%; padding-bottom: 0;">
+							<div class="input-box box-third first">
+								<div class="label display gray">
+									Bollard Pull (BP)
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Tonnage">
+										<input type="text" ng-model="charter.performance_sbb_bp_min" ng-change="clearCharterError();" placeholder="Min Tonnage">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Tonnage">
+										<input type="text" ng-model="charter.performance_sbb_bp_max" ng-change="clearCharterError();" placeholder="Max Tonnage">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-third">
+								<div class="label display gray">
+									Brake Horse Power (BHP)
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min BHP">
+										<input type="text" ng-model="charter.performance_sbb_bhp_min" ng-change="clearCharterError();" placeholder="Min BHP">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max BHP">
+										<input type="text" ng-model="charter.performance_sbb_bhp_max" ng-change="clearCharterError();" placeholder="Max BHP">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-third last">
+								<div class="label display gray">
+									Speed
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Knots">
+										<input type="text" ng-model="charter.performance_sbb_speed_min" ng-change="clearCharterError();" placeholder="Min Knots">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Knots">
+										<input type="text" ng-model="charter.performance_sbb_speed_max" ng-change="clearCharterError();" placeholder="Max Knots">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+					</div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						ADD DIMENSIONS <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<div class="input-box" style="width: 100%; padding-bottom: 0;">
+							<div class="input-box box-half">
+								<div class="label display gray">
+									Length OA
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Metres">
+										<input type="text" ng-model="charter.dimensions_length_min" ng-change="clearCharterError();" placeholder="Min Metres">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Metres">
+										<input type="text" ng-model="charter.dimensions_length_max" ng-change="clearCharterError();" placeholder="Max Metres">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display gray">
+									Breadth Moulded
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Metres">
+										<input type="text" ng-model="charter.dimensions_breadth_min" ng-change="clearCharterError();" placeholder="Min Metres">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Metres">
+										<input type="text" ng-model="charter.dimensions_breadth_max" ng-change="clearCharterError();" placeholder="Max Metres">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+						<div class="input-box" style="width: 100%; padding-bottom: 0;">
+							<div class="input-box box-half">
+								<div class="label display gray">
+									Depth Moulded
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Metres">
+										<input type="text" ng-model="charter.dimensions_depth_min" ng-change="clearCharterError();" placeholder="Min Metres">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Metres">
+										<input type="text" ng-model="charter.dimensions_depth_max" ng-change="clearCharterError();" placeholder="Max Metres">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display gray">
+									Draft
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half" data-validate="Min Metres">
+										<input type="text" ng-model="charter.dimensions_draft_min" ng-change="clearCharterError();" placeholder="Min Metres">
+										<div class="status error"></div>
+									</div>
+									<div class="input-box box-half last" data-validate="Max Metres">
+										<input type="text" ng-model="charter.dimensions_draft_max" ng-change="clearCharterError();" placeholder="Max Metres">
+										<div class="status error"></div>
+									</div>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+					</div>
+				</div>
+				<div class="input-box">
+					<div class="inputcontainer">
+						<div class="input-box box-half nopadding" data-validate="Expected MOB Date">
+							<div class="label display">
+								EXPECTED MOB DATE
+							</div>
+							<div class="inputcontainer" style="cursor: pointer;">
+								<input id="inputdate" type="text" ng-model="charter.expected_mob_date" ng-change="clearCharterError();" placeholder="Choose Date" readonly="readonly">
+							</div>
+							<div class="status error"></div>
+						</div>
+						<div class="clear-both"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="optional">
+					<div class="text">
+						<span class="left">[</span>OPTIONAL<span class="right">]</span>
+					</div>
+					<div class="aesthetic">
+						<div class="ln center_item_vertically"></div>
+					</div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half">
+						<div class="label display">
+							END CLIENT
+						</div>
+						<div class="inputcontainer">
+							<input type="text" ng-model="charter.end_client" placeholder="Enter Client Name">
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							PURPOSE
+						</div>
+						<div class="inputcontainer">
+							<ul class="radiolist">
+								<li class="radiolist__item">
+									<input type="radio" class="radio-btn" name="purpose" id="charter-purpose-opt" value="End User / Operator" ng-model="charter.purpose" />
+									<label for="charter-purpose-opt" class="radiolabel">Charter</label>
+								</li>
+								<li class="radiolist__item">
+									<input type="radio" class="radio-btn" name="purpose" id="sandp-opt" value="Charterer" ng-model="charter.purpose" />
+									<label for="sandp-opt" class="radiolabel">Sale and Purchase (S&P)</label>
+								</li>
+							</ul>
+						</div>
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div><div class="input-box">
+					<div class="label display">
+						ADD REGISTRATION / DOCUMENTATION
+					</div>
+					<div class="inputcontainer">
+						<div class="input-box" style="width: 100%; padding-bottom: 0;">
+							<div class="input-box box-half">
+								<div class="label display gray">
+									Class
+								</div>
+								<div class="inputcontainer">
+									<select ng-model="charter.class">
+										<option value="">
+											Choose Class
+										</option>
+										<option value="American Bureau of Shipping">American Bureau of Shipping</option>
+										<option value="Bureau Veritas">Bureau Veritas</option>
+										<option value="China Classification Society">China Classification Society</option>
+										<option value="Croatian Register of Shipping">Croatian Register of Shipping</option>
+										<option value="DNV GL">DNV GL</option>
+										<option value="Indian Register of Shipping">Indian Register of Shipping</option>
+										<option value="Korean Register of Shipping">Korean Register of Shipping</option>
+										<option value="Lloyd's Register">Lloyd's Register</option>
+										<option value="Nippon Kaiji Kyokai (ClassNK)">Nippon Kaiji Kyokai (ClassNK)</option>
+										<option value="Polish Register of Shipping">Polish Register of Shipping</option>
+										<option value="Registro Italiano Navale">Registro Italiano Navale</option>
+										<option value="Russian Maritime Register of Shipping">Russian Maritime Register of Shipping</option>
+										<option value="Others">Others</option>
+									</select>
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display gray">
+									NCDMB
+								</div>
+								<div class="inputcontainer">
+									<select ng-model="charter.ncdmb">
+										<option value="">
+											Choose Option
+										</option>
+										<option value="AAA">AAA</option>
+										<option value="AA">AA</option>
+										<option value="A">A</option>
+										<option value="B">B</option>
+										<option value="C">C</option>
+										<option value="D">D</option>
+										<option value="E">E</option>
+										<option value="Not Applicable">Not Applicable</option>
+									</select>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+					</div>
+					<div class="status error"></div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						ADD PORTS OF DELIVERY & RE-DELIVERY
+					</div>
+					<div class="inputcontainer">
+						<div class="input-box box-half">
+							<div class="inputcontainer" style="cursor: pointer;">
+								<input type="text" ng-model="charter.port_of_delivery" placeholder="Enter Port of Delivery">
+							</div>
+						</div>
+						<div class="input-box box-half last">
+							<div class="inputcontainer" style="cursor: pointer;">
+								<input type="text" ng-model="charter.port_of_redelivery" placeholder="Enter Port of Re-Delivery">
+							</div>
+						</div>
+						<div class="clear-both"></div>
+					</div>
+					<div class="status error"></div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						ADD DECK AND CARGO CAPACITIES
+					</div>
+					<div class="inputcontainer">
+						<div class="input-box" style="width: 100%; padding-bottom: 0;">
+							<div class="input-box box-third first">
+								<div class="label display gray">
+									Clear Deck Area (Sqm)
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half">
+										<input type="text" ng-model="charter.cleardeckarea_min" placeholder="Min">
+									</div>
+									<div class="input-box box-half last">
+										<input type="text" ng-model="charter.cleardeckarea_max" placeholder="Max">
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-third">
+								<div class="label display gray">
+									Deck Strength
+								</div>
+								<div class="inputcontainer">
+									<div class="input-box box-half">
+										<input type="text" ng-model="charter.deckstrength_min" placeholder="Min MT/sqm">
+									</div>
+									<div class="input-box box-half last">
+										<input type="text" ng-model="charter.deckstrength_max" placeholder="Max MT/sqm">
+									</div>
+								</div>
+							</div>
+							<div class="input-box box-third last">
+								<div class="label display gray">
+									Deck Crane
+								</div>
+								<div class="inputcontainer">
+									<ul class="radiolist">
+										<li class="radiolist__item">
+											<input type="radio" class="radio-btn" name="deckcrane" id="deckcrane-yes" value="End User / Operator" ng-model="charter.deckcrane" />
+											<label for="deckcrane-yes" class="radiolabel" style="padding-top: 7px;">Yes</label>
+										</li>
+										<li class="radiolist__item">
+											<input type="radio" class="radio-btn" name="deckcrane" id="deckcrane-no" value="Charterer" ng-model="charter.deckcrane" />
+											<label for="deckcrane-no" class="radiolabel" style="padding-top: 7px;">No</label>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+					</div>
+					<div class="status error"></div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						ADD DYNAMIC POSITIONING
+					</div>
+					<div class="inputcontainer">
+						<div class="input-box" style="width: 100%; padding-bottom: 0;">
+							<div class="input-box box-half">
+								<div class="label display gray">
+									DP 1
+								</div>
+								<div class="inputcontainer">
+									<ul class="radiolist">
+										<li class="radiolist__item">
+											<input type="radio" class="radio-btn" name="dpone" id="dpone-yes" value="End User / Operator" ng-model="charter.dp1" />
+											<label for="dpone-yes" class="radiolabel">Yes</label>
+										</li>
+										<li class="radiolist__item">
+											<input type="radio" class="radio-btn" name="dpone" id="dpone-no" value="Charterer" ng-model="charter.dp1" />
+											<label for="dpone-no" class="radiolabel">No</label>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="input-box box-half last">
+								<div class="label display gray">
+									DP 2
+								</div>
+								<div class="inputcontainer">
+									<ul class="radiolist">
+										<li class="radiolist__item">
+											<input type="radio" class="radio-btn" name="dptwo" id="dptwo-yes" value="End User / Operator" ng-model="charter.dp2" />
+											<label for="dptwo-yes" class="radiolabel">Yes</label>
+										</li>
+										<li class="radiolist__item">
+											<input type="radio" class="radio-btn" name="dptwo" id="dptwo-no" value="Charterer" ng-model="charter.dp2" />
+											<label for="dptwo-no" class="radiolabel">No</label>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="clear-both"></div>
+						</div>
+					</div>
+					<div class="status error"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half">
+						<div class="label display">
+							ADD VESSEL INSPECTION / OVID
+						</div>
+						<div class="inputcontainer">
+							<div class="label display gray">
+								Valid OVID/CMID
+							</div>
+							<div class="inputcontainer">
+								<ul class="radiolist">
+									<li class="radiolist__item">
+										<input type="radio" class="radio-btn" name="valid_ovid" id="valid-ovid-yes" value="End User / Operator" ng-model="charter.valid_ovid_cmid" />
+										<label for="valid-ovid-yes" class="radiolabel" style="padding-top: 0;">Yes</label>
+									</li>
+									<li class="radiolist__item">
+										<input type="radio" class="radio-btn" name="valid_ovid" id="valid-ovid-no" value="Charterer" ng-model="charter.valid_ovid_cmid" />
+										<label for="valid-ovid-no" class="radiolabel" style="padding-top: 0;">No</label>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							ADD INSPECTION
+						</div>
+						<div class="inputcontainer">
+							<select ng-model="charter.inspection">
+								<option value="">
+									Choose
+								</option>
+								<option value="Within 2 Weeks">Within 2 Weeks</option>
+								<option value="Within 1 month">Within 1 month</option>
+								<option value="More than 1 month">More than 1 month</option>
+							</select>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+					<div class="status error"></div>
+				</div>
+
+				<div class="input-box">
+					<div class="input-box box-third first">
+						<div class="label display">
+							ADD PERFORMANCE (Fuel Consumption)
+						</div>
+						<div class="inputcontainer">
+							<div class="label display gray">
+								Fuel Consumption  (On tow)
+							</div>
+							<div class="inputcontainer">
+								<input type="text" ng-model="charter.fuel_consumption_on_tow" placeholder="Max Litres">
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-third">
+						<div class="label display">
+							ADD ACCOMMODATION
+						</div>
+						<div class="inputcontainer">
+							<div class="label display gray">
+								Passengers
+							</div>
+							<div class="inputcontainer">
+								<div class="input-box box-half">
+									<input type="text" ng-model="charter.accommodation_passengers_min" placeholder="Min">
+								</div>
+								<div class="input-box box-half last">
+									<input type="text" ng-model="charter.accommodation_passengers_max" placeholder="Max">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-third last">
+						<div class="label display" style="height: 12px;"></div>
+						<div class="inputcontainer">
+							<div class="label display gray">
+								Hospital
+							</div>
+							<div class="inputcontainer">
+								<ul class="radiolist">
+									<li class="radiolist__item">
+										<input type="radio" class="radio-btn" name="accommodation_hospital" id="accommodation_hospital-yes" value="End User / Operator" ng-model="charter.accommodation_hospital" />
+										<label for="accommodation_hospital-yes" class="radiolabel" style="padding-top: 7px;">Yes</label>
+									</li>
+									<li class="radiolist__item">
+										<input type="radio" class="radio-btn" name="accommodation_hospital" id="accommodation_hospital-no" value="Charterer" ng-model="charter.accommodation_hospital" />
+										<label for="accommodation_hospital-no" class="radiolabel" style="padding-top: 7px;">No</label>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+					<div class="status error"></div>
+				</div>
+				<div class="input-box">
+					<div class="input-box box-half">
+						<div class="label display">
+							ADD SPECIAL EQUIPMENT
+						</div>
+						<div class="inputcontainer">
+							<div class="label display gray">
+								Helipad/Helideck
+							</div>
+							<div class="inputcontainer">
+								<ul class="radiolist">
+									<li class="radiolist__item">
+										<input type="radio" class="radio-btn" name="helipad" id="helipad-yes" value="End User / Operator" ng-model="charter.helipad" />
+										<label for="helipad-yes" class="radiolabel" style="padding-top: 0;">Yes</label>
+									</li>
+									<li class="radiolist__item">
+										<input type="radio" class="radio-btn" name="helipad" id="helipad-no" value="Charterer" ng-model="charter.helipad" />
+										<label for="helipad-no" class="radiolabel" style="padding-top: 0;">No</label>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="input-box box-half last">
+						<div class="label display">
+							UPLOAD VESSEL SPECIFICATION DOCUMENT
+						</div>
+						<div class="inputcontainer" onclick="document.getElementById('vessel_specification_document').click();">
+							<div class="image-field" style="width: calc(100% - 2px);">
+								<div class="icon" ng-style="charter.vessel_specification_documentpreview">
+									<i class="fa fa-picture-o center_item" ng-if="!charter.vessel_specification_document"></i>
+								</div>
+								<div class="copy">
+									<span class="center_item_vertically" ng-if="!charter.vessel_specification_document">Upload Document</span>
+									<span class="center_item_vertically" ng-if="charter.vessel_specification_document">{{charter.vessel_specification_documentname}}</span>
+								</div>
+							</div>
+						</div>
+						<input type="file" accept=".doc, .docx, .ppt, .pptx, .pdf" class="fileField" id="vessel_specification_document" onchange="angular.element(this).scope().fileChanged(this, 'vessel_specification_document')">
+						<input type="hidden" class="hidden" ng-value="charter.vessel_specification_document">
+						<div class="status error"></div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						ADD ADDITIONAL DATA <span class="required">*</span>
+					</div>
+					<div class="inputcontainer">
+						<textarea placeholder="Type here" ng-model="charter.additional_data"></textarea>
+					</div>
+					<div class="status error"></div>
+				</div>
+
+				<div class="input-box" style="margin-top: 20px;">
+					<button type="submit" class="of_btn" ng-class="{'success-bg': !processing && (charterStatus == 'Charter Added')}" ng-disabled="processing">
+						<span class="center_item" ng-if="!processing && !(charterStatus == 'Charter Added')">SEND</span>
+						<span class="center_item" ng-if="!processing && (charterStatus == 'Charter Added')">SUCCESS</span>
+						<span class="center_item" ng-if="!processing && (charterStatus == 'Account Not Verified')">{{charterStatus}}</span>
+			            <div class="spinner" ng-if="processing">
+					        <div class="bounce1"></div>
+					        <div class="bounce2"></div>
+					        <div class="bounce3"></div>
+					    </div>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="relative-container" ng-if="charterSuccess">
+	<div class="center_item charter signupContainer" click-anywhere-but-here="click();">
+		<div class="signupForm signupSuccess">
+			<div class="relative-container">
+				<div class="top">
+					<div class="animation animated pulse infinite">
+					    <img src="assets/images/ship.gif" class="center_child" height="100%">
+					</div>
+				</div>
+				<div class="bottom">
+					<div class="header success">
+						SUCCESS!
+					</div>
+					<div class="details">
+						Vessel is on its way. So we're taking you back to <span class="bold">DASHBOARD</span> in <div id="seconds"></div>:<div id="milliseconds"></div> seconds
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

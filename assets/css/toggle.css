@@ -16,6 +16,12 @@
     flex: 1;
 }
 
+.dark_light .switch_box {
+    max-width: 50px;
+    min-width: 50px;
+    height: 35px;
+}
+
 input[type="checkbox"].switch_1 {
     font-size: 30px;
     -webkit-appearance: none;
@@ -24,7 +30,7 @@ input[type="checkbox"].switch_1 {
     width: 3.5em;
     height: 1.2em;
     background: #ddd;
-    border-radius: 3em;
+    border-radius: 16px;
     position: relative;
     cursor: pointer;
     outline: none;
@@ -33,9 +39,19 @@ input[type="checkbox"].switch_1 {
     margin: 0;
 }
 
+.dark_light input[type="checkbox"].switch_1 {
+    width: 2em;
+    height: 1.0em;
+    border: 1px dashed #DDD;
+}
+
 input[type="checkbox"].switch_1:checked {
-    /*background: #0ebeff;*/
     background: #26af57;
+}
+
+.dark_light input[type="checkbox"].switch_1:checked {
+    background: #FFF;
+    border: 1px dashed #AAA;
 }
 
 input[type="checkbox"].switch_1:after {
@@ -54,6 +70,18 @@ input[type="checkbox"].switch_1:after {
     transition: all .2s ease-in-out;
 }
 
+.dark_light input[type="checkbox"].switch_1:after {
+    width: 1.0em;
+    height: 1.0em;
+    box-shadow: none;
+    border: 1px solid #AAA;
+    top: -2px;
+}
+
 input[type="checkbox"].switch_1:checked:after {
     left: calc(100% - 1.2em);
+}
+
+.dark_light input[type="checkbox"].switch_1:checked:after {
+    left: calc(100% - 1.0em);
 }

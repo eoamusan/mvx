@@ -1,0 +1,120 @@
+<div class="mvx_inner_links" ng-class="{'showing_links': showingLinks}">
+	<div class="link" ng-click="signup(); showLink();">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap">ADD CHARTER ENQUIRY</span>
+		</div>
+	</div>
+	<div class="link" ng-click="login(); showLink();">
+		<div class="icon">
+			<i class="material-icons center_item">textsms</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap">CHATS</span>
+		</div>
+	</div>
+	<div class="link" ng-click="addvessel(); showLinks();">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap">POST VESSEL</span>
+		</div>
+	</div>
+	<div class="link">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap">POST PROCUREMENT</span>
+		</div>
+	</div>
+	<div class="link logout">
+		<div class="icon">
+			<i class="material-icons center_item">power_settings_new</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap abs-right">SIGN OUT</span>
+		</div>
+	</div>
+</div>
+<div class="mvx_inner_mainarea" ng-class="{'showing_links': showingLinks}">
+	<div class="relative-container">
+		<div class="mvx_inner_header">
+			<div class="mvx_toggle_two" ng-class="{'showing_links': showingLinks}" ng-click="showLinks();">
+				<img src="assets/images/ham_black.png"  class="center_item_vertically ham">
+				<img src="assets/images/icons/close.png" height="30" class="center_item_vertically close-flyout" style="right: 5px;">
+			</div>
+			<div class="logo" ng-class="{'showing_links': showingLinks, noborder: !globals.currentUser}" ng-click="home();">
+				
+			</div>
+			<div class="label" ng-class="{'logged_out': !globals.currentUser}">
+				<div class="inner_logout_links nowrap" ng-if="!globals.currentUser">
+					<div class="logout_link" ng-click="home();">
+						<div class="icon">
+							<i class="material-icons center_item">account_balance</i>
+						</div>
+						<div class="label">
+							<span class="center_item_vertically">
+								HOME
+							</span>
+						</div>
+					</div>
+					<div class="logout_link" ng-click="login();">
+						<div class="icon">
+							<i class="material-icons center_item">fingerprint</i>
+						</div>
+						<div class="label">
+							<span class="center_item_vertically">
+								LOG IN
+							</span>
+						</div>
+					</div>
+					<div class="logout_link" ng-click="signup();">
+						<div class="icon">
+							<i class="material-icons center_item">format_align_center</i>
+						</div>
+						<div class="label">
+							<span class="center_item_vertically">
+								SIGN UP
+							</span>
+						</div>
+					</div>
+					<div class="clear-both"></div>
+				</div>
+				<span class="center_item" ng-if="globals.currentUser">
+					<span ng-click="dashboard();" style="cursor: pointer;">DASHBOARD</span>
+					<span class="less_emphasis">
+						\ {{globals.currentUser.userdata.data.category}}
+					</span>
+				</span>
+			</div>
+			<div class="account" ng-if="globals.currentUser">
+				<div class="welcome">
+					<div class="label">
+						<span class="center_item_vertically">Welcome, <span class="uname">{{globals.currentUser.userdata.data.display_name}}</span></span>
+					</div>
+					<div class="mvx_inner_header_profile" style="border: 1px solid {{getColor(globals.currentUser.userdata.data.display_name)}}; ">
+						<span class="center_item" style="color: {{getColor(globals.currentUser.userdata.data.display_name)}};">
+							{{getInitials(globals.currentUser.userdata.data.display_name)}}
+						</span>
+					</div>
+				</div>
+				<div class="logout" ng-click="logout();">
+					<div class="label">
+						<span class="center_item_vertically">Logout</span>
+					</div>
+					<div class="icon">
+						<i class="material-icons center_item">power_settings_new</i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mvx_inner_container" ui-view="content">
+			
+		</div>
+		<div class="dim" ng-class="{'show_dim': showingLinks}" ng-click="showLinks();"></div>
+	</div>
+</div>
