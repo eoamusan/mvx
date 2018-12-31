@@ -1,9 +1,9 @@
-<div class="input-box verbose" data-validate="Category">
+<div class="input-box verbose required-field" data-validate="Category">
 	<div class="label">
 		CATEGORY
 	</div>
 	<div class="inputcontainer">
-		<select ng-model="user.shipcategory">
+		<select ng-model="usersignup.shipcategory">
 			<option value="">
 				Choose Ship Owner Category
 			</option>
@@ -24,56 +24,56 @@
 <div class="section-label">
 	BUSINESS DETAILS
 </div>
-<div class="input-box" data-validate="Company Logo" data-option="file-input">
+<div class="input-box">
 	<div class="inputcontainer" onclick="document.getElementById('companylogo').click();">
 		<div class="image-field">
-			<div class="icon" ng-style="user.companylogopreview">
-				<i class="fa fa-picture-o center_item" ng-if="!user.companylogo"></i>
+			<div class="icon" ng-style="usersignup.companylogopreview">
+				<i class="fa fa-picture-o center_item" ng-if="!usersignup.companylogo"></i>
 			</div>
 			<div class="copy">
-				<span class="center_item_vertically" ng-if="!user.companylogo">Upload Company Logo</span>
-				<span class="center_item_vertically" ng-if="user.companylogo">{{user.companylogoname}}</span>
+				<span class="center_item_vertically" ng-if="!usersignup.companylogo">Upload Company Logo</span>
+				<span class="center_item_vertically" ng-if="usersignup.companylogo">{{usersignup.companylogoname}}</span>
 			</div>
 		</div>
 	</div>
 	<div class="status error"></div>
 	<div class="clear-both"></div>
 	<input type="file" accept="image/*" class="fileField" id="companylogo" onchange="angular.element(this).scope().fileChanged(this, 'companylogo')">
-	<input type="hidden" class="hidden" ng-value="user.companylogo">                    			
+	<input type="hidden" class="hidden" ng-value="usersignup.companylogo">                    			
 </div>
-<div class="input-box" data-validate="Business Name">
+<div class="input-box required-field" data-validate="Business Name">
 	<div class="label">
 		<div class="hidden_label">
 			BUSINESS NAME <span class="required">*</span>
 		</div>
 	</div>
 	<div class="inputcontainer">
-		<input type="text" ng-model="user.shipbusinessname" placeholder="Business Name">
+		<input type="text" ng-model="usersignup.shipbusinessname" placeholder="Business Name">
 	</div>
 	<div class="status error"></div>
 	<div class="clear-both"></div>
 </div>
 <div class="input-box">
-	<div class="input-box box-half" data-validate="Company Registration Number">
+	<div class="input-box box-half">
 		<div class="label">
 			<div class="hidden_label">
 				COMPANY REGISTRATION NUMBER <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.shipcompanyregistrationnumber" placeholder="Company Registration Number">
+			<input type="text" ng-model="usersignup.shipcompanyregistrationnumber" placeholder="Company Registration Number">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
 	</div>
-	<div class="input-box box-half last" data-validate="Website">
+	<div class="input-box box-half last">
 		<div class="label">
 			<div class="hidden_label">
 				WEBSITE <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.shipwebsite" placeholder="Website">
+			<input type="text" ng-model="usersignup.shipwebsite" placeholder="Website">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
@@ -81,33 +81,33 @@
 	<div class="clear-both"></div>
 </div>
 <div class="input-box">
-	<div class="input-box box-half" data-validate="Email">
+	<div class="input-box box-half">
 		<div class="label">
 			<div class="hidden_label">
 				Email <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.shipbizemail" placeholder="Email">
+			<input type="text" ng-model="usersignup.shipbizemail" placeholder="Email">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
 	</div>
-	<div class="input-box box-half last" data-validate="Phone Number">
+	<div class="input-box box-half last">
 		<div class="label">
 			<div class="hidden_label">
 				Phone Number <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.shipbizmobile" placeholder="Phone Number">
+			<input type="text" ng-model="usersignup.shipbizmobile" placeholder="Phone Number">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
 	</div>
 	<div class="clear-both"></div>
 </div>
-<div class="input-box" data-validate="Service" ng-repeat="service in user.shipservices">
+<div class="input-box" ng-repeat="service in usersignup.shipservices">
 	<div class="label">
 		<div class="hidden_label">
 			Service {{$index+1}} <span class="required">*</span>
@@ -116,7 +116,7 @@
 	<div class="inputcontainer">
 		<input type="text" ng-model="service.label" placeholder="Service {{$index+1}}">
 	</div>
-	<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.shipservices.length > 1" ng-click="removeService(user.shipservices, service)">
+	<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="usersignup.shipservices.length > 1" ng-click="removeService(usersignup.shipservices, service)">
 		<div class="relative-container">
 			<div class="delete_btn center_item">
 				<div class="relative-container">
@@ -129,43 +129,43 @@
 	<div class="clear-both"></div>
 </div>
 <div class="input-box align-left">
-	<span class="action_btn" ng-click="addNewservice(user.shipservices);">
+	<span class="action_btn" ng-click="addNewservice(usersignup.shipservices);">
 		Add Service
 	</span>
 </div>
-<div class="input-box" data-validate="Corporate Office Address">
+<div class="input-box">
 	<div class="label">
 		<div class="hidden_label">
 			Corporate Office Address <span class="required">*</span>
 		</div>
 	</div>
 	<div class="inputcontainer">
-		<input type="text" ng-model="user.shipcorporateofficeaddress" placeholder="Corporate Office Address">
+		<input type="text" ng-model="usersignup.shipcorporateofficeaddress" placeholder="Corporate Office Address">
 	</div>
 	<div class="status error"></div>
 	<div class="clear-both"></div>
 </div>
 <div class="input-box">
-	<div class="input-box box-half" data-validate="Name of Contact Person">
+	<div class="input-box box-half required-field" data-validate="Name of Contact Person">
 		<div class="label">
 			<div class="hidden_label">
 				Name of Contact Person <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.shipcontactpersonname" placeholder="Name of Contact Person">
+			<input type="text" ng-model="usersignup.shipcontactpersonname" placeholder="Name of Contact Person">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
 	</div>
-	<div class="input-box box-half last" data-validate="Phone Number of Contact Person">
+	<div class="input-box box-half last required-field" data-validate="Phone Number of Contact Person">
 		<div class="label">
 			<div class="hidden_label">
 				Phone Number of Contact Person <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.shipcontactpersonmobile" placeholder="Phone Number of Contact Person">
+			<input type="text" ng-model="usersignup.shipcontactpersonmobile" placeholder="Phone Number of Contact Person">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
@@ -173,38 +173,38 @@
 	<div class="clear-both"></div>
 </div>
 <div class="input-box">
-	<div class="input-box box-half only" data-validate="Email of contact person">
+	<div class="input-box box-half only required-field" data-validate="Email of contact person">
 		<div class="label">
 			<div class="hidden_label">
 				Email of Contact Person <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.shipcontactpersonemail" placeholder="Email of Contact Person">
+			<input type="text" ng-model="usersignup.shipcontactpersonemail" placeholder="Email of Contact Person">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
 	</div>
 	<div class="clear-both"></div>
 </div>
-<div class="input-box" data-validate="Company Profile" data-option="file-input">
+<div class="input-box">
 	<div class="inputcontainer" onclick="document.getElementById('companyprofile').click();">
 		<div class="image-field">
-			<div class="icon" ng-style="user.companyprofilepreview">
-				<i class="fa fa-picture-o center_item" ng-if="!user.companyprofile"></i>
+			<div class="icon" ng-style="usersignup.companyprofilepreview">
+				<i class="fa fa-picture-o center_item" ng-if="!usersignup.companyprofile"></i>
 			</div>
 			<div class="copy">
-				<span class="center_item_vertically" ng-if="!user.companyprofile">Upload Brochure / Company Profile</span>
-				<span class="center_item_vertically" ng-if="user.companyprofile">{{user.companyprofilename}}</span>
+				<span class="center_item_vertically" ng-if="!usersignup.companyprofile">Upload Brochure / Company Profile</span>
+				<span class="center_item_vertically" ng-if="usersignup.companyprofile">{{usersignup.companyprofilename}}</span>
 			</div>
 		</div>
 	</div>
 	<input type="file" accept=".doc, .docx, .ppt, .pptx, .pdf" class="fileField" id="companyprofile" onchange="angular.element(this).scope().fileChanged(this, 'companyprofile')">
-	<input type="hidden" class="hidden" ng-value="user.companyprofile">
+	<input type="hidden" class="hidden" ng-value="usersignup.companyprofile">
 	<div class="status error"></div>
 	<div class="clear-both"></div>
 </div>
-<div class="input-box" data-validate="Permit(s)" ng-repeat="permit in user.shippermits">
+<div class="input-box" ng-repeat="permit in usersignup.shippermits">
 	<div class="label">
 		<div class="hidden_label">
 			Permit (DPR. NIMASA etc) {{$index+1}} <span class="required">*</span>
@@ -213,7 +213,7 @@
 	<div class="inputcontainer">
 		<input type="text" ng-model="permit.label" placeholder="Permit (DPR. NIMASA etc) {{$index+1}}">
 	</div>
-	<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="user.shippermits.length > 1" ng-click="removePermit(user.shippermits, permit)">
+	<div style="width: 45px; height: 45px; position: absolute; right: -45px; top: 0" ng-if="usersignup.shippermits.length > 1" ng-click="removePermit(usersignup.shippermits, permit)">
 		<div class="relative-container">
 			<div class="delete_btn center_item">
 				<div class="relative-container">
@@ -226,7 +226,7 @@
 	<div class="clear-both"></div>
 </div>
 <div class="input-box align-left padding-bottom-30">
-	<span class="action_btn" ng-click="addNewPermit(user.shippermits);">
+	<span class="action_btn" ng-click="addNewPermit(usersignup.shippermits);">
 		Add Permit
 	</span>
 </div>

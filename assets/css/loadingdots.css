@@ -17,6 +17,15 @@
     animation-fill-mode: both;
 }
 
+.spinner.small_loader>div {
+    width: 10px;
+    height: 10px;
+}
+.spinner.smallest_loader>div {
+    width: 7px;
+    height: 7px;
+}
+
 .spinner .bounce1 {
     -webkit-animation-delay: -0.32s;
     animation-delay: -0.32s;

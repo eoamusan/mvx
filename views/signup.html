@@ -10,7 +10,7 @@
 							</div>
 							<div class="text">
 								<span class="center_item_vertically" style="color: #aee4ff;" ng-if="!signupError">
-									EMAIL TAKEN. <span class="emphasis" ng-click="login();">LOGIN</span> or <span class="emphasis" ng-click="useAnother();">USE ANOTHER</span>
+									EMAIL TAKEN. <span class="emphasis" ng-click="gotoLogin();">LOGIN</span> or <span class="emphasis" ng-click="useAnother();">USE ANOTHER</span>
 								</span>
 								<span class="center_item_vertically" ng-if="signupError">
 									<span class="emphasis">{{signupError}}</span>
@@ -29,9 +29,9 @@
 								</div>
 							</div>
 							<span ng-if="signUpStep != 3">JOIN MVXCHANGE</span>
-							<span ng-if="(signUpStep == 3) && (user.category == 'Ship Owner')">SHIP OWNER REGISTRATION</span>
-							<span ng-if="(signUpStep == 3) && (user.category == 'Charterer')">CHARTERER</span>
-							<span ng-if="(signUpStep == 3) && (user.category == 'Procurement Vendor / Supplier')">PROCUREMENT VENDOR / SUPPLIER</span>
+							<span ng-if="(signUpStep == 3) && (usersignup.category == 'Ship Owner')">SHIP OWNER REGISTRATION</span>
+							<span ng-if="(signUpStep == 3) && (usersignup.category == 'Charterer')">CHARTERER</span>
+							<!-- <span ng-if="(signUpStep == 3) && (usersignup.category == 'Procurement Vendor / Supplier')">PROCUREMENT VENDOR / SUPPLIER</span> -->
 						</div>
 						<div ng-if="signUpStep == 1">
 							<div class="input-box" data-validate="Email address">
@@ -41,7 +41,7 @@
 									</div>
 								</div>
 								<div class="inputcontainer">
-									<input id="useAnother" type="text" ng-model="user.email" placeholder="Email Address" show-label>
+									<input id="useAnother" type="text" ng-model="usersignup.email" placeholder="Email Address" show-label>
 								</div>
 								<div class="status error"></div>
 							</div>
@@ -49,13 +49,10 @@
 						<div ui-view="choosecategory" ng-if="signUpStep == 2">
 							
 						</div>
-						<div ui-view="shipowner" ng-if="(signUpStep == 3) && (user.category == 'Ship Owner')">
+						<div ui-view="shipowner" ng-if="(signUpStep == 3) && (usersignup.category == 'Ship Owner')">
 							
 						</div>
-						<div ui-view="charterer" ng-if="(signUpStep == 3) && (user.category == 'Charterer')">
-							
-						</div>
-						<div ui-view="procurement" ng-if="(signUpStep == 3) && (user.category == 'Procurement Vendor / Supplier')">
+						<div ui-view="charterer" ng-if="(signUpStep == 3) && (usersignup.category == 'Charterer')">
 							
 						</div>
 						<div class="input-box extend">
@@ -74,7 +71,7 @@
 						</div>
 					</div>
 					<div class="input-box align-center alt-opts">
-						Already a member? <span class="emphasis" ng-click="login();">SIGN IN</span>
+						Already a member? <span class="emphasis" ng-click="gotoLogin();">SIGN IN</span>
 					</div>
 				</div>
 			</form>

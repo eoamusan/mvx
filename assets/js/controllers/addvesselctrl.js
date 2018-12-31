@@ -5,25 +5,20 @@ app.controller('addvesselCtrl', function($rootScope, $scope, $http, $state, $tim
 
 	$scope.addVessel = function(){
 		var validate = utils.validate();
-		var data = angular.copy($scope.addvessel);
+		var data = appendAdditionalData($scope.addvessel);
 		$scope.processing = true;
 
 		if (validate == 0) {
-			data.userid = $rootScope.globals.currentUser.userdata.data.id;
-			if(document.getElementById('inputdate')){
-				data.unavailable_till = document.getElementById('inputdate').value;
-			}
-			data.classification_expiry = document.getElementById('inputdate2').value;
+			// console.log(data);
 
-			data.username = $rootScope.globals.currentUser.userdata.data.display_name;
-			data.usermobile = $rootScope.globals.currentUser.userdata.data.s_contactmobile;
-			data.useremail = $rootScope.globals.currentUser.userdata.data.s_contactemail;
+			// var data = [];
 
 			$http({
 	                method: 'POST',
 	                url: 'scripts/addvessel.php',
 	                data: data
 	            }).then(function(data){
+	            	console.log(data);
 	            	$scope.processing = false;
 	            	$scope.addvesselStatus = data.data.msg;
 
@@ -59,6 +54,20 @@ app.controller('addvesselCtrl', function($rootScope, $scope, $http, $state, $tim
         	var el = document.getElementById('charter');
         	el.children[2].scrollTop = 0;
         }
+	}
+
+	function appendAdditionalData(data) {
+		data.userid = $rootScope.mvx_globals.currentUser.userdata.data.id;
+		if(document.getElementById('inputdate')){
+			data.unavailable_till = document.getElementById('inputdate').value;
+		}
+		data.classification_expiry = document.getElementById('inputdate2').value;
+
+		data.username = $rootScope.mvx_globals.currentUser.userdata.data.display_name;
+		data.usermobile = $rootScope.mvx_globals.currentUser.userdata.data.s_contactmobile;
+		data.useremail = $rootScope.mvx_globals.currentUser.userdata.data.s_contactemail;
+
+		return data;
 	}
 
 	$scope.loadCalender = function(){

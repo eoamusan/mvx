@@ -1,5 +1,12 @@
 app.controller('signupCtrl', function($rootScope, $scope, $http, $state, utils, $timeout) {
-    $rootScope.user = {};
+    $rootScope.usersignup = {};
+	$rootScope.usersignup.services = [{id: 'service1'}];
+	$rootScope.usersignup.shipservices = [{id: 'service1'}];
+	$rootScope.usersignup.permits = [{id: 'permit1'}];
+	$rootScope.usersignup.shippermits = [{id: 'permit1'}];
+
+	console.log($rootScope.usersignup);
+
     $scope.processing = false;
 
     $scope.signUpStep = 1;
@@ -12,12 +19,12 @@ app.controller('signupCtrl', function($rootScope, $scope, $http, $state, utils, 
     	if($scope.signUpStep < 3 && validation == 0){
     		if($scope.signUpStep == 1){
     			$scope.processing = true;
-    			console.log($scope.user);
+    			console.log($rootScope.usersignup);
 
     			$http({
 	                method: 'POST',
 	                url: 'scripts/checkEmailAvailability.php',
-	                data: $scope.user
+	                data: $rootScope.usersignup
 	            }).then(function(data){
 	            	console.log(data);
     				$scope.processing = false;
@@ -39,7 +46,7 @@ app.controller('signupCtrl', function($rootScope, $scope, $http, $state, utils, 
 			$http({
 	                method: 'POST',
 	                url: 'scripts/signup.php',
-	                data: $scope.user
+	                data: $rootScope.usersignup
 	            }).then(function(data){
 	            	console.log(data);
     				$scope.processing = false;
@@ -53,7 +60,7 @@ app.controller('signupCtrl', function($rootScope, $scope, $http, $state, utils, 
 					    }, 500)
 					    .then(function(){
 					    	return $timeout(function(){
-						    	$state.go('verify', {email: $scope.user.email});
+						    	$state.go('verify', {email: $rootScope.usersignup.email});
 						    }, 5100);
 					    });
     				}else{
@@ -74,7 +81,7 @@ app.controller('signupCtrl', function($rootScope, $scope, $http, $state, utils, 
 	}
 
 	$scope.useAnother = function(){
-		$scope.user.email = "";
+		$rootScope.usersignup.email = "";
 		document.getElementById("useAnother").focus();
 	}
 
@@ -85,13 +92,13 @@ app.controller('signupCtrl', function($rootScope, $scope, $http, $state, utils, 
 		console.log(file.files[0].type);
 
 		r.onloadend = function(e) {
-			$scope.user[src] = e.target.result;
-			$scope.user[(src+'name')] = file.files[0].name;
+			$rootScope.usersignup[src] = e.target.result;
+			$rootScope.usersignup[(src+'name')] = file.files[0].name;
 
-			console.log($scope.user);
+			console.log($rootScope.usersignup);
 
-			$scope.user[(src+'preview')] = {
-				'background-image': 'url('+parseBg($scope.user[src], file.files[0].type)+')'
+			$rootScope.usersignup[(src+'preview')] = {
+				'background-image': 'url('+parseBg($rootScope.usersignup[src], file.files[0].type)+')'
 			}
 
 			$scope.$apply();
@@ -115,11 +122,6 @@ app.controller('signupCtrl', function($rootScope, $scope, $http, $state, utils, 
 			}
 		}
 	}
-
-	$rootScope.user.services = [{id: 'service1'}];
-	$rootScope.user.shipservices = [{id: 'service1'}];
-	$rootScope.user.permits = [{id: 'permit1'}];
-	$rootScope.user.shippermits = [{id: 'permit1'}];
 
 	$scope.addNewservice = function(obj) {
 		var newItemNo = obj.length + 1;

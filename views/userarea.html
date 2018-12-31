@@ -1,0 +1,65 @@
+<div class="auth_logo center_item_horizontally" ng-click="closeMore();"></div>
+<div class="logout logout_lone" ng-click="logout(); closeMore();" ng-if="mvx_globals.currentUser">
+	<div class="label">
+		<span class="center_item_vertically">Logout</span>
+	</div>
+	<div class="icon">
+		<i class="material-icons center_item">play_for_work</i>
+	</div>
+</div>
+<div class="relative-container" ui-view="form" ng-if="!mvx_globals.currentUser"></div>
+<div class="relative-container" style="height: calc(100% - 100px);" ng-if="mvx_globals.currentUser">
+	<div class="relative-container" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Ship Owner')">
+		<div class="userareaheader">
+			<span ng--if="!offeringVessel">Your Vessels</span>
+			<span ng-if="offeringVessel">Offer one of your vessels to <span class="charter-url" ng-click="charterInformation(charterToTakeOffer); closeMore();">Charter {{charterToTakeOffer.id}}</span></span>
+		</div>
+		<div class="userareacontent" ng-class="{shorter: offeredVessel}" data-simplebar>
+			<div class="half-div" ng-repeat="item in uservessels" ng-click="vesselOptions(item); showMore();">
+				<div class="featuredVessel btnHover" ng-class="{offeredVessel: item.id == offeredVessel.id}">
+					<div ui-view="vessel"></div>
+				</div>
+			</div>
+		</div>
+		<div class="spinner page-loading center_item" style="top: 40%;" ng-if="!uservessels">
+	        <div class="bounce1"></div>
+	        <div class="bounce2"></div>
+	        <div class="bounce3"></div>
+	    </div>
+	    <div class="offer-panel" ng-if="offeredVessel">
+	    	<div class="nowrap mvx_link addvessel" ng-class="{processing: sendingOffer, 'success-bg': offerMsg == 'Vessel Offered' && offerMsg, 'error-bg': offerMsg != 'Vessel Offered' && offerMsg}" ng-if="mvx_globals.currentUser" ng-click="sendOffer();">
+				<div class="label" ng-if="!sendingOffer && !offerMsg">OFFER VESSEL</div>
+				<div class="label" ng-if="offerMsg && !sendingOffer">{{offerMsg | uppercase}}</div>
+				<div class="caret" ng-if="!sendingOffer && !offerMsg">
+					<i class="material-icons center_item">keyboard_arrow_right</i>
+				</div>
+				<div class="spinner small_loader center_item" ng-if="sendingOffer">
+			        <div class="bounce1"></div>
+			        <div class="bounce2"></div>
+			        <div class="bounce3"></div>
+			    </div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="cancelOffer" ng-click="cancelOffer();">
+				CANCEL OFFER
+			</div>
+	    </div>
+	</div>
+	<div class="relative-container" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Charterer')">
+		<div class="userareaheader">
+			Your Charter Requests
+		</div>
+		<div class="userareacontent" data-simplebar>
+			<div class="half-div" ng-repeat="item in usercharters" ng-click="charterInformation(item); showMore();">
+				<div class="featuredVessel btnHover">
+					<div ui-view="charter"></div>
+				</div>
+			</div>
+		</div>
+		<div class="spinner page-loading center_item" style="top: 40%;" ng-if="!usercharters">
+	        <div class="bounce1"></div>
+	        <div class="bounce2"></div>
+	        <div class="bounce3"></div>
+	    </div>
+	</div>
+</div>

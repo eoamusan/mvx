@@ -1,60 +1,62 @@
 <div class="mainArea" ng-class="{'showingLink': showLinks}">
 	<div class="relative-container">
-		<div class="dim" ng-class="{show_dim: showLinks}" ng-click="showLink();"></div>
+		<div class="dim" ng-class="{show_dim: showingMore}" ng-click="closeMore();"></div>
 		<div class="mvx_header">
 			<div class="logo">
 				<img src="assets/images/logo_stacked.png" height="100%">
 			</div>
-			<div class="mvx_headeraction" ng-class="{expanded: globals.currentUser}">
-				<div class="mvx_searchbarcontainer">
-					<div class="cover">
-						<div class="mvx_searchinput">
-							<input />
-						</div>
-						<div class="mvx_searchbtn">
-							<span class="center_item">SEARCH</span>
-						</div>
-					</div>
-				</div>
+			<div class="mvx_headeraction" ng-class="{expanded: mvx_globals.currentUser}">
 				<div class="mvx_links" ng-class="{'fixed': showLinks}">
 					<div class="mvx_morelinks">
-						<div class="nowrap mvx_morelink join" ng-click="signup();" ng-if="!globals.currentUser">
+						<div class="nowrap mvx_morelink join" ng-click="signup();" ng-if="!mvx_globals.currentUser">
 							<span>JOIN MVXCHANGE</span>
 						</div>
-						<div class="nowrap mvx_morelink signin" ng-click="login();" ng-if="!globals.currentUser">
+						<div class="nowrap mvx_morelink signin" ng-click="gotoLogin();" ng-if="!mvx_globals.currentUser">
 							<span>SIGN IN</span>
 						</div>
-						<div class="nowrap mvx_morelink_logged" ng-if="globals.currentUser">
-							<div class="profile" style="border: 1px solid {{getColor(globals.currentUser.userdata.data.display_name)}};">
-								<span class="center_item" style="color: {{getColor(globals.currentUser.userdata.data.display_name)}};">
-									{{getInitials(globals.currentUser.userdata.data.display_name)}}
+						<div class="nowrap mvx_morelink_logged" ng-if="mvx_globals.currentUser">
+							<div class="profile" style="border: 1px solid {{getColor(mvx_globals.currentUser.userdata.data.display_name)}};">
+								<span class="center_item" style="color: {{getColor(mvx_globals.currentUser.userdata.data.display_name)}};">
+									{{getInitials(mvx_globals.currentUser.userdata.data.display_name)}}
 								</span>
 							</div>
-							<div class="profile_access" style="width: calc(100% - 71px); float: left; padding-left: 10px;">
+							<div class="profile_access" style="width: auto; float: left; padding-left: 10px;">
 								<div style="width: 100%; height: 25px; padding-top: 5px;" class="text_truncate">
-									{{getName(globals.currentUser.userdata.data.display_name)}}
+									{{getName(mvx_globals.currentUser.userdata.data.display_name)}}
 								</div>
 								<div class="account_actions text_truncate">
 									<div class="account_action left" ng-click="dashboard();">DASHBOARD</div><div> \ </div><div class="account_action right" ng-click="logout();">LOGOUT</div>
 								</div>
 							</div>
 						</div>
-						<div class="mvx_toggle float-right" ng-class="{'showLinks': showLinks}" ng-click="showLink();">
-							<img src="assets/images/ham_black.png" height="28" class="center_item_vertically ham" style="right: 0;">
-							<img src="assets/images/icons/close.png" height="30" class="center_item_vertically close-flyout" style="right: 5px;">
+						<div class="mvx_toggle float-right" ng-click="toggleMore();">
+							<div class="wrapper-menu" ng-class="{'open': showingMore}">
+								<div class="line-menu half start"></div>
+								<div class="line-menu"></div>
+								<div class="line-menu half end"></div>
+							</div>
 						</div>
 					</div>
-					<div class="nowrap mvx_link addad" ng-if="(globals.currentUser.userdata.data.category == 'Procurement Vendor / Supplier') || !globals.currentUser">
-						<span>POST PROCUREMENT AD</span>
+					<div class="nowrap mvx_link addvessel" ng-click="addvessel();" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Ship Owner') || !mvx_globals.currentUser">
+						<div class="label">ADD A VESSEL</div>
+						<div class="caret">
+							<i class="material-icons center_item">keyboard_arrow_right</i>
+						</div>
+						<div class="clear-both"></div>
 					</div>
-					<div class="nowrap mvx_link addvessel" ng-click="addvessel();" ng-if="(globals.currentUser.userdata.data.category == 'Ship Owner') || !globals.currentUser">
-						<span>POST A VESSEL</span>
+					<div class="nowrap mvx_link addvessel" ng-click="charter();" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Charterer') || !mvx_globals.currentUser">
+						<div class="label">CHARTER VESSEL</div>
+						<div class="caret">
+							<i class="material-icons center_item">keyboard_arrow_right</i>
+						</div>
+						<div class="clear-both"></div>
 					</div>
-					<div class="nowrap mvx_link addvessel" ng-click="addvessel();" ng-if="(globals.currentUser.userdata.data.category == 'Charterer') && globals.currentUser">
-						<span>CHARTER VESSEL</span>
-					</div>
-					<div class="nowrap mvx_link addvessel" ng-if="globals.currentUser" ng-click="dashboard();">
-						<span>DASHBOARD</span>
+					<div class="nowrap mvx_link addvessel" ng-if="mvx_globals.currentUser" ng-click="dashboard();">
+						<div class="label">DASHBOARD</div>
+						<div class="caret">
+							<i class="material-icons center_item">keyboard_arrow_right</i>
+						</div>
+						<div class="clear-both"></div>
 					</div>
 				</div>
 				<div class="mvx_search">
@@ -63,496 +65,155 @@
 			</div>
 		</div>
 		<div class="mvx_actionarea">
-			<div class="mvx_shortinfo noselect">
-				Motor Vessel Xchange (MVX / MVXchange) is a vessel chartering and procurement marketplace.
+			<div class="mvx_shortinfo_header noselect">
+				Empower. Improve performance.
 			</div>
-			<div class="mvx_actionbtn animated infinite" ng-class="{pulsate: globals.currentUser}" ng-click="charter();" ng-if="globals.currentUser.userdata.data.category == 'Charterer' || !globals.currentUser">
+			<div class="mvx_shortinfo noselect">
+				We empower our community to conveniently charter and manage offshore support vessels while reducing man-hours, saving cost and improving performance.
+			</div>
+			<div class="mvx_actionbtn animated infinite" ng-class="{pulsate: mvx_globals.currentUser}" ng-click="charter();" ng-if="mvx_globals.currentUser.userdata.data.category == 'Charterer' || !mvx_globals.currentUser">
 				<span class="center_item nowrap">
-					CHARTER VESSEL NOW
+					CHARTER WITH MVXCHANGE
 				</span>
 			</div>
-			<div class="mvx_actionbtn infinite" ng-class="{'pulsate': globals.currentUser}" ng-click="addvessel();" ng-if="globals.currentUser.userdata.data.category == 'Ship Owner'">
+			<div class="mvx_actionbtn infinite" ng-class="{'pulsate': mvx_globals.currentUser}" ng-click="addvessel();" ng-if="mvx_globals.currentUser.userdata.data.category == 'Ship Owner'">
 				<span class="center_item nowrap">
 					ADD VESSEL NOW
 				</span>
 			</div>
 		</div>
-		<div class="mvx_featuredlabel" ng-if="(globals.currentUser.userdata.data.category == 'Ship Owner')">
+		<div class="mvx_featuredlabel" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Ship Owner')">
 			<div class="mvx_labels">
 				<div>
 					LATEST CHARTERS
 				</div>
 			</div>
 		</div>
-		<div class="mvx_featuredlabel" ng-if="(globals.currentUser.userdata.data.category == 'Charterer') || !globals.currentUser">
+		<div class="mvx_featuredlabel" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Charterer') || !mvx_globals.currentUser">
 			<div class="mvx_labels">
 				<div>
 					LATEST VESSELS
 				</div>
 			</div>
 		</div>
-		<div class="mvx_featuredcontent" ng-if="(globals.currentUser.userdata.data.category == 'Ship Owner')">
-			<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
-				<div class="relative-container">
-					<div class="center_item navigation_arrow left"></div>
-				</div>
+		<div class="mvx_featuredcontent" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Ship Owner')">
+			<div class="spinner page-loading center_item" style="top: 40%;" ng-if="!charters">
+		        <div class="bounce1"></div>
+		        <div class="bounce2"></div>
+		        <div class="bounce3"></div>
+		    </div>
+			<div class="relative-container web" ng-if="charters">
+				<ui-carousel slides="charters" slides-to-show="4" slides-to-scroll="1" initial-slide="1" autoplay="true" autoplay-speed="4000" dots="false" arrows="true" speed="800">
+					<carousel-item>
+						<div class="featuredVessel btnHover" ng-click="$parent.$parent.charterInformation(item);" style="background: #FEFEFE;">
+							<div ui-view="charter"></div>
+						</div>
+					</carousel-item>
+					<carousel-prev>
+						<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow left"></div>
+							</div>
+						</div>
+					</carousel-prev>
+					<carousel-next>
+						<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow right"></div>
+							</div>
+						</div>
+					</carousel-next>
+				</ui-carousel>
 			</div>
-			<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
-				<div class="relative-container">
-					<div class="center_item navigation_arrow right"></div>
-				</div>
-			</div>
-			<div class="relative-container web">
-				<slick id="slideWeb" infinite=true slides-to-show=4 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn" lazy-load="ondemand" init-onload='true' data="charters">
-					<div class="featuredVessel btnHover" ng-repeat="charter in charters" ng-click="charterInformation(charter);" style="background: #FEFEFE;">
-						<div class="layer">
-							<div class="content">
-								<div class="charter_details">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">attach_money</i>
-											</div>
-											<div class="text">
-												HIRE RATE
-											</div>
-										</div>
-										<div class="copy">
-											${{charter.preferred_daily_hire_rate}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">timer</i>
-											</div>
-											<div class="text">
-												MAX AGE
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.max_age}} years
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">flag</i>
-											</div>
-											<div class="text">
-												FLAG
-											</div>
-										</div>
-										<div class="copy" style="padding-top: 5px;">
-											<div class="flag-icon">
-												<img src="assets/images/icons/countries/{{charter.preferred_flag | lowercase}}.png">
-											</div>
-											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
-												{{charter.preferred_flag}}
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="title text_truncate">
-									{{charter.vessel_type}}
-								</div>
-								<div class="vessel_info">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">date_range</i>
-											</div>
-											<div class="text">
-												FIRM DURATION
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.firm_duration}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">event</i>
-											</div>
-											<div class="text">
-												EXPECTED MOB DATE
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.expected_mob_date}}
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">location_on</i>
-											</div>
-											<div class="text">
-												LOCATION OF OPERATION
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.location_of_operation}}
-										</div>
-									</div>
-								</div>
+			<div class="relative-container mobile" ng-if="charters">
+				<ui-carousel slides="charters" slides-to-show="1" slides-to-scroll="1" initial-slide="1" autoplay="true" autoplay-speed="4000" dots="false" arrows="true" speed="800">
+					<carousel-item>
+						<div class="featuredVessel btnHover" ng-click="$parent.$parent.charterInformation(item);" style="background: #FEFEFE;">
+							<div ui-view="charter"></div>
+						</div>
+					</carousel-item>
+					<carousel-prev>
+						<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow left"></div>
 							</div>
 						</div>
-						<div class="menu-link menu-link-left offer_vessel">
-							<div class="menu-link-txt">
-							    <div class="menu-link-default">
-							        <div class="menu-link-default-txt">OFFER VESSEL</div>
-							    </div>
-							    <div class="menu-link-hover">OFFER VESSEL</div>
+					</carousel-prev>
+					<carousel-next>
+						<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow right"></div>
 							</div>
 						</div>
-					</div>
-				</slick>
-			</div>
-			<div class="relative-container mobile">
-				<slick id="slideWeb2" infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn" lazy-load="ondemand" init-onload='true' data="charters">
-					<div class="featuredVessel btnHover" ng-repeat="charter in charters" ng-click="charterInformation(charter);" style="background: #FEFEFE;">
-						<div class="layer">
-							<div class="content">
-								<div class="charter_details">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">attach_money</i>
-											</div>
-											<div class="text">
-												HIRE RATE
-											</div>
-										</div>
-										<div class="copy">
-											${{charter.preferred_daily_hire_rate}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">timer</i>
-											</div>
-											<div class="text">
-												MAX AGE
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.max_age}} years
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">flag</i>
-											</div>
-											<div class="text">
-												FLAG
-											</div>
-										</div>
-										<div class="copy" style="padding-top: 5px;">
-											<div class="flag-icon">
-												<img src="assets/images/icons/countries/{{charter.preferred_flag | lowercase}}.png">
-											</div>
-											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
-												{{charter.preferred_flag}}
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="title text_truncate">
-									{{charter.vessel_type}}
-								</div>
-								<div class="vessel_info">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">date_range</i>
-											</div>
-											<div class="text">
-												FIRM DURATION
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.firm_duration}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">event</i>
-											</div>
-											<div class="text">
-												EXPECTED MOB DATE
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.expected_mob_date}}
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">location_on</i>
-											</div>
-											<div class="text">
-												LOCATION OF OPERATION
-											</div>
-										</div>
-										<div class="copy">
-											{{charter.location_of_operation}}
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="menu-link menu-link-left offer_vessel">
-							<div class="menu-link-txt">
-							    <div class="menu-link-default">
-							        <div class="menu-link-default-txt">OFFER VESSEL</div>
-							    </div>
-							    <div class="menu-link-hover">OFFER VESSEL</div>
-							</div>
-						</div>
-					</div>
-				</slick>
+					</carousel-next>
+				</ui-carousel>
 			</div>
 		</div>
-		<div class="mvx_featuredcontent" ng-if="(globals.currentUser.userdata.data.category == 'Charterer') || !globals.currentUser">
-			<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
-				<div class="relative-container">
-					<div class="center_item navigation_arrow left"></div>
-				</div>
+		<div class="mvx_featuredcontent" ng-if="(mvx_globals.currentUser.userdata.data.category == 'Charterer') || !mvx_globals.currentUser">
+			<div class="spinner page-loading center_item" style="top: 40%;" ng-if="!vessels">
+		        <div class="bounce1"></div>
+		        <div class="bounce2"></div>
+		        <div class="bounce3"></div>
+		    </div>
+			<div class="relative-container web" ng-if="vessels">
+				<ui-carousel slides="vessels" slides-to-show="4" slides-to-scroll="1" initial-slide="1" autoplay="true" autoplay-speed="4000" dots="false" arrows="true" speed="800">
+					<carousel-item>
+						<div class="featuredVessel btnHover" style="background: #FEFEFE;" ng-click="$parent.$parent.vesselInformation(item);">
+							<div ui-view="vessel"></div>
+						</div>
+					</carousel-item>
+					<carousel-prev>
+						<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow left"></div>
+							</div>
+						</div>
+					</carousel-prev>
+					<carousel-next>
+						<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow right"></div>
+							</div>
+						</div>
+					</carousel-next>
+				</ui-carousel>
 			</div>
-			<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
-				<div class="relative-container">
-					<div class="center_item navigation_arrow right"></div>
-				</div>
-			</div>
-			<div class="relative-container web">
-				<slick id="slideWeb3" infinite=true slides-to-show=4 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn" lazy-load="ondemand" init-onload='true' data="vessels">
-					<div ng-repeat="vessel in vessels" class="featuredVessel btnHover" ng-click="vesselInformation(vessel);" style="background: #FEFEFE;">
-						<div class="layer">
-							<div class="content">
-								<div class="charter_details">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">attach_money</i>
-											</div>
-											<div class="text">
-												HIRE RATE
-											</div>
-										</div>
-										<div class="copy">
-											${{vessel.daily_hire_rate}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">timer</i>
-											</div>
-											<div class="text">
-												AGE
-											</div>
-										</div>
-										<div class="copy">
-											{{computeAge(vessel.year_built)}} years
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">flag</i>
-											</div>
-											<div class="text">
-												FLAG
-											</div>
-										</div>
-										<div class="copy" style="padding-top: 5px;">
-											<div class="flag-icon">
-												<img src="assets/images/icons/countries/{{vessel.preferred_flag | lowercase}}.png">
-											</div>
-											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
-												{{countries[vessel.preferred_flag]}}
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="title text_truncate">
-									{{vessel.vessel_name}}
-								</div>
-								<div class="vessel_info">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">date_range</i>
-											</div>
-											<div class="text">
-												VESSEL TYPE
-											</div>
-										</div>
-										<div class="copy">
-											{{vessel.vessel_type}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">event</i>
-											</div>
-											<div class="text">
-												PURPOSE
-											</div>
-										</div>
-										<div class="copy">
-											{{vessel.purpose}}
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">location_on</i>
-											</div>
-											<div class="text">
-												CURRENT LOCATION
-											</div>
-										</div>
-										<div class="copy">
-											{{vessel.current_location}}
-										</div>
-									</div>
-								</div>
+			<div class="relative-container mobile" ng-if="vessels">
+				<ui-carousel slides="vessels" slides-to-show="1" slides-to-scroll="1" initial-slide="1" autoplay="true" autoplay-speed="4000" dots="false" arrows="true" speed="800">
+					<carousel-item>
+						<div class="featuredVessel btnHover" style="background: #FEFEFE;" ng-click="$parent.$parent.vesselInformation(item);">
+							<div ui-view="vessel"></div>
+						</div>
+					</carousel-item>
+					<carousel-prev>
+						<div class="center_item_vertically mvx_featuredcontrols left slick-previous">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow left"></div>
 							</div>
 						</div>
-						<div class="menu-link menu-link-left offer_vessel">
-							<div class="menu-link-txt">
-							    <div class="menu-link-default">
-							        <div class="menu-link-default-txt">CHARTER VESSEL</div>
-							    </div>
-							    <div class="menu-link-hover">CHARTER VESSEL</div>
+					</carousel-prev>
+					<carousel-next>
+						<div class="center_item_vertically mvx_featuredcontrols right slick-nextbtn">
+							<div class="relative-container">
+								<div class="center_item navigation_arrow right"></div>
 							</div>
 						</div>
-					</div>
-				</slick>
-			</div>
-			<div class="relative-container mobile">
-				<slick id="slideWeb4" infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1 prev-arrow=".slick-previous" next-arrow=".slick-nextbtn" lazy-load="ondemand" init-onload='true' data="vessels">
-					<div ng-repeat="vessel in vessels" class="featuredVessel btnHover" ng-click="vesselInformation(vessel);" style="background: #FEFEFE;">
-						<div class="layer">
-							<div class="content">
-								<div class="charter_details">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">attach_money</i>
-											</div>
-											<div class="text">
-												HIRE RATE
-											</div>
-										</div>
-										<div class="copy">
-											${{vessel.daily_hire_rate}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">timer</i>
-											</div>
-											<div class="text">
-												AGE
-											</div>
-										</div>
-										<div class="copy">
-											{{computeAge(vessel.year_built)}} years
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">flag</i>
-											</div>
-											<div class="text">
-												FLAG
-											</div>
-										</div>
-										<div class="copy" style="padding-top: 5px;">
-											<div class="flag-icon">
-												<img src="assets/images/icons/countries/{{vessel.preferred_flag | lowercase}}.png">
-											</div>
-											<div class="flag-label" style="color: #FFF; padding-top: 5px;">
-												{{countries[vessel.preferred_flag]}}
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="title text_truncate">
-									{{vessel.vessel_name}}
-								</div>
-								<div class="vessel_info">
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">date_range</i>
-											</div>
-											<div class="text">
-												VESSEL TYPE
-											</div>
-										</div>
-										<div class="copy">
-											{{vessel.vessel_type}}
-										</div>
-									</div>
-									<div class="vessel_info_box">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">event</i>
-											</div>
-											<div class="text">
-												PURPOSE
-											</div>
-										</div>
-										<div class="copy">
-											{{vessel.purpose}}
-										</div>
-									</div>
-									<div class="vessel_info_box" style="width: 100%;">
-										<div class="label">
-											<div class="icon">
-												<i class="material-icons">location_on</i>
-											</div>
-											<div class="text">
-												CURRENT LOCATION
-											</div>
-										</div>
-										<div class="copy">
-											{{vessel.current_location}}
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="menu-link menu-link-left offer_vessel">
-							<div class="menu-link-txt">
-							    <div class="menu-link-default">
-							        <div class="menu-link-default-txt">CHARTER VESSEL</div>
-							    </div>
-							    <div class="menu-link-hover">CHARTER VESSEL</div>
-							</div>
-						</div>
-					</div>
-				</slick>
+					</carousel-next>
+				</ui-carousel>
 			</div>
 		</div>
 
 		<div class="mvx_ads">
-			<div class="mvx_ad one">
+			<div class="mvx_ad one" ng-click="addvessel();">
+				<div class="mvx_ad_header">
+					Manage Your Vessel Fleet
+				</div>
+				<div class="mvx_ad_subtext">
+					Take control of your vessel engagement. Skip the middleman.
+				</div>
 				<div class="mvx_adlabel">
 					<div style="position: relative;">
-						VIEW ALL VESSELS
+						ADD YOUR VESSEL
 						<div class="round">
 					        <div id="cta">
 					            <span class="arrow primera next "></span>
@@ -564,10 +225,16 @@
 				<div class="relative-container">
 				</div>
 			</div>
-			<div class="mvx_ad two">
+			<div class="mvx_ad two" ng-click="charter();">
+				<div class="mvx_ad_header">
+					Manage Your Vessel Chartering Process
+				</div>
+				<div class="mvx_ad_subtext">
+					Take control of your time. Improve your performance.
+				</div>
 				<div class="mvx_adlabel">
 					<div style="position: relative;">
-						VIEW ALL PROCUREMENT ITEMS
+						CHARTER VESSEL
 						<div class="round">
 					        <div id="cta">
 					            <span class="arrow primera next "></span>
@@ -581,82 +248,7 @@
 			</div>
 			<div class="clear-both"></div>
 		</div>
-		<div class="mvx_content">
-			<div class="mvx_labels">
-				<div>
-					FEATURED PROCUREMENT
-				</div>
-				<div class="action">
-					Add Your Products Here
-				</div>
-			</div>
-			<div class="mvx_procurementcontainers">
-				<div class="featured_vessels">
-					<div class="top">
-						<div class="previewImg">
-							
-						</div>
-					</div>
-					<div class="bottom">
-						
-					</div>
-				</div>
-				<div class="featured_vessels">
-					<div class="top">
-						<div class="previewImg">
-							
-						</div>
-					</div>
-					<div class="bottom">
-						
-					</div>
-				</div>
-				<div class="featured_vessels">
-					<div class="top">
-						<div class="previewImg">
-							
-						</div>
-					</div>
-					<div class="bottom">
-						
-					</div>
-				</div>
-				<div class="featured_vessels">
-					<div class="top">
-						<div class="previewImg">
-							
-						</div>
-					</div>
-					<div class="bottom">
-						
-					</div>
-				</div>
-				<div class="featured_vessels">
-					<div class="top">
-						<div class="previewImg">
-							
-						</div>
-					</div>
-					<div class="bottom">
-						
-					</div>
-				</div>
-				<div class="featured_vessels">
-					<div class="top">
-						<div class="previewImg">
-							
-						</div>
-					</div>
-					<div class="bottom">
-						
-					</div>
-				</div>
-				<div class="clear-both"></div>
-			</div>
-			<div class="mvx_adspace"></div>
-			<div class="clear-both"></div>
-		</div>
-		<div class="mvx_content">
+		<!-- <div class="mvx_content">
 			<div class="mvx_labels">
 				<div>
 					PARTNERS
@@ -666,21 +258,20 @@
 				<div class="mvx_partner one"></div>
 				<div class="mvx_partner two"></div>
 				<div class="mvx_partner three"></div>
-				<div class="mvx_partner four"></div>
 				<div class="mvx_partner five"></div>
 				<div class="mvx_partner six"></div>
 				<div class="mvx_partner seven"></div>
 				<div class="clear-both"></div>
 			</div>
-		</div>
+		</div> -->
 		<div class="mvx_footer">
 			<div class="top">
 				<div class="left">
 					<div class="header">
-						Subscribe for our weekly newsletters.
+						We are building the future of Vessel Chartering.
 					</div>
 					<div class="copy">
-						Keep abreast of recent happenings in the Oil and Gas industry by subscribing. We won't spam you, we promise :)
+						Join us and be the first to know when we launch
 					</div>
 					<div class="mvx_newsletter">
 						<div class="input">
@@ -688,7 +279,7 @@
 						</div>
 						<div class="mvx_nbtn">
 							<button>
-								SUBSCRIBE
+								JOIN US NOW
 							</button>
 						</div>
 						<div class="clear-both"></div>
@@ -699,33 +290,41 @@
 						FOLLOW US
 					</div>
 					<div class="mvx_socials">
-						<div class="mvx_social">
+						<div class="mvx_social" ng-click="openUrl('https://www.facebook.com/mvxchange/');">
 							<i class="fa fa-facebook center_item_vertically"></i>
 						</div>
-						<div class="mvx_social">
+						<div class="mvx_social" ng-click="openUrl('https://twitter.com/MVXchange');">
 							<i class="fa fa-twitter center_item_vertically"></i>
 						</div>
-						<div class="mvx_social">
+						<div class="mvx_social" ng-click="openUrl('https://www.instagram.com/mvxchange/');">
 							<i class="fa fa-instagram center_item_vertically"></i>
+						</div>
+						<div class="mvx_social" ng-click="openUrl('https://www.linkedin.com/company/mvxchange/about/');">
+							<i class="fa fa-linkedin center_item_vertically"></i>
 						</div>
 					</div>
 					<div class="header">
 						QUICK LINKS
 					</div>
 					<div class="mvx_quicklinks">
-						<div class="mvx_quicklink">
+						<div class="mvx_quicklink" ng-click="gotoLogin();" ng-if="!mvx_globals.currentUser">
 							<span class="center_item_vertically">
 								LOGIN
 							</span>
 						</div>
-						<div class="mvx_quicklink">
+						<div class="mvx_quicklink" ng-click="logout();" ng-if="mvx_globals.currentUser">
+							<span class="center_item_vertically">
+								LOGOUT
+							</span>
+						</div>
+						<div class="mvx_quicklink" ng-click="signup();" ng-if="!mvx_globals.currentUser">
 							<span class="center_item_vertically">
 								SIGN UP
 							</span>
 						</div>
-						<div class="mvx_quicklink">
+						<div class="mvx_quicklink" ng-click="dashboard();" ng-if="mvx_globals.currentUser">
 							<span class="center_item_vertically">
-								CREATE AD
+								DASHBOARD
 							</span>
 						</div>
 						<div class="mvx_quicklink">
@@ -754,7 +353,7 @@
 			<span class="center_item_vertically nowrap abs-right">JOIN MVXCHANGE</span>
 		</div>
 	</div>
-	<div class="link" ng-click="login(); showLink();">
+	<div class="link" ng-click="gotoLogin(); showLink();">
 		<div class="icon">
 			<i class="material-icons center_item">fingerprint</i>
 		</div>

@@ -30,6 +30,43 @@ app.factory('clickAnywhereButHereService', function($document) {
 app.factory('utils', function () {
     return {
 
+        groupOffers: function(offers){
+            grouped_offers = [];
+
+            // for (var i = 0; i < offers.length; i++) {
+            //     grouped_offers[offers[i].offers_charter_id] = [];
+            // }
+
+            // console.log(grouped_offers);
+            // grouped_offers = grouped_offers.filter(function (el) {
+            //     console.log(el);
+            //     return el !== null;
+            // });
+
+            // console.log(grouped_offers);
+
+            angular.forEach(offers, function(offer){
+                if(!grouped_offers[offer.offers_charter_id]){
+                    grouped_offers[offer.offers_charter_id] = {};
+                }
+
+                console.log(grouped_offers);
+
+                grouped_offers[offer.offers_charter_id].charter_id = offer;
+                if(formatted_responses[responses[i].user._id].responses == undefined){
+                    grouped_offers[offer.offers_charter_id].offers = [];
+                    grouped_offers[offer.offers_charter_id].offers.push(offer);
+                }else{
+                    grouped_offers[offer.offers_charter_id].offers.push(offer);
+                }
+                
+            });
+
+            console.log(grouped_offers);
+
+            return grouped_offers;
+        },
+
         inArray: function(needle, haystack) {
             if(haystack != undefined){
                 var length = haystack.length;

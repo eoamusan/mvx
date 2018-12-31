@@ -1,0 +1,465 @@
+<div class="chat_container">
+	<div class="peer">
+		<div class="identity noselect" ng-click="showChatInfo('user');" ng-class="{'active-details': (chatInfo == 'user')}">
+			<div class="initials">
+				<span class="center_item">AO</span>
+			</div>
+			<div class="name">
+				<div class="online_status online">ONLINE</div>
+				<div class="see_more">
+					<div class="icon">
+						<i class="material-icons">more_horiz</i>
+						<img src="assets/images/icons/ellipsis.svg">
+					</div>
+					<div class="text">
+						<span ng-if="chatInfo !== 'user'">VIEW DETAILS</span>
+						<span ng-if="chatInfo == 'user'">CLOSE DETAILS</span>
+					</div>
+				</div>
+				<div class="peer_name text_truncate">{{peer.display_name}}</div>
+			</div>
+		</div>
+		<div class="chat_peer_details noselect" ng-class="{'active-details': (chatInfo == 'user')}" ng-show="chatInfo == 'user'">
+			<div class="relative-container" data-simplebar ng-if="peer">
+				<div class="input-box">
+					<div class="label display">
+						<div class="icon">
+							
+						</div>
+						<div class="text">
+							NAME
+						</div>
+					</div>
+					<div class="inputcontainer">
+						{{peer.display_name}}
+					</div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						<div class="icon">
+							
+						</div>
+						<div class="text">
+							CATEGORY
+						</div>
+					</div>
+					<div class="inputcontainer">
+						{{peer.category}}
+					</div>
+				</div>
+				<div class="input-box" ng-if="peer.category == 'Ship Owner'">
+					<div class="label display">
+						SUB-CATEGORY
+					</div>
+					<div class="inputcontainer">
+						{{peer.s_subcategory}}
+					</div>
+				</div>
+				<div class="input-box" ng-if="peer.category == 'Ship Owner'">
+					<div class="label display">
+						BUSINESS NAME
+					</div>
+					<div class="inputcontainer">
+						{{peer.s_businessname}}
+					</div>
+				</div>
+				<div class="input-box" ng-if="peer.category == 'Ship Owner'">
+					<div class="label display">
+						COMPANY REGISTRATION NUMBER
+					</div>
+					<div class="inputcontainer">
+						{{peer.s_companyregistrationnumber}}
+					</div>
+				</div>
+				<div class="input-box" ng-if="peer.category == 'Ship Owner'">
+					<div class="label display">
+						SERVICES
+					</div>
+					<div class="inputcontainer repeat" ng-repeat="service in peer.s_services">
+						{{service.label}}
+					</div>
+				</div>
+				<div class="input-box" ng-if="peer.category == 'Charterer'">
+					<div class="label display">
+						COMPANY NAME
+					</div>
+					<div class="inputcontainer">
+						{{peer.c_company_name}}
+					</div>
+				</div>
+				<div class="input-box">
+					<div class="label display">
+						DATE SIGNED UP
+					</div>
+					<div class="inputcontainer">
+						{{peer.created_at * 1000 | date: 'medium'}}
+					</div>
+				</div>
+			</div>
+			<div class="relative-container" ng-if="!peer">
+				<div class="spinner small_loader center_item">
+	                <div class="bounce1"></div>
+	                <div class="bounce2"></div>
+	                <div class="bounce3"></div>
+	            </div>
+			</div>
+		</div>
+		<div class="identity noselect vessel_identity last" ng-click="showChatInfo('vessel');" ng-class="{'active-details': (chatInfo == 'vessel')}">
+			<div class="initials">
+				<img src="assets/images/icons/vessel.png" class="center_item">
+			</div>
+			<div class="name">
+				<div class="online_status vessel_indicator">VESSEL</div>
+				<div class="see_more">
+					<div class="icon">
+						<i class="material-icons">more_horiz</i>
+						<img src="assets/images/icons/ellipsis.svg">
+					</div>
+					<div class="text">
+						<span ng-if="chatInfo !== 'vessel'">VIEW DETAILS</span>
+						<span ng-if="chatInfo == 'vessel'">CLOSE DETAILS</span>
+					</div>
+				</div>
+				<div class="peer_name text_truncate">{{vessel.vessel_name}}</div>
+			</div>
+		</div>
+		<div class="chat_peer_details noselect" ng-class="{'active-details': (chatInfo == 'vessel')}" ng-show="chatInfo == 'vessel'">
+			<div class="relative-container" data-simplebar ng-if="vessel">
+				<div class="left_area">
+					<div class="vessel_name">
+						{{vessel.vessel_name}}
+					</div>
+			        <div class="img" style="margin-bottom: 50px; background: #056a9f;">
+			            <div class="relative-container" ng-if="vessel">
+			            	<div class="spinner small_loader center_item">
+				                <div class="bounce1"></div>
+				                <div class="bounce2"></div>
+				                <div class="bounce3"></div>
+				            </div>
+			                <slick infinite=true slides-to-show=1 responsive autoplay=true slides-to-scroll=1 arrows=true dots=true pause-on-hover=false>
+			                    <div class="vessel_images" ng-repeat="image in vessel.vessel_photos track by $index" style="background-image: url({{stripped(image)}});" ng-class="{single_image: vessel.vessel_photos.length == 1}"></div>
+			                </slick>
+			            </div>
+			        </div>
+			        <div class="availability" ng-if="vessel.vessel_availability == 'Available'">
+			            <div class="available">{{vessel.vessel_availability}}</div>
+			        </div>
+			        <div class="availability unavailability" ng-if="vessel.vessel_availability != 'Available'">
+			            <div class="unavailable">UNAVAILABLE</div>
+			            <div class="till">TILL <span>{{vessel.vessel_availability}}</span></div>
+			        </div>
+			        <div class="product_section">
+			            <div class="icon">
+			                <i class="material-icons center_item_vertically">timelapse</i>
+			            </div>
+			            <div class="label">
+			                CREATED
+			            </div>
+			            <div class="content">
+			                5:15pm 26th August, 2018
+			            </div>
+			            <div class="clear-both"></div>
+			        </div>
+			        <div class="details_header">
+			            VESSEL DETAILS
+			        </div>
+			        <div class="details_container">
+			            <div class="input-box">
+			                <div class="label display">
+			                    HIRE RATE
+			                </div>
+			                <div class="inputcontainer">
+			                    ${{vessel.daily_hire_rate}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    IMO NUMBER
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.imo_number}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    VESSEL NAME
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.vessel_name}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    OWNERSHIP STATUS
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.ownership_status}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    CURRENT LOCATION
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.current_location}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    YEAR BUILT
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.year_built}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    SPECIFICATION SHEET
+			                </div>
+			                <a ng-href="{{stripped(vessel.specification_sheet)}}" target="_blank">
+			                    <div class="inputcontainer filepath">
+			                        <div class="spec-name text_truncate">{{getFileName(vessel.specification_sheet)}}</div>
+			                            <div class="download-icon">
+			                                <i class="material-icons">file_download</i>
+			                            </div>
+			                        <div class="clear-both"></div>
+			                    </div>
+			                </a>                       
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    FLAG
+			                </div>
+			                <div class="inputcontainer" style="padding-bottom: 10px;">
+			                    <div class="flag-icon">
+			                        <img ng-src="{{(vessel.preferred_flag) ? 'assets/images/icons/countries/' + vessel.preferred_flag + '.png' : '' | lowercase}}">
+			                    </div>
+			                    <div class="flag-label">
+			                        {{countries[vessel.preferred_flag]}}
+			                    </div>
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    CLASSIFICATION
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.classification}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    CLASSIFICATION EXPIRY
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.classification_expiry}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    PURPOSE
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.purpose}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    VESSEL TYPE
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.vessel_type}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    ACCOMMODATION (MAXIMUM PASSENGERS)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.accommodation}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    HELIPAD / HELIDECK
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.helipad}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    VALID NCDMB CLASS (NIGERIA ONLY)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.valid_ncdmb_class}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    VALID OVID/CMID
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.valid_ovidcmid}}
+			                </div>                          
+			            </div>
+			        </div>
+			        <div class="clear-both"></div>
+			    </div>
+			    <div class="right_area">
+			        <div class="details_container">
+			            <div class="input-box">
+			                <div class="label display">
+			                    BOLLARD PULL (BP)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.bp}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    BRAKE HORSE POWER (BHP)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.bhp}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    DECK AREA (SQM)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.da}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    DECK STRENGTH (TON/SQM)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.ds}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    DYNAMIC POSITIONING (DP)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.dp}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    MAXIMUM SPEED
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.maximum_speed}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    DEADWEIGHT TONNAGE (DWT)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.dwt}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    GROSS TONNAGE (GRT)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.grt}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    LENGTH OA (METRES)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.length}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    BREADTH MOULDED (METRES)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.breadth_moulded}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    DEPTH MOULDED (METRES)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.depth_moulded}}
+			                </div>                          
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    MAXIMUM DRAFT (METRES)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.maximum_draft}}
+			                </div>
+			            </div>
+			            <div class="input-box">
+			                <div class="label display">
+			                    DECK CRANE (TONNE)
+			                </div>
+			                <div class="inputcontainer">
+			                    {{vessel.deck_crane}}
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			    <div class="clear-both"></div>
+			</div>
+			<div class="relative-container" ng-if="!vessel">
+				<div class="spinner small_loader center_item">
+	                <div class="bounce1"></div>
+	                <div class="bounce2"></div>
+	                <div class="bounce3"></div>
+	            </div>
+			</div>
+		</div>
+	</div>
+	<div class="chat_area">
+		<div class="chat_messages">
+			<div id="chatContainer" class="chatContainer relative-container" ng-class="{shrunk: choosingFile}" data-simplebar ng-show="chats && (chats.length > 0)">
+		        <ol class="discussion">
+		            <li ng-class="chat.author == mvx_globals.currentUser.userdata.data.id ? 'self' : 'other'" ng-repeat="chat in chats | orderBy : chat.created_at: false" id="{{chat.$id}}">
+		                <div class="messages">
+		                    <p>{{chat.msg}}</p>
+		                    <p class="chatTime nowrap">{{chat.created_at | date:'medium'}}</p>
+		                </div>
+		            </li>
+		        </ol>
+		    </div>
+		    <div class="spinner page-loading center_item" ng-if="!chats">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+			<img src="assets/images/chat.gif" class="center_item placeholder" ng-show="chats && (chats.length == 0)">
+		</div>
+		<div class="chat_input">
+			<form ng-submit="sendChat();">
+				<div class="chat_input_field">
+					<input type="text" ng-model="chat.term" placeholder="Type your message here">
+				</div>
+				<div class="chat_input_button" ng-class="{active_button: chat.term.length > 0}">
+					<button type="submit">
+						<i class="material-icons center_item" ng-if="!sendingChat">send</i>
+						<div class="spinner small_loader center_item" ng-if="sendingChat">
+			                <div class="bounce1"></div>
+			                <div class="bounce2"></div>
+			                <div class="bounce3"></div>
+			            </div>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

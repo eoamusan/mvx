@@ -15,7 +15,6 @@ app.controller('loginCtrl', function($rootScope, $scope, $timeout, $http, $state
 			$scope.processing = true;
 
 			AuthenticationService.Login($scope.user, function(data){
-				console.log(data);
 	    		$scope.loginStatus = data.data.msg;
 
 	    		if(data.data.msg == "Logged In"){

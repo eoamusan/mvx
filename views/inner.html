@@ -1,5 +1,5 @@
 <div class="mvx_inner_links" ng-class="{'showing_links': showingLinks}">
-	<div class="link" ng-click="signup(); showLink();">
+	<div class="link" ng-click="charter(); showLinks();" ng-if="mvx_globals.currentUser.userdata.data.category == 'Charterer'">
 		<div class="icon">
 			<i class="material-icons center_item">add_box</i>
 		</div>
@@ -7,7 +7,15 @@
 			<span class="center_item_vertically nowrap">ADD CHARTER ENQUIRY</span>
 		</div>
 	</div>
-	<div class="link" ng-click="login(); showLink();">
+	<div class="link" ng-click="addvessel(); showLinks();" ng-if="mvx_globals.currentUser.userdata.data.category == 'Ship Owner'">
+		<div class="icon">
+			<i class="material-icons center_item">add_box</i>
+		</div>
+		<div class="label">
+			<span class="center_item_vertically nowrap">POST VESSEL</span>
+		</div>
+	</div>
+	<div class="link" ng-click="login(); showLinks();">
 		<div class="icon">
 			<i class="material-icons center_item">textsms</i>
 		</div>
@@ -17,41 +25,36 @@
 	</div>
 	<div class="link" ng-click="addvessel(); showLinks();">
 		<div class="icon">
-			<i class="material-icons center_item">add_box</i>
+			<i class="material-icons center_item">person_pin</i>
 		</div>
 		<div class="label">
-			<span class="center_item_vertically nowrap">POST VESSEL</span>
+			<span class="center_item_vertically nowrap">MY ACCOUNT</span>
 		</div>
 	</div>
-	<div class="link">
-		<div class="icon">
-			<i class="material-icons center_item">add_box</i>
-		</div>
-		<div class="label">
-			<span class="center_item_vertically nowrap">POST PROCUREMENT</span>
-		</div>
-	</div>
-	<div class="link logout">
+	<div class="link logout" ng-click="logout(); showLinks();">
 		<div class="icon">
 			<i class="material-icons center_item">power_settings_new</i>
 		</div>
 		<div class="label">
-			<span class="center_item_vertically nowrap abs-right">SIGN OUT</span>
+			<span class="center_item_vertically nowrap abs-right" style="padding-right: 10px;">SIGN OUT</span>
 		</div>
 	</div>
 </div>
 <div class="mvx_inner_mainarea" ng-class="{'showing_links': showingLinks}">
 	<div class="relative-container">
 		<div class="mvx_inner_header">
-			<div class="mvx_toggle_two" ng-class="{'showing_links': showingLinks}" ng-click="showLinks();">
+			<div class="mvx_toggle_two" ng-if="mvx_globals.currentUser" ng-class="{'showing_links': showingLinks}" ng-click="showLinks();">
 				<img src="assets/images/ham_black.png"  class="center_item_vertically ham">
 				<img src="assets/images/icons/close.png" height="30" class="center_item_vertically close-flyout" style="right: 5px;">
 			</div>
-			<div class="logo" ng-class="{'showing_links': showingLinks, noborder: !globals.currentUser}" ng-click="home();">
+			<div class="mvx_toggle_two" ng-if="!mvx_globals.currentUser" ng-click="home();">
+				<i class="material-icons center_item">arrow_back</i>
+			</div>
+			<div class="logo" ng-class="{'showing_links': showingLinks, noborder: !mvx_globals.currentUser}" ng-click="home();">
 				
 			</div>
-			<div class="label" ng-class="{'logged_out': !globals.currentUser}">
-				<div class="inner_logout_links nowrap" ng-if="!globals.currentUser">
+			<div class="label" ng-class="{'logged_out': !mvx_globals.currentUser}">
+				<div class="inner_logout_links nowrap" ng-if="!mvx_globals.currentUser">
 					<div class="logout_link" ng-click="home();">
 						<div class="icon">
 							<i class="material-icons center_item">account_balance</i>
@@ -84,21 +87,21 @@
 					</div>
 					<div class="clear-both"></div>
 				</div>
-				<span class="center_item" ng-if="globals.currentUser">
+				<span class="center_item" ng-if="mvx_globals.currentUser">
 					<span ng-click="dashboard();" style="cursor: pointer;">DASHBOARD</span>
 					<span class="less_emphasis">
-						\ {{globals.currentUser.userdata.data.category}}
+						\ {{mvx_globals.currentUser.userdata.data.category}}
 					</span>
 				</span>
 			</div>
-			<div class="account" ng-if="globals.currentUser">
+			<div class="account" ng-if="mvx_globals.currentUser">
 				<div class="welcome">
 					<div class="label">
-						<span class="center_item_vertically">Welcome, <span class="uname">{{globals.currentUser.userdata.data.display_name}}</span></span>
+						<span class="center_item_vertically">Welcome, <span class="uname">{{mvx_globals.currentUser.userdata.data.display_name}}</span></span>
 					</div>
-					<div class="mvx_inner_header_profile" style="border: 1px solid {{getColor(globals.currentUser.userdata.data.display_name)}}; ">
-						<span class="center_item" style="color: {{getColor(globals.currentUser.userdata.data.display_name)}};">
-							{{getInitials(globals.currentUser.userdata.data.display_name)}}
+					<div class="mvx_inner_header_profile" style="background: {{getColor(mvx_globals.currentUser.userdata.data.display_name)}}; ">
+						<span class="center_item" style="color: #FFF;">
+							{{getInitials(mvx_globals.currentUser.userdata.data.display_name)}}
 						</span>
 					</div>
 				</div>
@@ -107,7 +110,7 @@
 						<span class="center_item_vertically">Logout</span>
 					</div>
 					<div class="icon">
-						<i class="material-icons center_item">power_settings_new</i>
+						<i class="material-icons center_item">play_for_work</i>
 					</div>
 				</div>
 			</div>

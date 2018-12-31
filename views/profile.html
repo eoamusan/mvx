@@ -1,0 +1,110 @@
+<div ng-cloak class="left halves noselect">
+    <div class="tab_heads">
+        <div class="tab_head_icon">
+            <i class="material-icons center_item">person_pin</i>
+        </div>
+        <div class="inner_section_label">
+            <span class="center_item_vertically text_truncate" style="width: 100%;">
+                PROFILE SETTINGS
+            </span>
+        </div>
+        <div class="inner_section_search" ng-class="{bigger: (focus == 'left'), typing: (focus == 'left'), 'smaller': mvx_globals.currentUser.userdata.data.category == 'Charterer'}" focus-input>
+            <div class="search_icon">
+                <i class="material-icons center_item">search</i>
+            </div>
+            <div class="search_input">
+                <form name="search_left" autocomplete="off">
+                    <input type="text" name="term" ng-model="search.firstsection" ng-focus="foc('left')" ng-blur="((search_left.term.$modelValue == undefined) || (search_left.term.$modelValue == '')) ? blur() : ''" class="inner_search" placeholder="Search here" autocomplete="off">
+                </form>
+            </div>
+        </div>
+        <div class="light_toggle">
+            <div class="light_label">
+                <span class="center_item">
+                    DARK
+                </span>
+            </div>
+            <div class="switch_container">
+                <div class="wrapper center_item dark_light">
+                    <div class="switch_box box_1">
+                        <input type="checkbox" class="switch_1" id="switch_1" ng-model="search.left_light">
+                    </div>
+                </div>
+            </div>
+            <div class="light_label">
+                <span class="center_item">
+                    LIGHT
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="dash_content" ng-class="{'dark' : !search.left_light, 'light' : search.left_light}">
+        <div class="relative-container" ng-if="!offers">
+            <div class="spinner center_item">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <div class="dash_items_container" data-simplebar ng-if="(uservessels.length > 0) && (mvx_globals.currentUser.userdata.data.category == 'Ship Owner')">
+            <div class="dash_item" ng-repeat="vessel in uservessels | filter:search.firstsection track by $index" ng-class="{'show': (show == vessel.id)}" ng-click="revealShow(vessel, 'vessel');" ui-view="vessel">
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="right halves noselect">
+    <div class="tab_heads">
+        <div class="tab_head_icon">
+            <i class="material-icons center_item">fingerprint</i>
+        </div>
+        <div class="inner_section_label">
+            <span class="center_item_vertically text_truncate" style="width: 100%;">
+                CHANGE PASSWORD
+            </span>
+        </div>
+        <div class="inner_section_search" ng-class="{bigger: (focus == 'middle'), typing: (focus == 'middle'), 'smaller': mvx_globals.currentUser.userdata.data.category == 'Charterer'}" focus-input>
+            <div class="search_icon">
+                <i class="material-icons center_item">search</i>
+            </div>
+            <div class="search_input">
+                <form name="search_left" autocomplete="off">
+                    <input type="text" name="term" ng-model="search.secondsection" ng-focus="foc('middle')" ng-blur="((search_left.term.$modelValue == undefined) || (search_left.term.$modelValue == '')) ? blur() : ''" class="inner_search" placeholder="Search here" autocomplete="off">
+                </form>
+            </div>
+        </div>
+        <div class="light_toggle">
+            <div class="light_label">
+                <span class="center_item">
+                    DARK
+                </span>
+            </div>
+            <div class="switch_container">
+                <div class="wrapper center_item dark_light">
+                    <div class="switch_box box_1">
+                        <input type="checkbox" class="switch_1" id="switch_1" ng-model="search.left_light">
+                    </div>
+                </div>
+            </div>
+            <div class="light_label">
+                <span class="center_item">
+                    LIGHT
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="dash_content dark" ng-class="{'dark' : !search.middle_light, 'light' : search.middle_light}">
+        <div class="relative-container" ng-if="!charters">
+            <div class="spinner center_item">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <div class="dash_items_container charterer_dash charter_list" data-simplebar ng-if="(charters.length > 0) && (mvx_globals.currentUser.userdata.data.category == 'Charterer')">
+            <div class="dash_item" ng-repeat="charter in charters | orderBy: created_at: true track by $index" ng-click="revealShow(charter, 'charter');" ng-class="{'show': (charterShow == charter.id)}" ui-view="charter_enquiry">
+                
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,12 +9,10 @@ app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window,
 
 	$scope.index = function(id){
 		$scope[index + id] = 0;
-		console.log($scope);
 		return $scope[index + id];
 	}
 
 	$scope.setActive = function(val){
-		console.log(val);
 		$timeout(function(){
 			$rootScope.index = val;
 			$scope.$apply();
@@ -39,38 +37,88 @@ app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window,
 	        method: 'GET',
 	        url: 'scripts/getvessels.php'
 		}).then(function(data){
-			console.log('Vessels:', data);
-			$rootScope.vessels = data.data;
+			$scope.vessels = data.data;
 
-			angular.forEach($rootScope.vessels, function(vessel){
+			angular.forEach($scope.vessels, function(vessel){
 				vessel.vessel_photos = JSON.parse(vessel.vessel_photos);
 			});
 
 		}).catch(angular.noop);
 	}
 
-	$scope.getOffers = function(){
+	$scope.getUserVessels = function(){
 		$http({
 	        method: 'GET',
-	        url: 'scripts/getoffers.php'
+	        url: 'scripts/getuservessels.php?id='+$rootScope.mvx_globals.currentUser.userdata.data.id
 		}).then(function(data){
-			console.log('Offers:', data);
-			$rootScope.offers = data.data;
+			$scope.uservessels = data.data;
+			
+			angular.forEach($scope.uservessels, function(vessel){
+				vessel.vessel_photos = JSON.parse(vessel.vessel_photos);
+				vessel.userown = true;
+			});
+		}).catch(angular.noop);
+	}
 
-			angular.forEach($rootScope.offers, function(offer){
+	$scope.getUser = function(userid, callback){
+		var url = 'scripts/fetchuser.php?id='+userid+'&src=id';
+
+		$http({
+	        method: 'GET',
+	        url: url
+		}).then(function(data){
+            callback(data.data.data);
+		}).catch(angular.noop);
+    }
+
+    $scope.getVessel = function(id, callback){
+		$http({
+	        method: 'GET',
+	        url: 'scripts/getvessel.php?id='+id
+		}).then(function(data){
+			callback(data);
+		}).catch(angular.noop);
+	}
+
+	$scope.getOffers = function(){
+		$scope.offers = null;
+		$http({
+	        method: 'GET',
+	        url: 'scripts/getoffers.php?id='+$rootScope.mvx_globals.currentUser.userdata.data.id
+		}).then(function(data){
+			var offers = data.data;
+			var grouped_offers = [];
+			var cleaned_grouped_offers = [];
+
+			angular.forEach(offers, function(offer){
 				offer.vessels_vessel_photos = JSON.parse(offer.vessels_vessel_photos);
 			});
+
+			angular.forEach(offers, function(offer, key){
+				if(grouped_offers[offer.offers_charter_id] == null){
+					grouped_offers[offer.offers_charter_id] = [];
+				}
+				grouped_offers[offer.offers_charter_id].push(offer);
+			});
+
+			angular.forEach(grouped_offers, function(offer, key){
+				if(offer !== null){
+					cleaned_grouped_offers[key] = offer;
+				}
+			})
+
+			$scope.offers = cleaned_grouped_offers;
 
 		}).catch(angular.noop);
 	}
 
 	$scope.getCharterRequests = function(){
+		$scope.charters = null;
 		$http({
 	        method: 'GET',
-	        url: 'scripts/getcharterrequests.php'
+	        url: 'scripts/getusercharterrequests.php?id='+$rootScope.mvx_globals.currentUser.userdata.data.id
 		}).then(function(data){
-			$rootScope.charters = data.data;
-			console.log('Charter Requests:', $rootScope.charters);
+			$scope.charters = data.data;
 
 		}).catch(angular.noop);
 	}
@@ -124,13 +172,24 @@ app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window,
 		$state.go('addvessel');
 	}
 
+	$scope.charter = function(){
+		$state.go('charter');
+	}
+
+	$scope.chat = function(){
+		$state.go('chat');
+	}
+
+	$scope.viewchat = function(code, vessel, peer){
+		$state.go('chat', {"vessel": vessel, "peer": peer, "chat_id": code});
+	}
+
     $rootScope.charterInformationTab = function(charter){
     	var url = $state.href('enquiry', {"enquiry": charter, "enquiry_id": charter.id});
 		$window.open(url,'_blank');
     }
 
     $rootScope.vesselInformationTab = function(vessel, src){
-    	console.log(vessel, src);
     	if(src == 'vessel') {
     		vesselObj = vessel;
     		vesselId = vessel.id;

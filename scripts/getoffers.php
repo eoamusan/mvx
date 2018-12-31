@@ -5,7 +5,7 @@
 
 	$user = new User();
 
-	$offers = $user->getoffers();
+	$offers = $user->getoffers($_GET['id']);
 
 	echo json_encode($offers);
 ?>

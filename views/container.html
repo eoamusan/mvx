@@ -1,9 +1,14 @@
-<div ui-view="overlay">
-	
+<div class="mvx_home_mainarea" ng-class="{'showing_user_area': showingMore}">
+	<div ui-view="overlay">
+		
+	</div>
+	<div ui-view="authlogo">
+		
+	</div>
+	<div class="home-container" ng-class="{'noScrollSmall': showLinks}" data-simplebar ui-view="home">
+		
+	</div>
 </div>
-<div ui-view="authlogo">
-	
-</div>
-<div class="home-container" ng-class="{'noScrollSmall': showLinks}" data-simplebar ui-view="home">
+<div class="mvx_user_area" ng-class="{'showing_user_area': showingMore}" ui-view="userArea">
 	
 </div>

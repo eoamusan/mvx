@@ -17,12 +17,12 @@ app.controller('charterCtrl', function($rootScope, $scope, $http, $state, $timeo
 		$scope.processing = true;
 
 		if (validate == 0) {
-			data.userid = $rootScope.globals.currentUser.userdata.data.id;
+			data.userid = $rootScope.mvx_globals.currentUser.userdata.data.id;
 			data.expected_mob_date = document.getElementById('inputdate').value;
 
-			data.username = $rootScope.globals.currentUser.userdata.data.c_name;
-			data.usermobile = $rootScope.globals.currentUser.userdata.data.c_mobile;
-			data.useremail = $rootScope.globals.currentUser.userdata.data.c_email;
+			data.username = $rootScope.mvx_globals.currentUser.userdata.data.c_name;
+			data.usermobile = $rootScope.mvx_globals.currentUser.userdata.data.c_mobile;
+			data.useremail = $rootScope.mvx_globals.currentUser.userdata.data.c_email;
 
 			$http({
 	                method: 'POST',

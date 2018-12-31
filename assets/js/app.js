@@ -1,4 +1,4 @@
-var app = angular.module("doctorDialApp", ["ui.router", "slick", "ngSanitize", "ngCookies"]);
+var app = angular.module("doctorDialApp", ["ui.router", "slick", "ngSanitize", "ngCookies", "ui.carousel", "firebase"]);
 app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
 
     $urlRouterProvider.otherwise('/');
@@ -15,9 +15,24 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
         .state('home', {
             url: '/',
             parent: 'container',
+            cache: true,
             views: {
                 'home@container': {
                     templateUrl : "views/home.html",
+                    controller : "homeCtrl"
+                },
+                'userArea@container': {
+                    templateUrl : "views/userarea.html"
+                },
+                'form@home': {
+                    templateUrl : "views/login/form.html"
+                },
+                'charter@home': {
+                    templateUrl : "views/charter_item.html",
+                    controller : "homeCtrl"
+                },
+                'vessel@home': {
+                    templateUrl : "views/vessel_item.html",
                     controller : "homeCtrl"
                 }
             }
@@ -30,6 +45,19 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
                 'home@container': {
                     templateUrl : "views/vessel.html",
                     controller : "vesselCtrl"
+                },
+                'userArea@container': {
+                    templateUrl : "views/userarea.html"
+                },
+                'form@vessel': {
+                    templateUrl : "views/login/form.html"
+                },
+                'charter@vessel': {
+                    templateUrl : "views/charter_item.html"
+                },
+                'vessel@vessel': {
+                    templateUrl : "views/vessel_item.html",
+                    controller : "homeCtrl"
                 }
             },
             params: {
@@ -44,6 +72,20 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
                 'home@container': {
                     templateUrl : "views/enquiry.html",
                     controller : "enquiryCtrl"
+                },
+                'userArea@container': {
+                    templateUrl : "views/userarea.html"
+                },
+                'form@enquiry': {
+                    templateUrl : "views/login/form.html"
+                },
+                'charter@enquiry': {
+                    templateUrl : "views/charter_item.html",
+                    controller : "homeCtrl"
+                },
+                'vessel@enquiry': {
+                    templateUrl : "views/vessel_item.html",
+                    controller : "homeCtrl"
                 }
             },
             params: {
@@ -89,18 +131,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
                     templateUrl : "views/authlogo.html",
                     controller : "loginCtrl"
                 },
-                'home@container': {
-                    templateUrl : "views/home.html",
-                    controller : "homeCtrl"
-                },
                 'choosecategory@signup': {
                     templateUrl : "views/signup/choosecategory.html"
                 },
                 'charterer@signup': {
                     templateUrl : "views/signup/categories/charterer.html"
-                },
-                'procurement@signup': {
-                    templateUrl : "views/signup/categories/procurement.html"
                 },
                 'shipowner@signup': {
                     templateUrl : "views/signup/categories/shipowner.html"
@@ -145,7 +180,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
         .state('dashboard', {
             url: '/dashboard',
             parent: 'inner',
-            cache: false,
+            // cache: false,
             views: {
                 'content@inner': {
                     templateUrl : "views/dashboard.html",
@@ -163,6 +198,39 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
                 'chat@dashboard': {
                     templateUrl : "views/dashboard/chat.html"
                 }
+            }
+        })
+
+        .state('profile', {
+            url: '/profile',
+            parent: 'inner',
+            views: {
+                'content@inner': {
+                    templateUrl : "views/profile.html",
+                    controller : "profileCtrl"
+                },
+                'account@profile': {
+                    templateUrl : "views/profile/account.html"
+                },
+                'changepassword@profile': {
+                    templateUrl : "views/profile/changepassword.html"
+                }
+            }
+        })
+
+        .state('chat', {
+            url: '/chat/:chat_id',
+            parent: 'inner',
+            cache: false,
+            views: {
+                'content@inner': {
+                    templateUrl : "views/chat.html",
+                    controller : "chatCtrl"
+                }
+            },
+            params: {
+                peer: {},
+                vessel: {}
             }
         })
 
@@ -229,28 +297,67 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
 });
 
 app.run(function($rootScope, $state, AuthenticationService, $cookies, $location, $http, $timeout) {
+    // var config = {
+    //     apiKey: "AIzaSyDX6ru5vWVCcY7ve_mp-dxZlyspUhjGwtw",
+    //     authDomain: "mvxchange-realtime-test.firebaseapp.com",
+    //     databaseURL: "https://mvxchange-realtime-test.firebaseio.com/",
+    //     storageBucket: "mvxchange-realtime-test.appspot.com",
+    // };
 
-    $rootScope.globals = $cookies.getObject('globals') || {};
+    var config = {
+        apiKey: "AIzaSyAyc-0XL3hbpofaK6LOMfWh5ygqrVsWVIc",
+        authDomain: "mvxchange-realtime.firebaseapp.com",
+        databaseURL: "https://mvxchange-realtime.firebaseio.com/",
+        storageBucket: "mvxchange-realtime.appspot.com",
+    };
+
+    firebase.initializeApp(config);
+
+    var connectedRef = firebase.database().ref(".info/connected");
+
+    connectedRef.on("value", function(snap) {
+        
+    });
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            var isAnonymous = user.isAnonymous;
+            var uid = user.uid;
+
+            if($rootScope.mvx_globals.currentUser){
+                var usersRef = firebase.database().ref('presence/' + $rootScope.mvx_globals.currentUser.userdata.data.id);
+
+                firebase.database().ref('presence/' + $rootScope.mvx_globals.currentUser.userdata.data.id).once('value').then(function(snapshot) {
+                    var update = snapshot.val();
+                    update.uid = uid;
+
+                    firebase.database().ref('presence/' + $rootScope.mvx_globals.currentUser.userdata.data.id).update(update);
+                });
+            }
+        } else {
+            firebase.auth().signInAnonymously().catch(function(error) {
+                console.log(error);
+            });
+        }
+    });
+
+    $rootScope.mvx_globals = $cookies.getObject('mvx_globals') || {};
 
     var routes_nloggedin = ['/login', '/signin', '/signup', '/signup/doctor'];
-    var routes_loggedin = ['/dashboard', '/charter', '/addvessel'];
+    var routes_loggedin = ['/dashboard', '/charter', '/addvessel', '/chat'];
 
-    console.log($rootScope.globals);
-
-    if ($rootScope.globals.currentUser) {
+    if ($rootScope.mvx_globals.currentUser) {
         var credentials = {
-            email: $rootScope.globals.currentUser.email,
-            password: $rootScope.globals.currentUser.password
+            email: $rootScope.mvx_globals.currentUser.email,
+            password: $rootScope.mvx_globals.currentUser.password
         };
 
         AuthenticationService.Login(credentials, function(data){
-            console.log(data);
-
             if(data.status === 200){
 
                 if(data.data.msg == "Account Not Verified"){
-                    $rootScope.globals = {};
-                    $cookies.remove('globals');
+                    $rootScope.mvx_globals = {};
+                    $cookies.remove('mvx_globals');
                     
                     if($rootScope.inner){
                         $state.go('verification', {email: credentials.email});
@@ -258,11 +365,8 @@ app.run(function($rootScope, $state, AuthenticationService, $cookies, $location,
                         $state.go('verify', {email: credentials.email});
                     }                    
                 }else if(data.data.msg != "Logged In"){
-                    console.log(data);
-                    console.log($cookies.getAll());
-                    $rootScope.globals = {};
-                    $cookies.remove("globals");
-                    console.log($cookies.getAll());
+                    $rootScope.mvx_globals = {};
+                    $cookies.remove("mvx_globals");
 
                     $state.go('login');
                 }else{
@@ -271,8 +375,8 @@ app.run(function($rootScope, $state, AuthenticationService, $cookies, $location,
 
             }else{
 
-                $rootScope.globals = {};
-                $cookies.remove('globals');
+                $rootScope.mvx_globals = {};
+                $cookies.remove('mvx_globals');
                 $state.go('login');
 
             }
@@ -281,17 +385,21 @@ app.run(function($rootScope, $state, AuthenticationService, $cookies, $location,
     }
 
     $rootScope.$on('$locationChangeStart', function(event, toState, toParams, fromState, fromParams) {
-        if ((routes_nloggedin.indexOf($location.path()) !== -1) && $rootScope.globals.currentUser) {
-            // User is authenticated
-            $state.go("dashboard");
-            event.preventDefault();
-        }
+        angular.forEach(routes_nloggedin, function(route){
+            if (($location.path().indexOf(route) !== -1) && $rootScope.mvx_globals.currentUser) {
+                // User is authenticated
+                $state.go("dashboard");
+                event.preventDefault();
+            }
+        });
 
-        if ((routes_loggedin.indexOf($location.path()) !== -1) && !$rootScope.globals.currentUser) {
-            // User isn’t authenticated
-            $state.go("login");
-            event.preventDefault();
-        }
+        angular.forEach(routes_loggedin, function(route){
+            if (($location.path().indexOf(route) !== -1) && !$rootScope.mvx_globals.currentUser) {
+                // User isn’t authenticated
+                $state.go("login");
+                event.preventDefault();
+            }
+        });
 
         $rootScope.stateIsLoading = true;
     });

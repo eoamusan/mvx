@@ -1,48 +1,48 @@
-<div class="input-box" data-validate="Name">
+<div class="input-box required-field" data-validate="Name">
 	<div class="label">
 		<div class="hidden_label">
 			NAME <span class="required">*</span>
 		</div>
 	</div>
 	<div class="inputcontainer">
-		<input type="text" ng-model="user.charterername" placeholder="Name">
+		<input type="text" ng-model="usersignup.charterername" placeholder="Name">
 	</div>
 	<div class="status error"></div>
 	<div class="clear-both"></div>
 </div>
-<div class="input-box" data-validate="Company Name">
+<div class="input-box required-field" data-validate="Company Name">
 	<div class="label">
 		<div class="hidden_label">
-			COMPANY NAME <span class="required">*</span>
+			BUSINESS NAME <span class="required">*</span>
 		</div>
 	</div>
 	<div class="inputcontainer">
-		<input type="text" ng-model="user.charterercompanyname" placeholder="Company Name">
+		<input type="text" ng-model="usersignup.charterercompanyname" placeholder="Company Name">
 	</div>
 	<div class="status error"></div>
 	<div class="clear-both"></div>
 </div>
 <div class="input-box">
-	<div class="input-box box-half" data-validate="Email address">
+	<div class="input-box box-half required-field" data-validate="Email address">
 		<div class="label">
 			<div class="hidden_label">
 				EMAIL <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.email" placeholder="Email" readonly="readonly" disabled="disabled">
+			<input type="text" ng-model="usersignup.email" placeholder="Email" readonly="readonly" disabled="disabled">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>
 	</div>
-	<div class="input-box box-half padding-bottom-30 last" data-validate="Phone number">
+	<div class="input-box box-half padding-bottom-30 last required-field" data-validate="Phone number">
 		<div class="label">
 			<div class="hidden_label">
 				PHONE NUMBER <span class="required">*</span>
 			</div>
 		</div>
 		<div class="inputcontainer">
-			<input type="text" ng-model="user.charterermobile" placeholder="Phone Number">
+			<input type="text" ng-model="usersignup.charterermobile" placeholder="Phone Number">
 		</div>
 		<div class="status error"></div>
 		<div class="clear-both"></div>

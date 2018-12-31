@@ -1,13 +1,24 @@
-app.controller('containerCtrl', function($rootScope, $scope, $http, $state, utils, AuthenticationService) {
+app.controller('containerCtrl', function($rootScope, $scope, $http, $state, $window, $timeout, utils, AuthenticationService) {
 	$rootScope.showingError = false;
 	$scope.showLinks = false;
+	$scope.user = {};
+	$rootScope.offeringVessel = false;
+	$rootScope.showingMore = false;
+
+
+  	$scope.charter = function(){
+		$state.go('charter');
+	}
+  
+  	$scope.addvessel = function(){
+		$state.go('addvessel');
+	}
 
     $rootScope.removeGoHome = function(){
     	$state.go('home');
     }
 
     $rootScope.vesselInformation = function(vessel){
-    	console.log(vessel);
     	$state.go('vessel', {"vessel": vessel, "vessel_id": vessel.id});
     }
 
@@ -19,12 +30,16 @@ app.controller('containerCtrl', function($rootScope, $scope, $http, $state, util
     	return utils.formatDate(date);
     }
 
-    $rootScope.login = function(){
+    $rootScope.gotoLogin = function(){
     	$state.go('login');
     }
 
 	$scope.stripped = function(image){
 		return image.split('../')[1];
+	}
+
+	$scope.openUrl = function(url){
+		$window.open(url, '_blank');
 	}
 
 	$scope.getFileName = function(filepath){
@@ -58,6 +73,64 @@ app.controller('containerCtrl', function($rootScope, $scope, $http, $state, util
 		$scope.showLinks = !$scope.showLinks;
 	}
 
+	$scope.toggleMore = function(){
+		if($rootScope.showingMore == true){
+			$rootScope.showingMore = false;
+		}else{
+			$rootScope.showingMore = true;
+		}
+	}
+
+	$scope.showMore = function(){
+		$rootScope.showingMore = true;
+	}
+
+	$scope.vesselOptions = function(vessel){
+		if($rootScope.offeringVessel == true){
+			$scope.offeredVessel = vessel;
+		}else{
+			$rootScope.vesselInformation(vessel);
+		}
+	}
+
+	$scope.cancelOffer = function(vessel){
+		$scope.offeredVessel = null;
+	}
+
+	$scope.sendOffer = function(){
+		$scope.sendingOffer = true;
+
+		var credentials = {
+			charter_id: $scope.charterToTakeOffer.id,
+			vessel_id: $scope.offeredVessel.id
+		};
+
+		$http({
+            method: "post",
+            url: 'scripts/offervessel.php',
+            data: credentials
+        }).then(function successCallback(data) {
+
+        	console.log(data);
+        	
+        	$timeout(function(){
+        		$scope.sendingOffer = false;
+        		$scope.offerMsg = data.data.msg;
+        	}, 500);            
+            
+        }, function errorCallback(data) {
+            
+            console.log(data);
+            $scope.processing = false;
+
+        });
+	}
+
+	$scope.closeMore = function(){
+		$rootScope.showingMore = false;
+		$rootScope.offeringVessel = false;
+	}
+
 	$rootScope.closeError = function(){
 		$rootScope.showingError = false;
 	}
@@ -74,13 +147,13 @@ app.controller('containerCtrl', function($rootScope, $scope, $http, $state, util
 		return utils.getName(fullname);
 	}
 
+	// Get all vessels on platform
 	$scope.getVessels = function(){
 		$http({
 	        method: 'GET',
 	        url: 'scripts/getvessels.php'
 		}).then(function(data){
-			console.log('Vessels:', data);
-			$rootScope.vessels = data.data;
+			$rootScope.vessels = data.data.reverse();
 
 			angular.forEach($rootScope.vessels, function(vessel){
 				vessel.vessel_photos = JSON.parse(vessel.vessel_photos);
@@ -89,12 +162,73 @@ app.controller('containerCtrl', function($rootScope, $scope, $http, $state, util
 		}).catch(angular.noop);
 	}
 
+	$scope.offerVessel = function(charter){
+		console.log(charter.id);
+		$rootScope.offeringVessel = true;
+		console.log($rootScope.offeringVessel);
+		$rootScope.charterToTakeOffer = charter;
+	}
+
+	$scope.login = function(){
+    	var validation = utils.validate();
+    	$scope.loginError = false;
+        $rootScope.showingError = false;
+
+    	if(validation == 0){
+			$scope.closeError();
+			$scope.processing = true;
+
+			AuthenticationService.Login($scope.user, function(data){
+				console.log(data);
+	    		$scope.loginStatus = data.data.msg;
+
+	    		if(data.data.msg == "Logged In"){
+		    		AuthenticationService.SetCredentials($scope.user.email, $scope.user.password, data.data);
+	    			$scope.user = {};
+
+		    		$timeout(function(){
+		    			$scope.loginStatus = "";
+		    		}, 1000);
+
+		    		if($rootScope.mvx_globals.currentUser.userdata.data.category == 'Ship Owner'){
+						$scope.getOffers();
+						$scope.getUserVessels();
+					}else{
+						getUserCharterRequests();
+					}
+
+		    	}else if(data.data.msg == "Account Not Verified"){
+		    		$rootScope.showError();
+		    		$scope.loginError = data.data.msg;
+                    $timeout(function(){
+                    	$rootScope.closeError();
+		    			$scope.loginError = data.data.msg;
+		    			if($rootScope.inner){
+			    			$state.go('verification', {email: $scope.user.email});
+			    		}else{
+				    		$state.go('verify', {email: $scope.user.email});
+				    	}
+                        
+                    }, 1500);
+                }else{
+                	$rootScope.showError();
+                	$scope.loginError = data.data.msg;
+                }
+    			$scope.$broadcast("processing_done");
+
+    			$timeout(function(){
+    				$scope.processing = false;
+	    		}, 500);
+    		});
+		}
+	}
+
 	$scope.getOffers = function(){
 		$http({
 	        method: 'GET',
-	        url: 'scripts/getoffers.php'
+	        url: 'scripts/getoffers.php?id='+$rootScope.mvx_globals.currentUser.userdata.data
 		}).then(function(data){
-			console.log('Offers:', data);
+			console.log(data);
 			$rootScope.offers = data.data;
 
 			angular.forEach($rootScope.offers, function(offer){
@@ -105,22 +239,59 @@ app.controller('containerCtrl', function($rootScope, $scope, $http, $state, util
 	}
 
 	$scope.getCharterRequests = function(){
+		console.log('Getting Requests');
 		$http({
 	        method: 'GET',
 	        url: 'scripts/getcharterrequests.php'
 		}).then(function(data){
-			$rootScope.charters = data.data;
-			console.log('Charter Requests:', $rootScope.charters);
+			$scope.charters = data.data.reverse();
+		}).catch(angular.noop);
+	}
+
+	function getUserCharterRequests(){
+		$scope.usercharters = null;
+		$http({
+	        method: 'GET',
+	        url: 'scripts/getusercharterrequests.php?id='+$rootScope.mvx_globals.currentUser.userdata.data.id
+		}).then(function(data){
+			console.log('Charters:', data);
+			$scope.usercharters = data.data;
+
+			angular.forEach($scope.usercharters, function(charter){
+				charter.userown = true;
+			});
+
 		}).catch(angular.noop);
 	}
 
 	$scope.getCharterRequests();
 	$scope.getVessels();
 
-	if ($rootScope.globals.currentUser) {
-		if($rootScope.globals.currentUser.userdata.data.category == 'Ship Owner'){
+	$scope.getUserVessels = function(){
+		$http({
+	        method: 'GET',
+	        url: 'scripts/getuservessels.php?id='+$rootScope.mvx_globals.currentUser.userdata.data.id
+		}).then(function(data){
+			$scope.uservessels = data.data;
+			
+			angular.forEach($scope.uservessels, function(vessel){
+				vessel.vessel_photos = JSON.parse(vessel.vessel_photos);
+				vessel.userown = true;
+			});
+		}).catch(angular.noop);
+	}
+
+	if ($rootScope.mvx_globals.currentUser) {
+		if($rootScope.mvx_globals.currentUser.userdata.data.category == 'Ship Owner'){
 			$scope.getOffers();
+			$scope.getUserVessels();
+		}else{
+			getUserCharterRequests();
 		}
+	}
+
+	$scope.chat = function(){
+		$state.go('chat');
 	}
 
 	$scope.countries = {

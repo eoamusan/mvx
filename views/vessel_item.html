@@ -1,0 +1,102 @@
+<div class="layer">
+	<div class="content">
+		<div class="charter_details">
+			<div class="vessel_info_box">
+				<div class="label">
+					<div class="icon">
+						<i class="material-icons">attach_money</i>
+					</div>
+					<div class="text">
+						HIRE RATE
+					</div>
+				</div>
+				<div class="copy">
+					${{item.daily_hire_rate}}
+				</div>
+			</div>
+			<div class="vessel_info_box">
+				<div class="label">
+					<div class="icon">
+						<i class="material-icons">timer</i>
+					</div>
+					<div class="text">
+						AGE
+					</div>
+				</div>
+				<div class="copy">
+					{{computeAge(item.year_built)}} years
+				</div>
+			</div>
+			<div class="vessel_info_box" style="width: 100%;">
+				<div class="label">
+					<div class="icon">
+						<i class="material-icons">flag</i>
+					</div>
+					<div class="text">
+						FLAG
+					</div>
+				</div>
+				<div class="copy" style="padding-top: 5px;">
+					<div class="flag-icon">
+						<img ng-src="{{(item.preferred_flag) ? 'assets/images/icons/countries/' + item.preferred_flag + '.png' : '' | lowercase}}">
+					</div>
+					<div class="flag-label" style="color: #FFF; padding-top: 5px;">
+						{{countries[item.preferred_flag]}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="title text_truncate">
+			{{item.vessel_name}}
+		</div>
+		<div class="vessel_info">
+			<div class="vessel_info_box">
+				<div class="label">
+					<div class="icon">
+						<i class="material-icons">date_range</i>
+					</div>
+					<div class="text">
+						VESSEL TYPE
+					</div>
+				</div>
+				<div class="copy">
+					{{item.vessel_type}}
+				</div>
+			</div>
+			<div class="vessel_info_box">
+				<div class="label">
+					<div class="icon">
+						<i class="material-icons">event</i>
+					</div>
+					<div class="text">
+						PURPOSE
+					</div>
+				</div>
+				<div class="copy">
+					{{item.purpose}}
+				</div>
+			</div>
+			<div class="vessel_info_box" style="width: 100%;">
+				<div class="label">
+					<div class="icon">
+						<i class="material-icons">location_on</i>
+					</div>
+					<div class="text">
+						CURRENT LOCATION
+					</div>
+				</div>
+				<div class="copy">
+					{{item.current_location}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="menu-link menu-link-left offer_vessel" ng-if="!item.userown">
+	<div class="menu-link-txt">
+	    <div class="menu-link-default">
+	        <div class="menu-link-default-txt">CHARTER VESSEL</div>
+	    </div>
+	    <div class="menu-link-hover">CHARTER VESSEL</div>
+	</div>
+</div>
