@@ -68,75 +68,41 @@
 								<option value="">
 									Choose Vessel Type
 								</option>
-								<option value="Anchor Handling Tug Supply (AHTS)">
-									Anchor Handling Tug Supply (AHTS)
-								</option>
-								<option value="Anchor Handling Tug (AHT)">
-									Anchor Handling Tug (AHT)
-								</option>
-								<option value="Platform Support Vessel (PSV)">
-									Platform Support Vessel (PSV)
-								</option>
-								<option value="Diving Support Vessel (DSV)">
-									Diving Support Vessel (DSV)
-								</option>
-								<option value="Multipurpose Support Vessel">
-									Multipurpose Support Vessel
-								</option>
-								<option value="Tanker">
-									Tanker
-								</option>
-								<option value="Crew Vessel">
-									Crew Vessel
-								</option>
-								<option value="Cargo Barge">
-									Cargo Barge
-								</option>
-								<option value="Accommodation Barge">
-									Accommodation Barge
-								</option>
-								<option value="Heavy Lift Barge">
-									Heavy Lift Barge
-								</option>
-								<option value="Fast Supply Vessel">
-									Fast Supply Vessel
-								</option>
-								<option value="ROV Support Vessel">
-									ROV Support Vessel
-								</option>
-								<option value="Construction Support Vessel">
-									Construction Support Vessel
-								</option>
-								<option value="Pipe Lay Vessel">
-									Pipe Lay Vessel
-								</option>
-								<option value="Standby Vessel">
-									Standby Vessel
-								</option>
-								<option value="Survey Vessel">
-									Survey Vessel
-								</option>
-								<option value="Security Vessel">
-									Security Vessel
-								</option>
-								<option value="Construction Vessel">
-									Construction Vessel
-								</option>
-								<option value="Inland Barge">
-									Inland Barge
-								</option>
-								<option value="Laybarge">
-									Laybarge
-								</option>
-								<option value="Houseboat">
-									Houseboat
-								</option>
-								<option value="Push Tug">
-									Push Tug
-								</option>
-								<option value="Other">
-									Other
-								</option>
+								<option value="Accommodation Barge (Creek/Inland)">Accommodation Barge (Creek/Inland)</option>
+								<option value="Anchor Handling Tug Supply (AHTS)">Anchor Handling Tug Supply (AHTS)</option>
+								<option value="Anchor Handling Tug (AHT)">Anchor Handling Tug (AHT)</option>
+								<option value="Cargo Barge">Cargo Barge</option>
+								<option value="Construction Support Vessel">Construction Support Vessel</option>
+								<option value="Construction Vessel">Construction Vessel</option>
+								<option value="Crew Vessel">Crew Vessel</option>
+								<option value="Diving Support Vessel (DSV)">Diving Support Vessel (DSV)</option>
+								<option value="Drillships">Drillships</option>
+								<option value="Dry Dock">Dry Dock</option>
+								<option value="Emergency Response and Rescue Vessel">Emergency Response and Rescue Vessel</option>
+								<option value="Fast Supply Vessel">Fast Supply Vessel</option>
+								<option value="Floaters">Floaters</option>
+								<option value="Flotel">Flotel</option>
+								<option value="FPSO">FPSO</option>
+								<option value="FSO">FSO</option>
+								<option value="Heavy Lift Barge">Heavy Lift Barge</option>
+								<option value="Houseboat (Creek/Inland)">Houseboat (Creek/Inland)</option>
+								<option value="Inland Barge">Inland Barge</option>
+								<option value="Jackup Rig">Jackup Rig</option>
+								<option value="Laybarge (Creek/Inland)">Laybarge (Creek/Inland)</option>
+								<option value="Multipurpose Support Vessel">Multipurpose Support Vessel</option>
+								<option value="Other">Other</option>
+								<option value="Pipe Lay Vessel">Pipe Lay Vessel</option>
+								<option value="Platforms">Platforms</option>
+								<option value="Platform Support Vessel (PSV)">Platform Support Vessel (PSV)</option>
+								<option value="Push Tug (Creek/Inland)">Push Tug (Creek/Inland)</option>
+								<option value="Ramp/Water Barge (Creek/Inland)">Ramp/Water Barge (Creek/Inland)</option>
+								<option value="ROV Support Vessel">ROV Support Vessel</option>
+								<option value="Security Vessel">Security Vessel</option>
+								<option value="Standby Vessel">Standby Vessel</option>
+								<option value="Semisubmersibles">Semisubmersibles</option>
+								<option value="Submersibles">Submersibles</option>
+								<option value="Survey Vessel">Survey Vessel</option>
+								<option value="Tanker">Tanker</option>
 							</select>
 						</div>
 						<div class="status error"></div>
@@ -440,15 +406,22 @@
 						<div class="label display">
 							PREFERRED DAILY HIRE RATE <span class="required">*</span>
 						</div>
-						<div class="inputcontainer light-border with-content">
+						<div class="inputcontainer light-border with-content extra-option" ng-class="{grayedout: (!(charter.open_for_offers === false) && !(charter.open_for_offers === undefined))}">
 							<div class="currency">
 								<span class="center_item">
 									$
 								</span>
 							</div>
 							<div class="amount">
-								<input type="number" ng-model="charter.daily_hire_rate" ng-change="clearCharterError();" placeholder="Amount">
+								<input type="number" ng-model="charter.daily_hire_rate" ng-change="clearCharterError();" placeholder="Amount"  ng-disabled="!(charter.open_for_offers === false) && !(charter.open_for_offers === undefined)">
 							</div>
+						</div>
+						<div class="open-offers noselect">
+							<label class="switch">
+								<input type="checkbox" ng-model="charter.open_for_offers">
+								<div class="dd_check_slider round"></div>
+								<span>Open for Offers</span>
+							</label>
 						</div>
 						<div class="status error"></div>
 					</div>
@@ -524,9 +497,17 @@
 					<div class="status error"></div>
 					<div class="clear-both"></div>
 				</div>
+				<div class="optional">
+					<div class="text">
+						<span class="left">[</span>OPTIONAL<span class="right">]</span>
+					</div>
+					<div class="aesthetic">
+						<div class="ln center_item_vertically"></div>
+					</div>
+				</div>
 				<div class="input-box">
 					<div class="label display">
-						ADD TONNAGE (GRT/DWT) <span class="required">*</span>
+						ADD TONNAGE (GRT/DWT)
 					</div>
 					<div class="inputcontainer">
 						<div class="input-box" style="width: 100%; padding-bottom: 0;">
@@ -535,11 +516,11 @@
 									Deadweight Tonnage (DWT)
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Tonnes">
+									<div class="input-box box-half">
 										<input type="text" ng-model="charter.tonnage_dwt_min" placeholder="Min Tonnes">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Tonnes">
+									<div class="input-box box-half last">
 										<input type="text" ng-model="charter.tonnage_dwt_max" ng-change="clearCharterError();" placeholder="Max Tonnes">
 										<div class="status error"></div>
 									</div>
@@ -550,11 +531,11 @@
 									Gross Tonnage (GRT)
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Tonnes">
+									<div class="input-box box-half">
 										<input type="text" ng-model="charter.tonnage_grt_min" ng-change="clearCharterError();" placeholder="Min Tonnes">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Tonnes">
+									<div class="input-box box-half last">
 										<input type="text" ng-model="charter.tonnage_grt_max" ng-change="clearCharterError();" placeholder="Max Tonnes">
 										<div class="status error"></div>
 									</div>
@@ -564,9 +545,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="input-box" data-validate="Password">
+				<div class="input-box">
 					<div class="label display">
-						ADD PERFORMANCE (Speed/Bollard Pull/BHP) <span class="required">*</span>
+						ADD PERFORMANCE (Speed/Bollard Pull/BHP)
 					</div>
 					<div class="inputcontainer">
 						<div class="input-box" style="width: 100%; padding-bottom: 0;">
@@ -575,11 +556,11 @@
 									Bollard Pull (BP)
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Tonnage">
+									<div class="input-box box-half"Min Tonnage">
 										<input type="text" ng-model="charter.performance_sbb_bp_min" ng-change="clearCharterError();" placeholder="Min Tonnage">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Tonnage">
+									<div class="input-box box-half last"Max Tonnage">
 										<input type="text" ng-model="charter.performance_sbb_bp_max" ng-change="clearCharterError();" placeholder="Max Tonnage">
 										<div class="status error"></div>
 									</div>
@@ -590,11 +571,11 @@
 									Brake Horse Power (BHP)
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min BHP">
+									<div class="input-box box-half"Min BHP">
 										<input type="text" ng-model="charter.performance_sbb_bhp_min" ng-change="clearCharterError();" placeholder="Min BHP">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max BHP">
+									<div class="input-box box-half last"Max BHP">
 										<input type="text" ng-model="charter.performance_sbb_bhp_max" ng-change="clearCharterError();" placeholder="Max BHP">
 										<div class="status error"></div>
 									</div>
@@ -605,11 +586,11 @@
 									Speed
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Knots">
+									<div class="input-box box-half"Min Knots">
 										<input type="text" ng-model="charter.performance_sbb_speed_min" ng-change="clearCharterError();" placeholder="Min Knots">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Knots">
+									<div class="input-box box-half last"Max Knots">
 										<input type="text" ng-model="charter.performance_sbb_speed_max" ng-change="clearCharterError();" placeholder="Max Knots">
 										<div class="status error"></div>
 									</div>
@@ -621,7 +602,7 @@
 				</div>
 				<div class="input-box">
 					<div class="label display">
-						ADD DIMENSIONS <span class="required">*</span>
+						ADD DIMENSIONS
 					</div>
 					<div class="inputcontainer">
 						<div class="input-box" style="width: 100%; padding-bottom: 0;">
@@ -630,11 +611,11 @@
 									Length OA
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Metres">
+									<div class="input-box box-half"Min Metres">
 										<input type="text" ng-model="charter.dimensions_length_min" ng-change="clearCharterError();" placeholder="Min Metres">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Metres">
+									<div class="input-box box-half last"Max Metres">
 										<input type="text" ng-model="charter.dimensions_length_max" ng-change="clearCharterError();" placeholder="Max Metres">
 										<div class="status error"></div>
 									</div>
@@ -645,11 +626,11 @@
 									Breadth Moulded
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Metres">
+									<div class="input-box box-half"Min Metres">
 										<input type="text" ng-model="charter.dimensions_breadth_min" ng-change="clearCharterError();" placeholder="Min Metres">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Metres">
+									<div class="input-box box-half last"Max Metres">
 										<input type="text" ng-model="charter.dimensions_breadth_max" ng-change="clearCharterError();" placeholder="Max Metres">
 										<div class="status error"></div>
 									</div>
@@ -663,11 +644,11 @@
 									Depth Moulded
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Metres">
+									<div class="input-box box-half"Min Metres">
 										<input type="text" ng-model="charter.dimensions_depth_min" ng-change="clearCharterError();" placeholder="Min Metres">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Metres">
+									<div class="input-box box-half last"Max Metres">
 										<input type="text" ng-model="charter.dimensions_depth_max" ng-change="clearCharterError();" placeholder="Max Metres">
 										<div class="status error"></div>
 									</div>
@@ -678,11 +659,11 @@
 									Draft
 								</div>
 								<div class="inputcontainer">
-									<div class="input-box box-half" data-validate="Min Metres">
+									<div class="input-box box-half"Min Metres">
 										<input type="text" ng-model="charter.dimensions_draft_min" ng-change="clearCharterError();" placeholder="Min Metres">
 										<div class="status error"></div>
 									</div>
-									<div class="input-box box-half last" data-validate="Max Metres">
+									<div class="input-box box-half last"Max Metres">
 										<input type="text" ng-model="charter.dimensions_draft_max" ng-change="clearCharterError();" placeholder="Max Metres">
 										<div class="status error"></div>
 									</div>
@@ -694,7 +675,7 @@
 				</div>
 				<div class="input-box">
 					<div class="inputcontainer">
-						<div class="input-box box-half nopadding" data-validate="Expected MOB Date">
+						<div class="input-box box-half nopadding"Expected MOB Date">
 							<div class="label display">
 								EXPECTED MOB DATE
 							</div>
@@ -706,14 +687,6 @@
 						<div class="clear-both"></div>
 					</div>
 					<div class="clear-both"></div>
-				</div>
-				<div class="optional">
-					<div class="text">
-						<span class="left">[</span>OPTIONAL<span class="right">]</span>
-					</div>
-					<div class="aesthetic">
-						<div class="ln center_item_vertically"></div>
-					</div>
 				</div>
 				<div class="input-box">
 					<div class="input-box box-half">
@@ -1061,7 +1034,7 @@
 				</div>
 				<div class="input-box">
 					<div class="label display">
-						ADD ADDITIONAL DATA <span class="required">*</span>
+						ADD ADDITIONAL DATA
 					</div>
 					<div class="inputcontainer">
 						<textarea placeholder="Type here" ng-model="charter.additional_data"></textarea>

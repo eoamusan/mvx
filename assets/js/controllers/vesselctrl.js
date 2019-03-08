@@ -50,6 +50,7 @@ app.controller('vesselCtrl', function($scope, $rootScope, $http, $state, utils, 
 	}
 
 	function getUser(userid, callback){
+		console.log('Here 2');
 		var url = 'scripts/fetchuser.php?id='+userid+'&src=id';
 
 		$http({

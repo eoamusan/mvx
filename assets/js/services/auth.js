@@ -11,11 +11,15 @@ app.factory('AuthenticationService', ['Base64', '$http', '$cookies', '$rootScope
             });
 
             login_request.then(function successCallback(data) {
-
+                console.log(data);
                 callback(data);
 
-                if((data.status == 200) && data.data.data.verified && data.data.data.enabled){
-                    service.setOnline(data.data.data.id);
+                if(data.data.msg == "User exists") {
+                    if(data.data.data) {
+                        if((data.status == 200) && data.data.data.verified && data.data.data.enabled){
+                            service.setOnline(data.data.data.id);
+                        }
+                    }
                 }
                 
             }, function errorCallback(data) {

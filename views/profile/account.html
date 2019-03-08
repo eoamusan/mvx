@@ -1,0 +1,407 @@
+<div class="relative-container account_information">
+	<form ng-submit="updateProfile();" ng-if="mvx_globals.currentUser.userdata.data.category != 'Charterer'">
+		<div class="alertMessage">
+			<div class="alertBox" ng-class="{showingError: showingError, 'error-bg': editError}">
+				<div class="icon">
+					<i class="material-icons center_item">info</i>
+				</div>
+				<div class="text">
+					<span class="center_item_vertically" ng-if="editError">
+						<span class="emphasis">{{editError}}</span>
+					</span>
+				</div>
+				<div class="close" ng-click="closeError();">
+					<i class="pe-7s-close center_item"></i>
+				</div>
+			</div>
+		</div>
+		<div class="input-box" data-validate="Email address">
+			<div class="label display">
+				EMAIL ADDRESS <span class="required">*</span>
+			</div>
+			<div class="inputcontainer">
+				<input type="text" ng-value="usersignup.email" ng-model="user.email" ng-disabled="user.carinsurance == 'no'" autocomplete="new-password" readonly="readonly" class="noselect">
+				<span class="value" ng-if="!editing">{{usersignup.email}}</span>
+			</div>
+			<div class="status error"></div>
+		</div>
+		<div class="input-box verbose required-field" data-validate="Category">
+			<div class="label">
+				CATEGORY <span class="required">*</span>
+			</div>
+			<div class="inputcontainer">
+				<select ng-model="usersignup.s_subcategory">
+					<option value="">
+						Choose Ship Owner Category
+					</option>
+					<option value="Ship Owner">
+						Ship Owner
+					</option>
+					<option value="Ship Management Company">
+						Ship Management Company
+					</option>
+					<option value="Brokerage Firm">
+						Brokerage Firm
+					</option>
+				</select>
+				<span class="value" ng-if="!editing">{{usersignup.s_subcategory}}</span>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="section-label">
+			BUSINESS DETAILS
+		</div>
+		<div class="input-box">
+			<div class="label">
+				COMPANY LOGO
+			</div>
+			<div class="inputcontainer transparent">
+				<div class="logo_showcase showcase" onclick="document.getElementById('companylogo').click();" style="background-image: url('{{parseUrl(usersignup.s_companylogo)}}');" ng-style="usersignup.s_companylogopreview">
+					<div class="changelogo showcase nowrap">[ Change Company Logo ]</div>
+				</div>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+			<input type="file" accept="image/*" class="fileField" id="companylogo" onchange="angular.element(this).scope().fileChanged(this, 's_companylogo')">
+			<input type="hidden" class="hidden" ng-value="usersignup.s_companylogo">                    			
+		</div>
+		<div class="input-box required-field" data-validate="Business Name">
+			<div class="label">
+				BUSINESS NAME <span class="required">*</span>
+			</div>
+			<div class="inputcontainer">
+				<input type="text" ng-model="usersignup.s_businessname" placeholder="Business Name">
+				<span class="value" ng-if="!editing">{{usersignup.s_businessname}}</span>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="input-box box-half">
+				<div class="label">
+					COMPANY REGISTRATION NUMBER <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.s_companyregistrationnumber" placeholder="Company Registration Number">
+					<span class="value" ng-if="!editing">{{usersignup.s_companyregistrationnumber}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="input-box box-half last">
+				<div class="label">
+					WEBSITE <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.s_website" placeholder="Website">
+					<span class="value" ng-if="!editing">{{usersignup.s_website}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="input-box box-half">
+				<div class="label">
+					Email <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.s_businessemail" placeholder="Email">
+					<span class="value" ng-if="!editing">{{usersignup.s_businessemail}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="input-box box-half last">
+				<div class="label">
+					Phone Number <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.s_businessmobile" placeholder="Phone Number">
+					<span class="value" ng-if="!editing">{{usersignup.s_businessmobile}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="label">
+				SERVICES
+			</div>
+			<div ng-repeat="service in usersignup.s_services">
+				<div class="inputcontainer">
+					<input type="text" style="width: calc(100% - 77px); padding-right: 60px;" ng-model="service.label" placeholder="Service {{$index+1}}">
+					<div style="width: 45px; height: 45px; position: absolute; right: 5px; top: 0" ng-if="usersignup.s_services.length > 1" ng-click="removeService(usersignup.s_services, service)">
+						<div class="relative-container">
+							<div class="delete_btn center_item">
+								<div class="relative-container">
+									<i class="pe-7s-close center_item"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+					<span class="value" ng-if="!editing">{{service.label}}</span>
+				</div>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box align-left" style="height: 35px;" ng-if="editing">
+			<span class="action_btn" ng-click="addNewservice(usersignup.s_services);">
+				Add Service
+			</span>
+		</div>
+		<div class="input-box">
+			<div class="label">
+				Corporate Office Address <span class="required">*</span>
+			</div>
+			<div class="inputcontainer">
+				<input type="text" ng-model="usersignup.s_corporateofficeaddress" placeholder="Corporate Office Address">
+				<span class="value" ng-if="!editing">{{usersignup.s_corporateofficeaddress}}</span>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="input-box box-half required-field" data-validate="Name of Contact Person">
+				<div class="label">
+					Name of Contact Person <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.s_contactname" placeholder="Name of Contact Person">
+					<span class="value" ng-if="!editing">{{usersignup.s_contactname}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="input-box box-half last required-field" data-validate="Phone Number of Contact Person">
+				<div class="label">
+					Phone Number of Contact Person <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.s_contactmobile" placeholder="Phone Number of Contact Person">
+					<span class="value" ng-if="!editing">{{usersignup.s_contactmobile}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="input-box box-half only required-field" data-validate="Email of contact person">
+				<div class="label">
+					Email of Contact Person <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.s_contactemail" placeholder="Email of Contact Person">
+					<span class="value" ng-if="!editing">{{usersignup.s_contactemail}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="label">
+				Upload Brochure / Company Profile <span class="required">*</span>
+			</div>
+			<div class="inputcontainer transparent">
+				<a ng-href="{{stripped(usersignup.s_companyprofile)}}" target="_blank">
+                    <div class="inputcontainer filepath transparent" style="min-height: 35px; overflow: hidden;">
+                        <div class="spec-name text_truncate display">{{(!usersignup.s_companyprofilename) ? getFileName(usersignup.s_companyprofile) : usersignup.s_companyprofilename}}</div>
+                        <div class="download-icon display">
+                            <i class="material-icons">file_download</i>
+                        </div>
+                        <div class="clear-both"></div>
+                    </div>
+                </a>
+                <div class="changebrochure showcase nowrap" onclick="document.getElementById('companyprofile').click();">[ Change Company Profile ]</div>
+			</div>
+			<input type="file" accept=".doc, .docx, .ppt, .pptx, .pdf" class="fileField" id="companyprofile" onchange="angular.element(this).scope().fileChanged(this, 's_companyprofile')">
+			<input type="hidden" class="hidden" ng-value="usersignup.s_companyprofile">
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="label">
+				PERMITS (DPR. NIMASA etc)
+			</div>
+			<div ng-repeat="permit in usersignup.s_permits">
+				<div class="inputcontainer">
+					<input type="text" style="width: calc(100% - 77px); padding-right: 60px;" ng-model="permit.label" placeholder="Permit (DPR. NIMASA etc) {{$index+1}}">
+					<div style="width: 45px; height: 45px; position: absolute; right: 5px; top: 0" ng-if="usersignup.s_permits.length > 1" ng-click="removePermit(usersignup.s_permits, permit)">
+						<div class="relative-container">
+							<div class="delete_btn center_item">
+								<div class="relative-container">
+									<i class="pe-7s-close center_item"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+					<span class="value" ng-if="!editing">{{permit.label}}</span>
+				</div>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box align-left padding-bottom-30" ng-if="editing">
+			<span class="action_btn" ng-click="addNewPermit(usersignup.s_permits);">
+				Add Permit
+			</span>
+		</div>
+		<div class="input-box">
+			<button type="submit" class="of_btn" ng-class="{'success-bg': !processing && ((loginStatus == 'Logged In'))}" ng-disabled="user.carinsurance == 'no'">
+				<span class="center_item" ng-if="!processing && !((loginStatus == 'Logged In') || (loginStatus == 'Account Not Verified'))">UPDATE PROFILE</span>
+				<span class="center_item" ng-if="!processing && (loginStatus == 'Logged In')">SUCCESS</span>
+				<span class="center_item" ng-if="!processing && (loginStatus == 'Account Not Verified')">{{loginStatus}}</span>
+	            <div class="spinner" ng-if="processing">
+			        <div class="bounce1"></div>
+			        <div class="bounce2"></div>
+			        <div class="bounce3"></div>
+			    </div>
+			</button>
+		</div>
+	</form>
+	<form ng-submit="updateProfile();" ng-if="mvx_globals.currentUser.userdata.data.category == 'Charterer'">
+		<div class="alertMessage">
+			<div class="alertBox" ng-class="{showingError: showingError, 'error-bg': editError}">
+				<div class="icon">
+					<i class="material-icons center_item">info</i>
+				</div>
+				<div class="text">
+					<span class="center_item_vertically" ng-if="editError">
+						<span class="emphasis">{{editError}}</span>
+					</span>
+				</div>
+				<div class="close" ng-click="closeError();">
+					<i class="pe-7s-close center_item"></i>
+				</div>
+			</div>
+		</div>
+		<div class="input-box" data-validate="Email address">
+			<div class="label display">
+				EMAIL ADDRESS <span class="required">*</span>
+			</div>
+			<div class="inputcontainer">
+				<input type="text" ng-value="usersignup.email" ng-model="user.email" ng-disabled="user.carinsurance == 'no'" autocomplete="new-password" readonly="readonly" class="noselect">
+				<span class="value" ng-if="!editing">{{usersignup.email}}</span>
+			</div>
+			<div class="status error"></div>
+		</div>
+		<div class="section-label">
+			CHARTERER DETAILS
+		</div>
+		<div class="input-box required-field" data-validate="Charterer Name">
+			<div class="label">
+				NAME <span class="required">*</span>
+			</div>
+			<div class="inputcontainer">
+				<input type="text" ng-model="usersignup.c_name" placeholder="Charterer Name">
+				<span class="value" ng-if="!editing">{{usersignup.c_name}}</span>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="input-box box-half">
+				<div class="label">
+					POSITION <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.c_position" placeholder="Position">
+					<span class="value" ng-class="{italics: !usersignup.c_position && !editing}" ng-if="!editing">{{usersignup.c_position ? usersignup.c_position : 'Not Specified'}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="input-box box-half last">
+				<div class="label">
+					COMPANY NAME <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.c_company_name" placeholder="Company Name">
+					<span class="value" ng-class="{italics: !usersignup.c_company_name && !editing}" ng-if="!editing">{{usersignup.c_company_name ? usersignup.c_company_name : 'Not Specified'}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="input-box box-half">
+				<div class="label">
+					Company Website <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.c_company_website" placeholder="Company Website">
+					<span class="value" ng-if="!editing" ng-class="{italics: !usersignup.c_company_website && !editing}">{{usersignup.c_company_website ? usersignup.c_company_website : 'Not Specified'}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="input-box box-half last">
+				<div class="label">
+					Country <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.c_country" placeholder="Country">
+					<span class="value" ng-if="!editing" ng-class="{italics: !usersignup.c_country && !editing}">{{usersignup.c_country ? usersignup.c_country : 'Not Specified'}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="label">
+				Company Description <span class="required">*</span>
+			</div>
+			<div class="inputcontainer">
+				<input type="text" ng-model="usersignup.c_company_description" placeholder="Company Description">
+				<span class="value" ng-if="!editing" ng-class="{italics: !usersignup.c_company_description && !editing}">{{usersignup.c_company_description ? usersignup.c_company_description : 'Not Specified'}}</span>
+			</div>
+			<div class="status error"></div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<div class="input-box box-half only required-field">
+				<div class="label">
+					Mobile Number <span class="required">*</span>
+				</div>
+				<div class="inputcontainer">
+					<input type="text" ng-model="usersignup.c_mobile" placeholder="Mobile Number">
+					<span class="value" ng-if="!editing" ng-class="{italics: !usersignup.c_mobile && !editing}">{{usersignup.c_mobile ? usersignup.c_mobile : 'Not Specified'}}</span>
+				</div>
+				<div class="status error"></div>
+				<div class="clear-both"></div>
+			</div>
+			<div class="clear-both"></div>
+		</div>
+		<div class="input-box">
+			<button type="submit" class="of_btn" ng-class="{'success-bg': !processing && ((loginStatus == 'Logged In'))}" ng-disabled="user.carinsurance == 'no'">
+				<span class="center_item" ng-if="!processing && !((loginStatus == 'Logged In') || (loginStatus == 'Account Not Verified'))">UPDATE PROFILE</span>
+				<span class="center_item" ng-if="!processing && (loginStatus == 'Logged In')">SUCCESS</span>
+				<span class="center_item" ng-if="!processing && (loginStatus == 'Account Not Verified')">{{loginStatus}}</span>
+	            <div class="spinner" ng-if="processing">
+			        <div class="bounce1"></div>
+			        <div class="bounce2"></div>
+			        <div class="bounce3"></div>
+			    </div>
+			</button>
+		</div>
+	</form>
+</div>
+<div class="successModal" ng-if="profileUpdated" ng-click="closeProfileuUpdateSuccess();">
+	<div class="relative-container">
+		<div class="outerCircle center_item">
+			<div class="modalCircle">
+				<div class="relative-container">
+					<i class="material-icons center_item">check</i>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

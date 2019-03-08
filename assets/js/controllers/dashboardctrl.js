@@ -6,6 +6,10 @@ app.controller('dashboardCtrl', function($rootScope, $scope, $http, $state, $fir
 	$scope.addcharter = function(){
 		$state.go('charter');
 	}
+	
+	$scope.editCharterEnquiry = function(charter) {
+		$state.go('editcharter', {charter: charter});
+	}
 
 	$scope.revealShow = function(obj, src){
 		if(src == 'vessel'){

@@ -284,6 +284,20 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
             }
         })
 
+        .state('editcharter', {
+            url: '/edit-charter',
+            parent: 'inner',
+            views: {
+                'content@inner': {
+                    templateUrl : "views/charter.html",
+                    controller : "charterCtrl"
+                }
+            },
+            params: {
+                charter: {}
+            }
+        })
+
         .state('addvessel', {
             url: '/addvessel',
             parent: 'inner',
@@ -292,6 +306,20 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider, $http
                     templateUrl : "views/addvessel.html",
                     controller : "addvesselCtrl"
                 }
+            }
+        })
+
+        .state('editvessel', {
+            url: '/editvessel',
+            parent: 'inner',
+            views: {
+                'content@inner': {
+                    templateUrl : "views/addvessel.html",
+                    controller : "addvesselCtrl"
+                }
+            },
+            params: {
+                vessel: {}
             }
         })
 });
@@ -344,7 +372,7 @@ app.run(function($rootScope, $state, AuthenticationService, $cookies, $location,
     $rootScope.mvx_globals = $cookies.getObject('mvx_globals') || {};
 
     var routes_nloggedin = ['/login', '/signin', '/signup', '/signup/doctor'];
-    var routes_loggedin = ['/dashboard', '/charter', '/addvessel', '/chat'];
+    var routes_loggedin = ['/dashboard', '/profile', '/charter', '/addvessel', '/chat'];
 
     if ($rootScope.mvx_globals.currentUser) {
         var credentials = {

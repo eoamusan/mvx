@@ -1,3 +1,6 @@
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+}
 html, body{
 	height: 100%;
 	width: 100%;
@@ -14,6 +17,9 @@ html, body{
 .grayscale{
 	-webkit-filter: grayscale(100%);
 	filter: grayscale(100%);
+}
+.grayedout {
+	opacity: 0.6;
 }
 .nowrap{
 	white-space: nowrap;
@@ -100,6 +106,9 @@ html, body{
 	color: #00AFEF;
 	font-weight: bold;
 	cursor: pointer;
+}
+.transparent {
+	background: transparent !important;
 }
 .home-container{
 	width: 100%;
@@ -360,6 +369,12 @@ html, body{
 .page-loading.spinner > div, .light .spinner > div{
 	background: #056a9f !important;
 }
+.of_btn .spinner > div {
+	background: #FFF !important;
+}
+.of_btn:hover .spinner > div {
+	background: #056a9f !important;
+}
 .input-box{
 	width: 80%;
 	height: auto;
@@ -554,6 +569,7 @@ html, body{
 	transition: all 0.3s;
 	outline: none;
 	padding: 0;
+	cursor: pointer;
 }
 .of_btn:hover{
 	background: #FFF;
@@ -641,6 +657,21 @@ html, body{
 	color: #EEE;
 	font-style: italic;
 	font-size: 0.9rem;
+}
+.mvx_btn_plain{
+	width: 100%;
+	height: 32px;
+	border: 1px solid #056A9F;
+	border-radius: 36px;
+	color: #056A9F;
+	font-size: 0.8rem;
+	transition: all 0.3s;
+	background: transparent;
+	cursor: pointer;
+}
+.mvx_btn_plain:hover, .mvx_btn_plain.editing {
+	background: #056A9F;
+	color: #FFF;
 }
 .mvx_quicklinks{
 	width: 100%;
@@ -1185,7 +1216,7 @@ html, body{
 	border-bottom: 2px solid #056a9f;
 	margin-bottom: 40px;
 }
-.product_information > .input-box {
+.product_information > .input-box, .account_information .input-box {
     width: 100%;
 }
 .mvx_descriptionarea{
@@ -2092,6 +2123,13 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
 	transition: all 0.2s;
 	margin-right: 10px;
 }
+.inner_section_action{
+	width: calc((100% - 230px) / 2);
+	height: 100%;
+	float: left;
+	position: relative;
+	margin-right: 10px;
+}
 .inner_section_label.bigger{
 	width: calc(100% - 166px);
 }
@@ -2150,6 +2188,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
 .dash_content.light{
 	background: #FFF;
 	color: #222;
+	font-weight: unset;
 }
 .empty_icon{
 	width: 70px;
@@ -3382,4 +3421,103 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
 }
 .mvx_link.processing:hover{
 	background: #F58634;
+}
+.account_information{
+	width: 95%;
+	margin: auto;
+	padding-top: 20px;
+}
+.notediting .required{
+	display: none;
+}
+.notediting .inputcontainer {
+	background: transparent;
+}
+.notediting .inputcontainer > *:not(span):not(.showcase):not(a) {
+	display: none;
+}
+.account_information .label {
+	display: block !important;
+	text-transform: uppercase;
+}
+.dark .account_information .label {
+	color: #DDD;
+}
+.account_information .section-label {
+	width: 100%;
+}
+.account_information .input-box.box-half.last {
+	margin-top: 15px;
+	margin-left: 0;
+}
+.inputcontainer span.value{
+	padding-left: 13px;
+	color: #FFF;
+}
+.light .inputcontainer span.value{
+	color: #000;
+}
+.logo_showcase{
+	height: 60px;
+	width: 60px;
+	background-color: #FFF;
+	border: 1px solid #DDD;
+	border-radius: 10px;
+	background-position: center;
+	background-size: 70%;
+	background-repeat: no-repeat;
+	position: relative;
+	margin-bottom: 20px;
+}
+.changelogo{
+	position: absolute;
+	bottom: 0;
+	left: calc(100% + 10px);
+	font-size: 0.9rem;
+	cursor: pointer;
+}
+.changebrochure{
+	position: relative;
+	font-size: 0.9rem;
+	cursor: pointer;
+	margin-bottom: 20px;
+}
+.extra-option {
+    width: calc(100% - 220px) !important;
+    margin-right: 18px;
+    float: left;
+}
+.open-offers {
+	width: 200px;
+    float: left;
+    padding-top: 10px;
+}
+.open-offers .switch span {
+	font-size: 0.8rem;
+    padding-top: 5px;
+}
+.successModal {
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.outerCircle {
+	width: 200px;
+	height: 200px;
+	border-radius: 200px;
+	padding: 70px;
+	background: rgba(255, 255, 255, 0.5);
+}
+.modalCircle {
+	width: 200px;
+	height: 200px;
+	border-radius: 200px;
+	background: green;
+}
+.modalCircle i {
+	color: #FFF;
+	font-size: 6rem;
 }

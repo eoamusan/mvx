@@ -1,4 +1,4 @@
-app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window, utils, AuthenticationService, $timeout) {
+app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window, utils, AuthenticationService, $timeout, $cookies) {
 	$scope.search = {};
 	$scope.search.left_light = false;
 	$scope.search.right_light = true;
@@ -6,6 +6,7 @@ app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window,
 	$scope.showingLinks = false;
 	$rootScope.inner = true;
 	$rootScope.showingError = false;
+	$scope.useraccount = {};
 
 	$scope.index = function(id){
 		$scope[index + id] = 0;
@@ -20,7 +21,65 @@ app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window,
 	}
 
 	$scope.stripped = function(image){
-		return image.split('../')[1];
+		if(image.includes('../assets')) {
+			return image.split('../')[1];
+		} else {
+			return image;
+		}
+	}
+
+	$scope.fileChanged = function(file, src){
+		var f = file.files[0],
+		r = new FileReader();
+
+		r.onloadend = function(e) {
+			$rootScope.usersignup[src] = e.target.result;
+			$rootScope.usersignup[(src+'name')] = file.files[0].name;
+
+			$rootScope.usersignup[(src+'preview')] = {
+				'background-image': 'url('+parseBg($rootScope.usersignup[src], file.files[0].type)+')'
+			}
+
+			$scope.$apply();
+
+			console.log($rootScope.usersignup);
+		}
+
+		r.readAsDataURL(f, "UTF-8");
+	}
+
+	function parseBg(file, file_type){
+		if (file_type.indexOf('image') >=0) {
+			return file;
+		}else{
+			if (file_type.indexOf('pdf') >= 0) {
+				return 'assets/images/icons/pdf.png';
+			}else if (file_type.indexOf('word') >= 0) {
+				return 'assets/images/icons/word.png';
+			}else if ((file_type.indexOf('presentation') >= 0) || (file_type.indexOf('powerpoint') >= 0)) {
+				return 'assets/images/icons/ppt.png';
+			}else{
+				return 'assets/images/icons/file.png';
+			}
+		}
+	}
+
+	$scope.addNewservice = function(obj) {
+		var newItemNo = obj.length + 1;
+		obj.push({'id':'service' + newItemNo});
+	};
+
+	$scope.addNewPermit = function(obj) {
+		var newItemNo = obj.length + 1;
+		obj.push({'id':'permit' + newItemNo});
+	};
+
+	$scope.removeService = function(obj, item) {
+		obj.splice(item, 1);
+	}
+
+	$scope.removePermit = function(obj, item) {
+		obj.splice(obj.indexOf(item), 1);
 	}
 
 	$scope.countries = {
@@ -31,6 +90,47 @@ app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window,
 	$scope.$on('$destroy', function() {
         $rootScope.inner = false;
     });
+
+    $scope.parseUrl = function(url) {
+    	return url.split('../')[1];
+    }
+
+    $scope.updatePassword = function(){
+    	console.log('Here');
+		var validate = utils.validate();
+		$scope.updateprocessing = true;
+
+		var data = {
+			email: $rootScope.mvx_globals.currentUser.userdata.data.email,
+			password: $scope.useraccount.current,
+			newpassword: $scope.useraccount.password,
+		}
+
+		if (validate == 0) {
+
+			$http({
+	                method: 'POST',
+	                url: 'scripts/updatepassword.php',
+	                data: data
+	            }).then(function(data){
+	            	$scope.updateprocessing = false;
+
+	            	$rootScope.mvx_globals.currentUser.password = $scope.useraccount.password;
+	            	$scope.updatepasswordStatus = data.data.msg;
+
+	            	if(data.data.msg == "Password Updated") {
+	            		$cookies.putObject('mvx_globals', $rootScope.mvx_globals);
+	            		$scope.useraccount = {};
+
+	            		$timeout(function(){
+	            			$scope.updatepasswordStatus = '';
+	            		}, 1500);
+	            	}
+	            }).catch(angular.noop);
+        } else {
+        	$scope.updateprocessing = false;
+        }
+	}
 
 	$scope.getVessels = function(){
 		$http({
@@ -166,6 +266,10 @@ app.controller('innerCtrl', function($rootScope, $scope, $http, $state, $window,
 
 	$scope.dashboard = function(){
 		$state.go('dashboard');
+	}
+
+	$scope.profile = function(){
+		$state.go('profile');
 	}
 
 	$scope.addvessel = function(){

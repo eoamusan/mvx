@@ -12,6 +12,7 @@
     </div>
 </div>
 <div class="title text_truncate margin-left-15" ng-class="{'text_truncate': !(show == vessel.id)}" ng-click="revealShow(vessel, 'vessel');" click-anywhere-but-here="click();">
+    <div class="hire_rate_label" click-anywhere-but-here="click();" ng-click="editCharterEnquiry(charter);">EDIT VESSEL</div>
     {{vessel.vessel_name}}
 </div>
 <div class="action-btn" ng-hide="(show == vessel.id)">
@@ -43,9 +44,6 @@
                 </slick>
             </div>
         </div>
-        <!-- <div class="img_thumbs">
-            <div class="img_thumb" ng-repeat="image in vessel.vessel_photos track by $index" style="background-image: url({{stripped(image)}});"></div>
-        </div> -->
         <div class="details_container">
             <div class="input-box">
                 <div class="label display">
@@ -249,7 +247,7 @@
                             </div>
                         <div class="clear-both"></div>
                     </div>
-                </a>                       
+                </a>
             </div>
             <div class="input-box">
                 <div class="label display">

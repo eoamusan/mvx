@@ -9,9 +9,6 @@ app.controller('addvesselCtrl', function($rootScope, $scope, $http, $state, $tim
 		$scope.processing = true;
 
 		if (validate == 0) {
-			// console.log(data);
-
-			// var data = [];
 
 			$http({
 	                method: 'POST',

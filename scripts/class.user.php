@@ -20,8 +20,7 @@
         function sendMailPHPMailer($template_name, $template_content, $to, $subject, $attachments = null){
         	$mail = new PHPMailer(true);
 
-			try {
-	  
+			// try {
 				$body = file_get_contents('../views/emails/'.$template_name.'.html');
 
 				for($i = 0; $i < count($template_content); $i++){
@@ -41,27 +40,23 @@
 				$mail->Subject = $subject;
 				$mail->msgHTML($body);
 				$mail->AltBody = 'This is a plain-text message body';
+				$mail->SMTPDebug = false;
+				$mail->do_debug = 0;
 
-				if (!$mail->send()) {
-				    // echo "Mailer Error: " . $mail->ErrorInfo;
-				} else {
-				    // echo "Message sent!";
-				}
+				$mail->send();
 
-			} catch (phpmailerException $e) {
+			// } catch (phpmailerException $e) {
 
-				echo $e->errorMessage(); //Pretty error messages from PHPMailer
+			// 	// echo $e->errorMessage(); //Pretty error messages from PHPMailer
 
-			} catch (Exception $e) {
+			// } catch (Exception $e) {
 
-				echo $e->getMessage(); //Boring error messages from anything else!
+			// 	// echo $e->getMessage(); //Boring error messages from anything else!
 
-			}
+			// }
 		}
 
 		function sendSMS($username, $password, $message, $mobiles, $sender){
-
-			// var_dump($username, $password, $mobiles, $sender);
 
 			//rebuild form data
 			$postdata = http_build_query(
@@ -75,8 +70,6 @@
 			);
 
 			$url = 'http://login.betasms.com/api/?username='.$username.'&password='.$password.'&message='.$message.'&mobiles='.$mobiles.'&sender='.$sender;
-
-			// echo $url;
 
 			//prepare a http post request
 			$opts = array('http' =>
@@ -166,9 +159,9 @@
 						$email = $data->email;
 						$mobile = $data->charterermobile;
 
-						$update_record = $this->db->prepare("INSERT INTO charterer(userid, name, company_name, email, mobile, updatedat) VALUES(?, ?, ?, ?, ?, ?)");
+						$update_record = $this->db->prepare("INSERT INTO charterer(userid, name, position, company_name, company_website, country, company_description, email, mobile, updatedat) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-						$update_record->bind_param("isssss", $recent_insert_id, $data->charterername, $data->charterercompanyname, strtolower($data->email), $data->charterermobile, $updated_at);
+						$update_record->bind_param("isssssssss", $recent_insert_id, $data->charterername, $data->position, $data->charterercompanyname, $data->companywebsite, $data->flag, $data->companydescription, strtolower($data->email), $data->charterermobile, $updated_at);
 
 						$update_record->execute();
 					}
@@ -264,6 +257,136 @@
 					$response['msg'] = "Something went wrong. Please try again";
 				}
 
+			}
+
+			return $response;
+
+		}
+
+		public function update($data){
+			$response = [];
+
+			$date = new DateTime(null, new DateTimeZone('Africa/Lagos'));
+			$email_user = $this->db->prepare("SELECT * FROM users WHERE email = ?");
+			$email_user->bind_param("s", strtolower($data->email));
+			$email_user->execute();
+			$email_user->store_result();
+
+			$account_exists = $email_user->num_rows();
+
+			if ($account_exists) {
+
+				if ($data->category == "Charterer") {
+					$mobile_user = $this->db->prepare("SELECT * FROM charterer WHERE mobile = ?");
+					$mobile_user->bind_param("s", $data->c_mobile);
+					$mobile_user->bind_result($id, $userid, $name, $position, $company_name, $company_website, $country, $company_description, $email, $mobile, $updatedat);
+					$mobile_user->execute();
+					$mobile_user->store_result();
+					$mobile_user->fetch();
+					$mobile_used = $mobile_user->num_rows();
+				}
+
+				if ($data->category == "Ship Owner") {
+					$mobile_user = $this->db->prepare("SELECT * FROM shipowner WHERE businessmobile = ? OR contactmobile = ? OR businessmobile = ? OR contactmobile = ?");
+					$mobile_user->bind_param("ssss", $data->s_businessmobile, $data->s_contactmobile, $data->s_contactmobile, $data->s_businessmobile);
+					$mobile_user->bind_result($id, $userid, $subcategory, $businessname, $companylogo, $companyregistrationnumber, $website, $businessemail, $businessmobile, $services, $corporateofficeaddress, $contactname, $contactmobile, $contactemail, $companyprofile, $permits, $updatedat);
+					$mobile_user->execute();
+					$mobile_user->store_result();
+					$mobile_user->fetch();
+					$mobile_used = $mobile_user->num_rows();
+				}
+
+				if($data->id !== $userid) {
+					if($mobile_used > 0) {
+						$response['msg'] = "Mobile number has an account linked to it";
+					}
+
+				}else{
+					$updated_at = $date->getTimestamp();
+
+					if ($data->category == "Charterer") {
+						$update_record = $this->db->prepare("UPDATE charterer SET name = ?, position = ?, company_name = ?, company_website = ?, country = ?, company_description = ?, email = ?, mobile = ?, updatedat = ? WHERE id = ?");
+
+						$update_record->bind_param("sssssssssi", $data->c_name, $data->c_position, $data->c_company_name, $data->c_company_website, $data->c_country, $data->c_company_description, strtolower($data->c_email), $data->c_mobile, $updated_at, $data->c_id);
+
+						$update_record->execute();
+					}
+
+					if ($data->category == "Ship Owner") {
+						$name = $data->s_contactname.' ('.$data->s_businessname.')';
+						$email = $data->s_contactemail;
+						$mobile = $data->s_contactmobile;
+
+						if(isset($data->s_businessemail)){
+							$business_email = strtolower($data->s_businessemail);
+						}else{
+							$business_email = null;
+						}
+
+						$cleanname = preg_replace('/\s+/', '', $name);
+						$random_hash = $cleanname.date('YmdHis',time()).mt_rand();
+
+						if(strpos($data->s_companylogo, '../assets') === FALSE) {
+
+							if(isset($data->s_companylogo)){
+								$extension_logo = substr($data->s_companylogoname, strrpos($data->s_companylogoname, '.') + 1);
+								$companylogo = "../assets/images/users/shipcompanylogos/".$random_hash.'.'.$extension_logo;
+								$image_logo = $this->base64_to_image( $data->s_companylogo, $companylogo );
+							}else{
+								$companylogo = null;
+							}
+
+						} else {
+							$companylogo = $data->s_companylogo;
+						}
+
+						if(strpos($data->s_companyprofile, '../assets') === FALSE) {
+
+							if(isset($data->s_companyprofile)){
+								$extension_profile = substr($data->s_companyprofilename, strrpos($data->s_companyprofilename, '.') + 1);
+								$companyprofile = "../assets/images/users/shipcompanyprofiles/".$random_hash.'.'.$extension_profile;
+								$image_profile = $this->base64_to_image( $data->s_companyprofile, $companyprofile );
+							}else{
+								$companyprofile = null;
+							}
+
+						} else {
+							$companyprofile = $data->s_companyprofile;
+						}
+
+						$update_record = $this->db->prepare("UPDATE shipowner SET subcategory = ?, companylogo = ?, businessname = ?, companyregistrationnumber = ?, website = ?, businessemail = ?, businessmobile = ?, services = ?, corporateofficeaddress = ?, contactname = ?, contactmobile = ?, contactemail = ?, companyprofile = ?, permits = ?, updatedat = ? WHERE id = ?");
+
+						$update_record->bind_param("sssssssssssssssi", trim($data->s_subcategory), $companylogo, $data->s_businessname, $data->s_companyregistrationnumber, $data->s_website, $business_email, $data->s_businessmobile, json_encode($data->s_services), $data->s_corporateofficeaddress, $data->s_contactname, $data->s_contactmobile, strtolower($data->s_contactemail), $companyprofile, json_encode($data->s_permits), $updated_at, $data->s_id);
+
+						$update_record->execute();
+					}
+
+					$response['msg'] = "Account Updated";
+
+					$content = 	array(
+									array(
+										'name' => 'name', 'content' => $name
+									)
+								);
+
+					$to = 	array(
+								'email' => $email,
+								'name' => $name
+							);
+
+					// $this->sendMailPHPMailer('signup', $content, $to, 'MVXchange: Account Updated');
+
+					#Send sms to user
+					$message = "MVXchange: Account Updated";
+					$message .= "\n\n";
+					$message .= "Changes to your account have been saved successfully.";
+
+					// $this->sendSMS(BETASMS_USER, BETASMS_PASS, $message, $mobile, BETASMS_SENDER);
+
+				}
+			} else {
+				echo 'Does not exist';
+				$response['msg'] = "User does not exist";
 			}
 
 			return $response;
@@ -716,6 +839,33 @@
 			return $response;
 		}
 
+		public function updatepassword($data){
+			$response = [];
+
+			$sql = $this->db->prepare('SELECT * FROM users WHERE email = ? AND password = ?');
+			$sql->bind_param('ss', strtolower($data->email), md5($data->password));
+			$sql->execute();
+			$sql->store_result();
+			$sql->bind_result($id, $email, $category, $password, $verificationcode, $verified, $enabled, $created_at);
+			$sql->fetch();
+			
+			$result = $sql->num_rows();
+			
+			if($result > 0){
+
+				$update = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+				$update->bind_param("si", md5($data->newpassword), $id);
+
+				if($update->execute()){
+					$response['msg'] = "Password Updated";
+				}
+			} else {
+				$response['msg'] = "Incorrect Password";
+			}
+
+			return $response;
+		}
+
 		function generate($length) {
 		    $result = '';
 
@@ -730,44 +880,6 @@
 		    $result = md5(uniqid(rand(), true));
 
 		    return substr( $result, 0, $valLength );
-		}
-
-		public function update($userid, $fname, $lname, $address, $city, $state, $zip, $card_authorization_code, $card_bin, $card_last4, $card_exp_month, $card_exp_year, $card_channel, $card_card_type, $card_bank, $card_country_code, $card_brand, $card_reusable, $email, $mobile, $password, $car_owner, $car_ownerfirstname, $car_ownerlastname, $car_ownermobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurance_type, $car_insurancecompanyname, $car_paperscomplete){
-
-			$response = [];
-
-			$check_payment = $this->db->prepare("SELECT * FROM card_authorizations WHERE user_id = ?");
-			$check_payment->bind_param("i", $userid);
-			$check_payment->execute();
-			$check_payment->store_result();
-
-			$payment_check = $check_payment->num_rows();
-
-			$register = $this->db->prepare("UPDATE users SET fname = ?, lname = ?, address = ?, city = ?, state = ?, zip = ?, password = ?, carowner = ?, carowner_firstname = ?, carowner_lastname = ?, carowner_mobile = ?, car_make = ?, car_model = ?, car_geartype = ?, car_insurance = ?, car_insurancetype = ?, car_insurancecompany = ?, car_paperscomplete = ? WHERE id = ?");
-			$register->bind_param("sssssssssssssssssi", $fname, $lname, $address, $city, $state, $zip, $password, $car_owner, $car_ownerfirstname, $car_ownerlastname, $car_ownermobile, $car_make, $car_model, $car_geartype, $car_insurance, $car_insurance_type, $car_insurancecompanyname, $car_paperscomplete, $userid);
-
-			if($register->execute())
-			{
-				if(($payment_check > 0) && ($card_authorization_code != NULL)){
-					$register = $this->db->prepare("UPDATE card_authorizations SET authorization_code = ?, card_type = ?, card_brand = ?, last4 = ?, exp_month = ?, exp_year = ?, bin = ?, bank = ?, channel = ?, reusable = ?, country_code = ?  WHERE user_id = ?");
-					$register->bind_param("sssssssssssi", $card_authorization_code, $card_card_type, $card_brand, $card_last4, $card_exp_month, $card_exp_year, $card_bin, $card_bank, $card_channel, $card_reusable, $card_country_code, $userid);
-					$register->execute();
-				}else if(($payment_check == 0) && ($card_authorization_code != NULL)){
-					$update_payment = $this->db->prepare("INSERT INTO card_authorizations(user_id, authorization_code, card_type, card_brand, last4, exp_month, exp_year, bin, bank, channel, reusable, country_code) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-					$update_payment->bind_param("isssssssssss", $userid, $card_authorization_code, $card_card_type, $card_brand, $card_last4, $card_exp_month, $card_exp_year, $card_bin, $card_bank, $card_channel, $card_reusable, $card_country_code);
-
-					$update_payment->execute();
-				}
-
-				$response['msg'] = "Account Updated";
-				
-			} else {
-				$response['msg'] = "Something went wrong. Please try again";
-			}
-
-			return $response;
-
 		}
 
 		public function get_result( $statement ) {
@@ -816,7 +928,7 @@
 					$sql->bind_param('i', $id);
 					$sql->execute();
 					$sql->store_result();
-					$sql->bind_result($c_id, $c_userid, $c_name, $c_company_name, $c_email, $c_mobile, $c_updatedat);
+					$sql->bind_result($c_id, $c_userid, $c_name, $c_position, $c_company_name, $c_company_website, $c_country, $c_company_description, $c_email, $c_mobile, $c_updatedat);
 					$sql->fetch();
 
 					$reachname = $c_name;
@@ -868,6 +980,10 @@
 						$login['data']['c_email'] = $c_email;
 						$login['data']['c_mobile'] = $c_mobile;
 						$login['data']['c_updatedat'] = $c_updatedat;
+						$login['data']['c_position'] = $c_position;
+						$login['data']['c_company_website'] = $c_company_website;
+						$login['data']['c_country'] = $c_country;
+						$login['data']['c_company_description'] = $c_company_description;
 					}
 
 					if($category == "Ship Owner"){
@@ -922,6 +1038,7 @@
 		}
 
 		public function fetch($hash, $src){
+			echo 'Got in here';
 			$response = [];
 
 			$parts = explode('_', $hash);
@@ -947,7 +1064,7 @@
 					$sql->bind_param('i', $id);
 					$sql->execute();
 					$sql->store_result();
-					$sql->bind_result($c_id, $c_userid, $c_name, $c_company_name, $c_email, $c_mobile, $c_updatedat);
+					$sql->bind_result($c_id, $c_userid, $c_name, $c_position, $c_company_name, $c_company_website, $c_country, $c_company_description, $c_email, $c_mobile, $c_updatedat);
 					$sql->fetch();
 
 					$reachname = $c_name;
@@ -979,7 +1096,7 @@
 				}
 
 				if (($verified == 1) && ($enabled == 1)) {	
-					$login['msg'] = "User exists";			
+					$login['msg'] = "User exists";
 					$login['data']['id'] = $id;
 					$login['data']['email'] = $email;
 					$login['data']['category'] = $category;
@@ -1121,7 +1238,7 @@
 					$sql->bind_param('i', $id);
 					$sql->execute();
 					$sql->store_result();
-					$sql->bind_result($c_id, $c_userid, $c_name, $c_company_name, $c_email, $c_mobile, $c_updatedat);
+					$sql->bind_result($c_id, $c_userid, $c_name, $c_position, $c_company_name, $c_company_website, $c_country, $c_company_description, $c_email, $c_mobile, $c_updatedat);
 					$sql->fetch();
 
 					$reachname = $c_name;
@@ -1433,7 +1550,7 @@
 					$sql->bind_param('i', $id);
 					$sql->execute();
 					$sql->store_result();
-					$sql->bind_result($c_id, $c_userid, $c_name, $c_company_name, $c_email, $c_mobile, $c_updatedat);
+					$sql->bind_result($c_id, $c_userid, $c_name, $c_position, $c_company_name, $c_company_website, $c_country, $c_company_description, $c_email, $c_mobile, $c_updatedat);
 					$sql->fetch();
 
 					$reachname = $c_name;

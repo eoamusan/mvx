@@ -1,7 +1,13 @@
-app.controller('charterCtrl', function($rootScope, $scope, $http, $state, $timeout, utils, AuthenticationService) {
+app.controller('charterCtrl', function($rootScope, $scope, $http, $state, $timeout, utils, AuthenticationService, $stateParams) {
 	$scope.user = {};
-	$scope.charter = {};
 	$scope.charterSuccess = false;
+
+	if($stateParams.charter) {
+		$scope.charter = $stateParams.charter;
+		$scope.charter.max_age = Number($scope.charter.max_age);
+	} else {
+		$scope.charter = {};
+	}
 
 	$timeout(function(){
 		loadCalender();

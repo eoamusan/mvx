@@ -7,6 +7,7 @@
 <div class="title margin-left-5 charter_type" ng-class="{'reduced': (charterShow != charter.id), 'vessel_name': (charterShow != charter.id)}">
     <div class="hire_rate_label" style="background: #8CB429;" ng-hide="(charterShow == charter.id)">{{charter.id}}</div>
     <div class="hire_rate_label" ng-hide="(charterShow == charter.id)">VESSEL TYPE</div>
+    <div class="hire_rate_label" click-anywhere-but-here="click();" ng-click="editCharterEnquiry(charter);">EDIT REQUEST</div>
     <div class="hire_rate_rate text_truncate" ng-hide="(charterShow == charter.id)">{{charter.vessel_type}}</div>
     <span ng-show="(charterShow == charter.id)">{{charter.vessel_type}}</span>
 </div>
